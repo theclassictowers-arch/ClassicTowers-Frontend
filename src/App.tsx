@@ -1,0 +1,69 @@
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { Refine } from "@refinedev/core";
+import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
+import {
+  useNotificationProvider,
+  RefineSnackbarProvider,
+} from "@refinedev/mui";
+import GlobalStyles from "@mui/material/GlobalStyles";
+import CssBaseline from "@mui/material/CssBaseline";
+import routerProvider, {
+  UnsavedChangesNotifier,
+} from "@refinedev/react-router-v6";
+
+import { useAuthContext, useLogoutConfirm } from "./contexts";
+import Routes from "./routes";
+import {
+  useAuthProvider,
+  userProvider,
+  siteProvider,
+  sensorProvider,
+  limitsProvider,
+  archivesProvider,
+} from "./providers";
+import { getResources } from "./utils";
+
+const App: React.FC = () => {
+  const { role } = useAuthContext();
+  const { confirm } = useLogoutConfirm();
+  const authProvider = useAuthProvider(confirm);
+  const resources = role ? getResources(role) : [];
+
+  return (
+    <BrowserRouter>
+      <RefineKbarProvider>
+        <CssBaseline />
+        <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
+        <RefineSnackbarProvider>
+          <Refine
+            dataProvider={{
+              default: siteProvider,
+              sensors: sensorProvider,
+              limits: limitsProvider,
+              users: userProvider,
+              archives: archivesProvider,
+            }}
+            notificationProvider={useNotificationProvider}
+            routerProvider={routerProvider}
+            authProvider={authProvider}
+            resources={resources}
+            options={{
+              syncWithLocation: true,
+              warnWhenUnsavedChanges: true,
+              breadcrumb: false,
+              useNewQueryKeys: true,
+              projectId: "u4D9YG-XrYklo-sAluut",
+            }}
+          >
+            <Routes />
+            <RefineKbar />
+            <UnsavedChangesNotifier />
+          </Refine>
+        </RefineSnackbarProvider>
+      </RefineKbarProvider>
+    </BrowserRouter>
+  );
+};
+
+export default App;
