@@ -34,7 +34,18 @@ const App: React.FC = () => {
     <BrowserRouter>
       <RefineKbarProvider>
         <CssBaseline />
-        <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
+        <GlobalStyles
+          styles={{
+            html: { WebkitFontSmoothing: "auto" },
+            body: { margin: 0, padding: 0 },
+            "#root": { minHeight: "100dvh" },
+            "main.MuiBox-root": {
+              padding: "0 !important",
+              margin: "0 !important",
+              overflow: "hidden",
+            },
+          }}
+        />
         <RefineSnackbarProvider>
           <Refine
             dataProvider={{

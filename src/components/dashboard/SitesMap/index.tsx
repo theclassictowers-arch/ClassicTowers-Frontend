@@ -207,6 +207,9 @@ export const SitesMap = ({ siteData, isLoading }: any) => {
             <Map
               defaultCenter={initialMapView.center}
               defaultZoom={initialMapView.zoom}
+              style={{ width: "100%", height: "100%" }}
+              gestureHandling="greedy"
+              disableDefaultUI
               {...(VITE_MAP_ID ? { mapId: VITE_MAP_ID } : {})}
             >
               <Markers points={locations} />

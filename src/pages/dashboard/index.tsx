@@ -90,18 +90,22 @@ export const DashboardPage: React.FC = () => {
   return (
     <Box
       sx={{
-        height: "100vh",
+        height: "100dvh",
+        width: "100%",
+        m: 0,
+        p: 0,
         display: "flex",
         flexDirection: "column",
+        overflow: "hidden",
       }}
     >
-      <Box>
+      <Box sx={{ flexShrink: 0, position: "relative", zIndex: 2 }}>
         <SystemAlertsTable
           latestStatus={latestStatus || []}
           lastUpdateTime={lastUpdateTime}
         />
       </Box>
-      <Box sx={{ flex: 1 }}>
+      <Box sx={{ flex: 1, minHeight: 0, position: "relative" }}>
         <SitesMap siteData={siteData} isLoading={isSiteLoading} />
       </Box>
     </Box>

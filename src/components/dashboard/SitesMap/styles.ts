@@ -3,6 +3,8 @@ export const styles = {
     position: "relative",
     width: "100%",
     height: "100%",
+    minHeight: 0,
+    overflow: "hidden",
   },
   progressLoader: {
     position: "absolute",
