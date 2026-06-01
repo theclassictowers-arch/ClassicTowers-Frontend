@@ -24,14 +24,14 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
         justifyContent="center"
         gap={collapsed ? 0 : "8px"}
         sx={{
-          padding: "8px",
-          borderRadius: "4px",
-          border: `1px solid ${theme.palette.divider}`,
-          boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+          padding: collapsed ? 0 : "8px",
+          borderRadius: collapsed ? 0 : "4px",
+          border: collapsed ? "none" : `1px solid ${theme.palette.divider}`,
+          boxShadow: collapsed ? "none" : "0 2px 4px rgba(0,0,0,0.05)",
           position: "relative",
           overflow: "hidden",
           "&:hover": {
-            boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+            boxShadow: collapsed ? "none" : "0 4px 8px rgba(0,0,0,0.1)",
           },
         }}
       >
@@ -42,7 +42,7 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
               display: "flex",
               justifyContent: "center", // Center horizontally
               alignItems: "center", // Center vertically
-              p: 0.5,
+              p: 0,
             }}
           >
             <Box
@@ -51,7 +51,6 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
                 padding: 0,
                 display: "flex",
                 justifyContent: "center",
-                paddingLeft: 3,
               }}
             >
               <HamburgerMenu />

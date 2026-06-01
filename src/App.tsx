@@ -44,6 +44,38 @@ const App: React.FC = () => {
               margin: "0 !important",
               overflow: "hidden",
             },
+            "@media (min-width: 900px)": {
+              ".MuiBox-root:has(> nav .MuiDrawer-docked) > .MuiBox-root:first-of-type":
+                {
+                  width: "48px !important",
+                  minWidth: "48px !important",
+                },
+              ".MuiBox-root:has(> nav .MuiDrawer-docked) > nav": {
+                width: "48px !important",
+              },
+              ".MuiDrawer-docked .MuiDrawer-paper": {
+                width: "48px !important",
+              },
+              ".MuiDrawer-docked .MuiPaper-root": {
+                height: "52px !important",
+                minHeight: "52px !important",
+                paddingLeft: "0 !important",
+                paddingRight: "0 !important",
+              },
+              ".MuiDrawer-docked .MuiList-root": {
+                paddingTop: "6px !important",
+              },
+              ".MuiDrawer-docked .MuiListItemButton-root": {
+                minHeight: "44px",
+                paddingLeft: "0 !important",
+                paddingRight: "0 !important",
+                justifyContent: "center",
+              },
+              ".MuiDrawer-docked .MuiListItemIcon-root": {
+                minWidth: "0 !important",
+                marginRight: "0 !important",
+              },
+            },
           }}
         />
         <RefineSnackbarProvider>
