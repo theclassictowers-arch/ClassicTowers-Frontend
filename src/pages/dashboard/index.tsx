@@ -100,16 +100,28 @@ export const DashboardPage: React.FC = () => {
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
+        position: "relative",
       }}
     >
-      {!isAdmin && (
-        <Box sx={{ flexShrink: 0, position: "relative", zIndex: 2 }}>
-          <SystemAlertsTable
-            latestStatus={latestStatus || []}
-            lastUpdateTime={lastUpdateTime}
-          />
-        </Box>
-      )}
+      <Box
+        sx={{
+          flexShrink: 0,
+          position: isAdmin ? "absolute" : "relative",
+          top: isAdmin ? 0 : "auto",
+          left: isAdmin ? 0 : "auto",
+          right: isAdmin ? 0 : "auto",
+          zIndex: 2,
+          pointerEvents: "none",
+          "& > *": {
+            pointerEvents: "auto",
+          },
+        }}
+      >
+        <SystemAlertsTable
+          latestStatus={latestStatus || []}
+          lastUpdateTime={lastUpdateTime}
+        />
+      </Box>
       <Box sx={{ flex: 1, minHeight: 0, position: "relative" }}>
         <SitesMap siteData={siteData} isLoading={isSiteLoading} />
       </Box>

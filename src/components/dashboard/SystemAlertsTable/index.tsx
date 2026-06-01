@@ -9,9 +9,10 @@ import {
   TableContainer,
   TableRow,
   Typography,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
-import LaunchIcon from "@mui/icons-material/Launch";
-import { ArchivesModal } from "./ArchivesModal";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 interface SystemAlertsTableProps {
   latestStatus: any[];
@@ -22,15 +23,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
   latestStatus,
 }) => {
   const theme = useTheme();
-  const [openArchives, setOpenArchives] = useState(false);
-
-  const handleOpenArchives = () => {
-    setOpenArchives(true);
-  };
-
-  const handleCloseArchives = () => {
-    setOpenArchives(false);
-  };
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const renderTableRows = (data: any[]) => {
     return data.map((status: any, index: number) => {
@@ -70,18 +63,35 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "min(980px, calc(100vw - 96px))",
+        mx: "auto",
+        mt: 1,
+      }}
+    >
       <Paper
-        elevation={3}
+        elevation={8}
         sx={{
           bgcolor: theme.palette.background.paper,
           borderRadius: 1,
           overflow: "hidden",
+          border: `1px solid ${theme.palette.divider}`,
+          boxShadow: "0 14px 38px rgba(15, 23, 42, 0.22)",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "stretch" }}>
           <Box sx={{ flex: 1 }}>
-            <TableContainer sx={{ maxHeight: "33px", position: "relative" }}>
+            <TableContainer
+              sx={{
+                maxHeight: isExpanded ? 250 : 33,
+                position: "relative",
+                overflowY: isExpanded ? "auto" : "hidden",
+                transition:
+                  "max-height 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+                scrollBehavior: "smooth",
+              }}
+            >
               <Table stickyHeader size="small">
                 <TableBody>
                   {latestStatus && latestStatus.length > 0 ? (
@@ -113,31 +123,37 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              px: 1,
+              px: 0.5,
+              borderLeft: `1px solid ${theme.palette.divider}`,
             }}
           >
-            <LaunchIcon
-              onClick={handleOpenArchives}
-              aria-label="Open Archives"
-              sx={{
-                cursor: "pointer",
-                color: theme.palette.primary.main,
-                fontSize: theme.spacing(3), // Scales better
-                transition:
-                  "color 0.2s ease-in-out, transform 0.2s ease-in-out",
-                "&:hover": {
-                  color: theme.palette.primary.dark,
-                  transform: "scale(1.1)",
-                },
-                "&:active": {
-                  transform: "scale(0.95)",
-                },
-              }}
-            />
+            <Tooltip title={isExpanded ? "Collapse" : "Expand"}>
+              <IconButton
+                onClick={() => setIsExpanded((current) => !current)}
+                aria-label={isExpanded ? "Collapse alerts" : "Expand alerts"}
+                size="small"
+                sx={{
+                  color: theme.palette.primary.main,
+                  transition:
+                    "color 180ms ease, transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+                  transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                  "&:hover": {
+                    color: theme.palette.primary.dark,
+                    bgcolor: "transparent",
+                  },
+                  "&:active": {
+                    transform: isExpanded
+                      ? "rotate(180deg) scale(0.94)"
+                      : "rotate(0deg) scale(0.94)",
+                  },
+                }}
+              >
+                <KeyboardArrowDownIcon fontSize="medium" />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Box>
       </Paper>
-      <ArchivesModal open={openArchives} onClose={handleCloseArchives} />
-    </>
+    </Box>
   );
 };
