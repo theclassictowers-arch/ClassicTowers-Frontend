@@ -6,11 +6,14 @@ import {
   SystemAlertsTable,
   SitesMap,
 } from "../../components/dashboard";
+import { useAuthContext } from "../../contexts";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
 export const DashboardPage: React.FC = () => {
   const [lastUpdateTime, setLastUpdateTime] = useState<string>("");
+  const { role } = useAuthContext();
+  const isAdmin = role?.toLowerCase() === "admin";
 
   const {
     data: siteData,
@@ -99,12 +102,14 @@ export const DashboardPage: React.FC = () => {
         overflow: "hidden",
       }}
     >
-      <Box sx={{ flexShrink: 0, position: "relative", zIndex: 2 }}>
-        <SystemAlertsTable
-          latestStatus={latestStatus || []}
-          lastUpdateTime={lastUpdateTime}
-        />
-      </Box>
+      {!isAdmin && (
+        <Box sx={{ flexShrink: 0, position: "relative", zIndex: 2 }}>
+          <SystemAlertsTable
+            latestStatus={latestStatus || []}
+            lastUpdateTime={lastUpdateTime}
+          />
+        </Box>
+      )}
       <Box sx={{ flex: 1, minHeight: 0, position: "relative" }}>
         <SitesMap siteData={siteData} isLoading={isSiteLoading} />
       </Box>
