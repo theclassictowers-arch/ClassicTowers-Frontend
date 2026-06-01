@@ -120,6 +120,7 @@ export const DashboardPage: React.FC = () => {
         <SystemAlertsTable
           latestStatus={latestStatus || []}
           lastUpdateTime={lastUpdateTime}
+          allowResize={isAdmin}
         />
       </Box>
       <Box sx={{ flex: 1, minHeight: 0, position: "relative" }}>

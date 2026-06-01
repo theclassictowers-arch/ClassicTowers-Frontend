@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useTheme,
   Paper,
@@ -17,13 +17,51 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 interface SystemAlertsTableProps {
   latestStatus: any[];
   lastUpdateTime: string;
+  allowResize?: boolean;
 }
 
 export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
   latestStatus,
+  allowResize = false,
 }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [expandedHeight, setExpandedHeight] = useState(250);
+  const [isResizing, setIsResizing] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const getClientY = (event: MouseEvent | TouchEvent) => {
+      if ("touches" in event) {
+        return event.touches[0]?.clientY ?? event.changedTouches[0]?.clientY ?? 0;
+      }
+
+      return event.clientY;
+    };
+
+    const handleResize = (event: MouseEvent | TouchEvent) => {
+      const top = containerRef.current?.getBoundingClientRect().top ?? 0;
+      const maxHeight = Math.max(160, window.innerHeight - top - 16);
+      const nextHeight = Math.min(Math.max(getClientY(event) - top, 90), maxHeight);
+      setExpandedHeight(nextHeight);
+    };
+
+    const stopResize = () => setIsResizing(false);
+
+    window.addEventListener("mousemove", handleResize);
+    window.addEventListener("mouseup", stopResize);
+    window.addEventListener("touchmove", handleResize, { passive: false });
+    window.addEventListener("touchend", stopResize);
+
+    return () => {
+      window.removeEventListener("mousemove", handleResize);
+      window.removeEventListener("mouseup", stopResize);
+      window.removeEventListener("touchmove", handleResize);
+      window.removeEventListener("touchend", stopResize);
+    };
+  }, [isResizing]);
 
   const renderTableRows = (data: any[]) => {
     return data.map((status: any, index: number) => {
@@ -64,17 +102,18 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
 
   return (
     <Box
+      ref={containerRef}
       sx={{
-        width: "min(980px, calc(100vw - 96px))",
-        mx: "auto",
-        mt: 1,
+        width: "100%",
+        mx: 0,
+        mt: 0,
       }}
     >
       <Paper
         elevation={8}
         sx={{
           bgcolor: theme.palette.background.paper,
-          borderRadius: 1,
+          borderRadius: 0,
           overflow: "hidden",
           border: `1px solid ${theme.palette.divider}`,
           boxShadow: "0 14px 38px rgba(15, 23, 42, 0.22)",
@@ -84,11 +123,13 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
           <Box sx={{ flex: 1 }}>
             <TableContainer
               sx={{
-                maxHeight: isExpanded ? 250 : 33,
+                maxHeight: isExpanded ? expandedHeight : 33,
                 position: "relative",
                 overflowY: isExpanded ? "auto" : "hidden",
                 transition:
-                  "max-height 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+                  isResizing
+                    ? "none"
+                    : "max-height 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
                 scrollBehavior: "smooth",
               }}
             >
@@ -153,6 +194,39 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
             </Tooltip>
           </Box>
         </Box>
+        {allowResize && isExpanded && (
+          <Box
+            onMouseDown={(event) => {
+              event.preventDefault();
+              setIsResizing(true);
+            }}
+            onTouchStart={(event) => {
+              event.preventDefault();
+              setIsResizing(true);
+            }}
+            sx={{
+              height: 12,
+              cursor: "ns-resize",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              bgcolor: isResizing ? "action.selected" : "background.paper",
+              borderTop: `1px solid ${theme.palette.divider}`,
+              transition: "background-color 180ms ease",
+              touchAction: "none",
+              "&::before": {
+                content: "\"\"",
+                width: 48,
+                height: 4,
+                borderRadius: 99,
+                bgcolor: "text.disabled",
+              },
+              "&:hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+          />
+        )}
       </Paper>
     </Box>
   );
