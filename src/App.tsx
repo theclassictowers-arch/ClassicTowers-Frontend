@@ -39,6 +39,35 @@ const App: React.FC = () => {
             html: { WebkitFontSmoothing: "auto" },
             body: { margin: 0, padding: 0 },
             "#root": { minHeight: "100dvh" },
+            "@keyframes sidebarIconTwist": {
+              "0%": { transform: "rotate(0deg) scale(1)" },
+              "45%": { transform: "rotate(-14deg) scale(1.18)" },
+              "100%": { transform: "rotate(-8deg) scale(1.12)" },
+            },
+            "@keyframes sidebarLabelFloat": {
+              "0%": {
+                opacity: 0,
+                transform: "translate(-26px, -50%) scale(0.9) rotateY(-18deg)",
+              },
+              "65%": {
+                opacity: 1,
+                transform: "translate(4px, -50%) scale(1.02) rotateY(2deg)",
+              },
+              "100%": {
+                opacity: 1,
+                transform: "translate(0, -50%) scale(1) rotateY(0deg)",
+              },
+            },
+            "@keyframes sidebarActiveGlow": {
+              "0%, 100%": {
+                boxShadow:
+                  "0 10px 24px rgba(25, 118, 210, 0.28), inset 3px 0 0 rgba(255,255,255,0.78)",
+              },
+              "50%": {
+                boxShadow:
+                  "0 14px 30px rgba(25, 118, 210, 0.38), inset 3px 0 0 rgba(255,255,255,0.92)",
+              },
+            },
             "main.MuiBox-root": {
               padding: "0 !important",
               margin: "0 !important",
@@ -109,37 +138,40 @@ const App: React.FC = () => {
               },
               ".MuiDrawer-docked .MuiListItemText-root": {
                 position: "absolute",
-                left: "56px",
+                left: "64px",
                 top: "50%",
-                minWidth: "150px",
+                minWidth: "172px",
                 margin: 0,
-                padding: "9px 14px",
-                borderRadius: "0 18px 18px 0",
+                padding: "10px 16px",
+                borderRadius: "999px",
                 color: "background.paper",
                 backgroundColor: "text.primary",
-                boxShadow: "0 10px 28px rgba(15, 23, 42, 0.24)",
+                boxShadow: "0 14px 34px rgba(15, 23, 42, 0.26)",
                 opacity: 0,
                 pointerEvents: "none",
-                transform: "translate(-14px, -50%) scale(0.94)",
+                transform: "translate(-26px, -50%) scale(0.9) rotateY(-18deg)",
                 transformOrigin: "left center",
+                perspective: "600px",
                 transition:
-                  "opacity 220ms ease, transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+                  "opacity 240ms ease, transform 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease",
                 whiteSpace: "nowrap",
               },
               ".MuiDrawer-docked .MuiListItemText-primary": {
                 fontWeight: 700,
                 letterSpacing: "0 !important",
+                transition:
+                  "transform 260ms cubic-bezier(0.16, 1, 0.3, 1), color 180ms ease",
               },
               ".MuiDrawer-docked .MuiListItemText-root::before": {
                 content: "\"\"",
                 position: "absolute",
-                left: "-7px",
+                left: "-6px",
                 top: "50%",
-                width: "14px",
-                height: "14px",
+                width: "12px",
+                height: "12px",
                 backgroundColor: "text.primary",
                 transform: "translateY(-50%) rotate(45deg)",
-                borderRadius: "3px",
+                borderRadius: "4px",
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover": {
                 backgroundColor: "rgba(255, 255, 255, 0.88)",
@@ -149,18 +181,25 @@ const App: React.FC = () => {
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemIcon-root":
                 {
-                  transform: "rotate(-10deg) scale(1.12)",
+                  animation:
+                    "sidebarIconTwist 300ms cubic-bezier(0.16, 1, 0.3, 1) both",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemText-root":
                 {
-                  opacity: 1,
-                  transform: "translate(0, -50%) scale(1)",
+                  animation:
+                    "sidebarLabelFloat 360ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                  boxShadow: "0 18px 38px rgba(15, 23, 42, 0.32)",
+                },
+              ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemText-primary":
+                {
+                  transform: "translateX(3px)",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected": {
                 backgroundColor: "primary.main",
                 color: "primary.contrastText",
                 boxShadow:
                   "0 10px 24px rgba(25, 118, 210, 0.28), inset 3px 0 0 rgba(255,255,255,0.78)",
+                animation: "sidebarActiveGlow 2200ms ease-in-out infinite",
               },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected:hover": {
                 backgroundColor: "primary.dark",
