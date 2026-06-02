@@ -47,7 +47,11 @@ const App: React.FC = () => {
             "@keyframes sidebarItemReveal": {
               "0%": {
                 opacity: 0,
-                transform: "translateX(-12px) scale(0.98)",
+                transform: "translateX(-18px) scale(0.98)",
+              },
+              "60%": {
+                opacity: 1,
+                transform: "translateX(4px) scale(1.01)",
               },
               "100%": {
                 opacity: 1,
@@ -104,6 +108,8 @@ const App: React.FC = () => {
                 width: "52px !important",
                 overflow: "visible !important",
                 zIndex: 1300,
+                transition:
+                  "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
               },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) > nav": {
                 position: "fixed !important",
@@ -113,6 +119,8 @@ const App: React.FC = () => {
                 width: "260px !important",
                 overflow: "visible !important",
                 zIndex: 1300,
+                transition:
+                  "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
               },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > main.MuiBox-root":
                 {
@@ -145,7 +153,7 @@ const App: React.FC = () => {
                 backdropFilter: "blur(8px)",
                 boxShadow: "8px 0 24px rgba(15, 23, 42, 0.08)",
                 transition:
-                  "width 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease",
+                  "width 320ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease, background-color 220ms ease",
               },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) .dashboard-alert-shell":
                 {
@@ -174,8 +182,9 @@ const App: React.FC = () => {
                 minHeight: "56px !important",
                 paddingLeft: "0 !important",
                 paddingRight: "0 !important",
-                background: "transparent !important",
-                backgroundColor: "transparent !important",
+                background: "rgba(255, 255, 255, 0.30) !important",
+                backgroundColor: "rgba(255, 255, 255, 0.30) !important",
+                backdropFilter: "blur(8px)",
                 borderBottom: "1px solid rgba(148, 163, 184, 0.22)",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiPaper-root": {
@@ -242,6 +251,8 @@ const App: React.FC = () => {
                 alignItems: "stretch",
                 paddingLeft: "10px !important",
                 paddingRight: "10px !important",
+                animation:
+                  "sidebarItemReveal 320ms cubic-bezier(0.16, 1, 0.3, 1) both",
               },
               ".MuiDrawer-docked .MuiListItemButton-root": {
                 minHeight: "42px",
@@ -273,7 +284,7 @@ const App: React.FC = () => {
                   justifyContent: "flex-start",
                   overflow: "hidden",
                   animation:
-                    "sidebarItemReveal 260ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                    "sidebarItemReveal 340ms cubic-bezier(0.16, 1, 0.3, 1) both",
                 },
               "nav:has([data-sidebar-collapsed='false']) .MuiListItemButton-root .MuiListItemText-root":
                 {
