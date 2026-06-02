@@ -125,6 +125,9 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
         },
         mx: 0,
         mt: 0,
+        position: "relative",
+        overflow: "visible",
+        zIndex: 4,
         transition: "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
       }}
     >
@@ -139,7 +142,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
         }}
       >
         <Box sx={{ display: "flex", alignItems: "stretch" }}>
-          <Box sx={{ flex: 1 }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <TableContainer
               sx={{
                 maxHeight: isExpanded ? expandedHeight : 33,
@@ -178,90 +181,6 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
               </Table>
             </TableContainer>
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 0.25,
-              minWidth: isFullWidth ? 72 : 38,
-              px: 0.5,
-              borderLeft: `1px solid ${theme.palette.divider}`,
-            }}
-          >
-            <Tooltip
-              title={
-                isFullWidth
-                  ? "Back to 40% width"
-                  : `Increase width to ${widthPercent + 20}%`
-              }
-            >
-              <IconButton
-                onClick={handleWidthClick}
-                aria-label={
-                  isFullWidth
-                    ? "Set alerts to 40 percent width"
-                    : "Increase alerts width"
-                }
-                size="small"
-                sx={{
-                  width: 30,
-                  height: 30,
-                  color: theme.palette.primary.main,
-                  border: `1px solid ${theme.palette.primary.main}`,
-                  bgcolor: "background.paper",
-                  boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
-                  transition:
-                    "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
-                  "&:hover": {
-                    color: theme.palette.primary.dark,
-                    bgcolor: "action.hover",
-                    boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
-                    transform: "scale(1.06)",
-                  },
-                  "&:active": {
-                    transform: "scale(0.94)",
-                  },
-                }}
-              >
-                {isFullWidth ? (
-                  <KeyboardDoubleArrowLeftIcon fontSize="small" />
-                ) : (
-                  <KeyboardDoubleArrowRightIcon fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
-            {isFullWidth && (
-              <Tooltip title={isExpanded ? "Collapse height" : "Increase height"}>
-                <IconButton
-                  onClick={() => setIsExpanded((current) => !current)}
-                  aria-label={
-                    isExpanded
-                      ? "Collapse alerts height"
-                      : "Increase alerts height"
-                  }
-                  size="small"
-                  sx={{
-                    color: theme.palette.primary.main,
-                    transition:
-                      "color 180ms ease, transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
-                    transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                    "&:hover": {
-                      color: theme.palette.primary.dark,
-                      bgcolor: "transparent",
-                    },
-                    "&:active": {
-                      transform: isExpanded
-                        ? "rotate(180deg) scale(0.94)"
-                        : "rotate(0deg) scale(0.94)",
-                    },
-                  }}
-                >
-                  <KeyboardArrowDownIcon fontSize="medium" />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Box>
         </Box>
         {allowResize && isFullWidth && isExpanded && (
           <Box
@@ -297,6 +216,111 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
           />
         )}
       </Paper>
+
+      <Box
+        sx={{
+          position: "absolute",
+          top: 2,
+          left: {
+            xs: "auto",
+            md: isFullWidth ? "auto" : "100%",
+          },
+          right: {
+            xs: 6,
+            md: isFullWidth ? 8 : "auto",
+          },
+          transform: {
+            xs: "none",
+            md: isFullWidth ? "none" : "translateX(10px)",
+          },
+          zIndex: 20,
+          display: "flex",
+          alignItems: "center",
+          gap: 0.5,
+          px: 0.5,
+          py: 0.35,
+          borderRadius: "999px",
+          backgroundColor: "rgba(255, 255, 255, 0.72)",
+          border: `1px solid ${theme.palette.divider}`,
+          backdropFilter: "blur(8px)",
+          boxShadow: "0 10px 24px rgba(15, 23, 42, 0.18)",
+        }}
+      >
+        <Tooltip
+          title={
+            isFullWidth
+              ? "Back to 40% width"
+              : `Increase width to ${widthPercent + 20}%`
+          }
+        >
+          <IconButton
+            onClick={handleWidthClick}
+            aria-label={
+              isFullWidth
+                ? "Set alerts to 40 percent width"
+                : "Increase alerts width"
+            }
+            size="small"
+            sx={{
+              width: 30,
+              height: 30,
+              color: theme.palette.primary.main,
+              border: `1px solid ${theme.palette.primary.main}`,
+              bgcolor: "background.paper",
+              boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
+              transition:
+                "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
+              "&:hover": {
+                color: theme.palette.primary.dark,
+                bgcolor: "action.hover",
+                boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
+                transform: "scale(1.06)",
+              },
+              "&:active": {
+                transform: "scale(0.94)",
+              },
+            }}
+          >
+            {isFullWidth ? (
+              <KeyboardDoubleArrowLeftIcon fontSize="small" />
+            ) : (
+              <KeyboardDoubleArrowRightIcon fontSize="small" />
+            )}
+          </IconButton>
+        </Tooltip>
+        {isFullWidth && (
+          <Tooltip title={isExpanded ? "Collapse height" : "Increase height"}>
+            <IconButton
+              onClick={() => setIsExpanded((current) => !current)}
+              aria-label={
+                isExpanded
+                  ? "Collapse alerts height"
+                  : "Increase alerts height"
+              }
+              size="small"
+              sx={{
+                width: 30,
+                height: 30,
+                color: theme.palette.primary.main,
+                transition:
+                  "color 180ms ease, transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+                transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                "&:hover": {
+                  color: theme.palette.primary.dark,
+                  bgcolor: "action.hover",
+                },
+                "&:active": {
+                  transform: isExpanded
+                    ? "rotate(180deg) scale(0.94)"
+                    : "rotate(0deg) scale(0.94)",
+                },
+              }}
+            >
+              <KeyboardArrowDownIcon fontSize="medium" />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
     </Box>
   );
 };
