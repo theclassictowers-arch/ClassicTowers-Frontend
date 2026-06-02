@@ -54,13 +54,16 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
           width: "100%",
           minWidth: 0,
           borderRadius: "8px",
-          border: `1px solid ${theme.palette.divider}`,
-          boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+          border: "1px solid rgba(148, 163, 184, 0.20)",
+          backgroundColor: "transparent",
+          boxShadow: "none",
           position: "relative",
           overflow: "hidden",
-          transition: "box-shadow 180ms ease, transform 180ms ease",
+          transition:
+            "background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease",
           "&:hover": {
-            boxShadow: "0 8px 18px rgba(15, 23, 42, 0.12)",
+            backgroundColor: "rgba(255, 255, 255, 0.12)",
+            boxShadow: "0 8px 18px rgba(15, 23, 42, 0.08)",
             transform: "translateY(-1px)",
           },
         }}
@@ -73,8 +76,7 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
               color: theme.palette.mode === "light" ? "#0b70c2" : "#67B7F7",
               "&:active": {
                 color: theme.palette.mode === "light" ? "#0b70c2" : "#fff",
-                backgroundColor:
-                  theme.palette.mode === "light" ? "#f5f5f5" : "#000",
+                backgroundColor: "transparent",
               },
             }}
           />

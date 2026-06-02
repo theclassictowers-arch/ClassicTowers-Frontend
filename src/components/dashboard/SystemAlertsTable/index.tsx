@@ -13,8 +13,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
-import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
 interface SystemAlertsTableProps {
   latestStatus: any[];
@@ -184,6 +184,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
               alignItems: "center",
               justifyContent: "center",
               gap: 0.25,
+              minWidth: isFullWidth ? 72 : 38,
               px: 0.5,
               borderLeft: `1px solid ${theme.palette.divider}`,
             }}
@@ -204,12 +205,18 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
                 }
                 size="small"
                 sx={{
+                  width: 30,
+                  height: 30,
                   color: theme.palette.primary.main,
+                  border: `1px solid ${theme.palette.primary.main}`,
+                  bgcolor: "background.paper",
+                  boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
                   transition:
-                    "color 180ms ease, transform 180ms ease",
+                    "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
                   "&:hover": {
                     color: theme.palette.primary.dark,
-                    bgcolor: "transparent",
+                    bgcolor: "action.hover",
+                    boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
                     transform: "scale(1.06)",
                   },
                   "&:active": {
@@ -218,9 +225,9 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
                 }}
               >
                 {isFullWidth ? (
-                  <FullscreenExitIcon fontSize="small" />
+                  <KeyboardDoubleArrowLeftIcon fontSize="small" />
                 ) : (
-                  <FullscreenIcon fontSize="small" />
+                  <KeyboardDoubleArrowRightIcon fontSize="small" />
                 )}
               </IconButton>
             </Tooltip>

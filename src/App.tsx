@@ -40,9 +40,19 @@ const App: React.FC = () => {
             body: { margin: 0, padding: 0 },
             "#root": { minHeight: "100dvh" },
             "@keyframes sidebarIconTwist": {
-              "0%": { transform: "rotate(0deg) scale(1)" },
-              "45%": { transform: "rotate(-14deg) scale(1.18)" },
-              "100%": { transform: "rotate(-8deg) scale(1.12)" },
+              "0%": { transform: "translateX(0) scale(1)" },
+              "55%": { transform: "translateX(3px) scale(1.14)" },
+              "100%": { transform: "translateX(1px) scale(1.08)" },
+            },
+            "@keyframes sidebarItemReveal": {
+              "0%": {
+                opacity: 0,
+                transform: "translateX(-12px) scale(0.98)",
+              },
+              "100%": {
+                opacity: 1,
+                transform: "translateX(0) scale(1)",
+              },
             },
             "@keyframes sidebarLabelFloat": {
               "0%": {
@@ -61,11 +71,11 @@ const App: React.FC = () => {
             "@keyframes sidebarActiveGlow": {
               "0%, 100%": {
                 boxShadow:
-                  "0 10px 24px rgba(25, 118, 210, 0.28), inset 3px 0 0 rgba(255,255,255,0.78)",
+                  "0 10px 24px rgba(25, 118, 210, 0.14), inset 3px 0 0 currentColor",
               },
               "50%": {
                 boxShadow:
-                  "0 14px 30px rgba(25, 118, 210, 0.38), inset 3px 0 0 rgba(255,255,255,0.92)",
+                  "0 14px 30px rgba(25, 118, 210, 0.22), inset 3px 0 0 currentColor",
               },
             },
             "main.MuiBox-root": {
@@ -168,6 +178,8 @@ const App: React.FC = () => {
                 },
               ".MuiDrawer-docked .MuiDrawer-paper > .MuiBox-root": {
                 height: "calc(100dvh - 56px) !important",
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiBox-root":
                 {
@@ -184,6 +196,12 @@ const App: React.FC = () => {
                 gap: "6px",
                 paddingTop: "10px !important",
                 paddingBottom: "10px !important",
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
+              },
+              ".MuiDrawer-docked .MuiListItem-root": {
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiList-root": {
                 alignItems: "center",
@@ -200,8 +218,10 @@ const App: React.FC = () => {
                 display: "flex",
                 alignItems: "center",
                 maxWidth: "100%",
+                backgroundColor: "transparent !important",
+                backdropFilter: "none",
                 transition:
-                  "background-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease",
+                  "background-color 180ms ease, color 180ms ease, box-shadow 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiListItemButton-root":
                 {
@@ -218,6 +238,8 @@ const App: React.FC = () => {
                   paddingRight: "12px !important",
                   justifyContent: "flex-start",
                   overflow: "hidden",
+                  animation:
+                    "sidebarItemReveal 260ms cubic-bezier(0.16, 1, 0.3, 1) both",
                 },
               ".MuiDrawer-docked .MuiListItemIcon-root": {
                 width: "38px",
@@ -281,6 +303,8 @@ const App: React.FC = () => {
                   whiteSpace: "normal !important",
                   overflow: "hidden !important",
                   flex: "1 1 auto",
+                  display: "block !important",
+                  visibility: "visible !important",
                 },
               ".MuiDrawer-docked .MuiListItemText-primary": {
                 fontWeight: 700,
@@ -314,10 +338,11 @@ const App: React.FC = () => {
                   lineHeight: 1.25,
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.22)",
+                backgroundColor: "rgba(255, 255, 255, 0.14) !important",
+                backdropFilter: "blur(5px)",
                 boxShadow:
-                  "0 8px 20px rgba(15, 23, 42, 0.14), inset 3px 0 0 currentColor",
-                transform: "translateX(2px)",
+                  "0 8px 20px rgba(15, 23, 42, 0.12), inset 3px 0 0 currentColor",
+                transform: "translateX(4px)",
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemIcon-root":
                 {
@@ -332,42 +357,44 @@ const App: React.FC = () => {
                 },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemText-primary":
                 {
-                  transform: "translateX(3px)",
+                  transform: "translateX(4px)",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected": {
-                backgroundColor: "primary.main",
-                color: "primary.contrastText",
+                backgroundColor: "rgba(25, 118, 210, 0.22) !important",
+                color: "primary.main",
+                backdropFilter: "blur(6px)",
                 boxShadow:
-                  "0 10px 24px rgba(25, 118, 210, 0.28), inset 3px 0 0 rgba(255,255,255,0.78)",
+                  "0 10px 24px rgba(25, 118, 210, 0.16), inset 3px 0 0 currentColor",
                 animation: "sidebarActiveGlow 2200ms ease-in-out infinite",
               },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected:hover": {
-                backgroundColor: "primary.dark",
+                backgroundColor: "rgba(25, 118, 210, 0.30) !important",
               },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root":
                 {
+                  color: "primary.main",
                   transform: "scale(1.08)",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected:hover .MuiListItemIcon-root":
                 {
-                  transform: "rotate(-10deg) scale(1.16)",
+                  transform: "translateX(2px) scale(1.14)",
                 },
               "nav:has([data-sidebar-collapsed='true']) .MuiListItemButton-root.Mui-selected .MuiListItemText-root":
                 {
-                  backgroundColor: "primary.main",
-                  color: "primary.contrastText",
+                  backgroundColor: "rgba(25, 118, 210, 0.88)",
+                  color: "#fff",
                 },
               "nav:has([data-sidebar-collapsed='true']) .MuiListItemButton-root.Mui-selected .MuiListItemText-root::before":
                 {
-                  backgroundColor: "primary.main",
+                  backgroundColor: "rgba(25, 118, 210, 0.88)",
                 },
               "nav:has([data-sidebar-collapsed='true']) .MuiListItemButton-root.Mui-selected:hover .MuiListItemText-root":
                 {
-                  backgroundColor: "primary.dark",
+                  backgroundColor: "rgba(25, 118, 210, 0.94)",
                 },
               "nav:has([data-sidebar-collapsed='true']) .MuiListItemButton-root.Mui-selected:hover .MuiListItemText-root::before":
                 {
-                  backgroundColor: "primary.dark",
+                  backgroundColor: "rgba(25, 118, 210, 0.94)",
                 },
               ".MuiDrawer-docked a": {
                 textDecoration: "none",
