@@ -8,6 +8,7 @@ import {
   CreateButton,
 } from "@refinedev/mui";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import { MapTablePage } from "../../components/map-table-page";
 
 const ActionsCell = ({ row }: any) => (
   <>
@@ -101,45 +102,47 @@ export const SiteList = () => {
   );
 
   return (
-    <List
-      headerButtons={
-        (role === "admin" || role === "organization") ? <CreateButton /> : null
-      }
-    >
-      <DataGrid
-        {...dataGridProps}
-        columns={columns}
-        autoHeight
-        // Professional Full Client-side Configuration
-        // Professional Uncontrolled Configuration for Instant Search
-        filterModel={undefined}
-        sortModel={undefined}
-        paginationModel={undefined}
-        onFilterModelChange={undefined} 
-        onSortModelChange={undefined}
-        onPaginationModelChange={undefined}
-        
-        sortingMode="client"
-        filterMode="client"
-        paginationMode="client"
-        
-        initialState={{
-          pagination: { paginationModel: { pageSize: 10, page: 0 } },
-        }}
-        slots={{
-          toolbar: GridToolbar,
-        }}
-        slotProps={{
-          toolbar: { 
-            showQuickFilter: true,
-            quickFilterProps: { 
-              debounceMs: 250, 
-              placeholder: "Search by Name, IMEI, Region...",
+    <MapTablePage>
+      <List
+        headerButtons={
+          (role === "admin" || role === "organization") ? <CreateButton /> : null
+        }
+      >
+        <DataGrid
+          {...dataGridProps}
+          columns={columns}
+          autoHeight
+          // Professional Full Client-side Configuration
+          // Professional Uncontrolled Configuration for Instant Search
+          filterModel={undefined}
+          sortModel={undefined}
+          paginationModel={undefined}
+          onFilterModelChange={undefined} 
+          onSortModelChange={undefined}
+          onPaginationModelChange={undefined}
+          
+          sortingMode="client"
+          filterMode="client"
+          paginationMode="client"
+          
+          initialState={{
+            pagination: { paginationModel: { pageSize: 10, page: 0 } },
+          }}
+          slots={{
+            toolbar: GridToolbar,
+          }}
+          slotProps={{
+            toolbar: { 
+              showQuickFilter: true,
+              quickFilterProps: { 
+                debounceMs: 250, 
+                placeholder: "Search by Name, IMEI, Region...",
+              },
             },
-          },
-        }}
-        getRowId={(row) => row._id}
-      />
-    </List>
+          }}
+          getRowId={(row) => row._id}
+        />
+      </List>
+    </MapTablePage>
   );
 };

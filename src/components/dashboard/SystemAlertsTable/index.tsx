@@ -13,6 +13,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 
 interface SystemAlertsTableProps {
   latestStatus: any[];
@@ -26,6 +28,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
 }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isFullWidth, setIsFullWidth] = useState(false);
   const [expandedHeight, setExpandedHeight] = useState(250);
   const [isResizing, setIsResizing] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -67,7 +70,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
     return data.map((status: any, index: number) => {
       const timestamp = `${status.date}T${status.time}Z`;
       const utcDate = new Date(timestamp);
-      const formattedTime = utcDate.toLocaleTimeString('en-GB', { hour12: false });
+      const formattedTime = utcDate.toLocaleTimeString("en-GB", { hour12: false });
       return (
         <TableRow
           key={index}
@@ -104,9 +107,13 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
     <Box
       ref={containerRef}
       sx={{
-        width: "100%",
+        width: {
+          xs: "100%",
+          md: isFullWidth ? "100%" : "40%",
+        },
         mx: 0,
         mt: 0,
+        transition: "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
       }}
     >
       <Paper
@@ -164,10 +171,41 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              gap: 0.25,
               px: 0.5,
               borderLeft: `1px solid ${theme.palette.divider}`,
             }}
           >
+            <Tooltip title={isFullWidth ? "40% width" : "Full width"}>
+              <IconButton
+                onClick={() => setIsFullWidth((current) => !current)}
+                aria-label={
+                  isFullWidth
+                    ? "Set alerts to 40 percent width"
+                    : "Set alerts to full width"
+                }
+                size="small"
+                sx={{
+                  color: theme.palette.primary.main,
+                  transition:
+                    "color 180ms ease, transform 180ms ease",
+                  "&:hover": {
+                    color: theme.palette.primary.dark,
+                    bgcolor: "transparent",
+                    transform: "scale(1.06)",
+                  },
+                  "&:active": {
+                    transform: "scale(0.94)",
+                  },
+                }}
+              >
+                {isFullWidth ? (
+                  <FullscreenExitIcon fontSize="small" />
+                ) : (
+                  <FullscreenIcon fontSize="small" />
+                )}
+              </IconButton>
+            </Tooltip>
             <Tooltip title={isExpanded ? "Collapse" : "Expand"}>
               <IconButton
                 onClick={() => setIsExpanded((current) => !current)}

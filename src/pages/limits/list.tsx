@@ -1,6 +1,7 @@
 import React from "react";
 import { useDataGrid, EditButton, ShowButton, List } from "@refinedev/mui";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import { MapTablePage } from "../../components/map-table-page";
 
 const ActionsCell = ({ row }: { row: any }) => (
   <>
@@ -72,35 +73,37 @@ export const LimitsList = () => {
   );
 
   return (
-    <List>
-      <DataGrid
-        {...dataGridProps}
-        columns={columns}
-        autoHeight
-        // Professional Uncontrolled Configuration for Instant Search
-        filterModel={undefined}
-        sortModel={undefined}
-        paginationModel={undefined}
-        onFilterModelChange={undefined} 
-        onSortModelChange={undefined}
-        onPaginationModelChange={undefined}
+    <MapTablePage>
+      <List>
+        <DataGrid
+          {...dataGridProps}
+          columns={columns}
+          autoHeight
+          // Professional Uncontrolled Configuration for Instant Search
+          filterModel={undefined}
+          sortModel={undefined}
+          paginationModel={undefined}
+          onFilterModelChange={undefined} 
+          onSortModelChange={undefined}
+          onPaginationModelChange={undefined}
 
-        sortingMode="client"
-        filterMode="client"
-        paginationMode="client"
+          sortingMode="client"
+          filterMode="client"
+          paginationMode="client"
 
-        initialState={{
-          pagination: { paginationModel: { pageSize: 10, page: 0 } },
-        }}
-        slots={{ toolbar: GridToolbar }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 250, placeholder: "Search by Sensor ID..." },
-          },
-        }}
-        getRowId={(row) => row._id}
-      />
-    </List>
+          initialState={{
+            pagination: { paginationModel: { pageSize: 10, page: 0 } },
+          }}
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 250, placeholder: "Search by Sensor ID..." },
+            },
+          }}
+          getRowId={(row) => row._id}
+        />
+      </List>
+    </MapTablePage>
   );
 };

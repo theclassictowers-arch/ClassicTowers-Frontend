@@ -34,7 +34,16 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
   }
 
   return (
-    <Link to="/" data-sidebar-collapsed="false">
+    <Link
+      to="/"
+      data-sidebar-collapsed="false"
+      style={{
+        display: "block",
+        width: "100%",
+        minWidth: 0,
+        overflow: "hidden",
+      }}
+    >
       <Box
         display="flex"
         alignItems="center"
@@ -42,6 +51,8 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
         gap="8px"
         sx={{
           padding: "8px",
+          width: "100%",
+          minWidth: 0,
           borderRadius: "8px",
           border: `1px solid ${theme.palette.divider}`,
           boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
@@ -54,9 +65,10 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
           },
         }}
       >
-        <Box display="flex" alignItems="center" gap={2}>
+        <Box display="flex" alignItems="center" gap={1.25} minWidth={0}>
           <MemoryIcon
             sx={{
+              flexShrink: 0,
               fontSize: 32,
               color: theme.palette.mode === "light" ? "#0b70c2" : "#67B7F7",
               "&:active": {
@@ -66,12 +78,19 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
               },
             }}
           />
-          <Box display="flex" flexDirection="column" alignItems="center">
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            minWidth={0}
+          >
             <img
               src={logoText}
               width={120}
               alt="PLC Logo"
               style={{
+                display: "block",
+                maxWidth: "100%",
                 filter: `drop-shadow(0 1px 2px ${theme.palette.divider})`,
               }}
             />

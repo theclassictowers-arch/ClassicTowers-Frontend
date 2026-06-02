@@ -118,6 +118,10 @@ const App: React.FC = () => {
                 width: "260px !important",
                 overflow: "hidden !important",
               },
+              "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper *":
+                {
+                  boxSizing: "border-box",
+                },
               ".MuiDrawer-docked .MuiPaper-root": {
                 height: "56px !important",
                 minHeight: "56px !important",
@@ -181,6 +185,9 @@ const App: React.FC = () => {
                 minHeight: "42px",
                 position: "relative",
                 borderRadius: "14px",
+                display: "flex",
+                alignItems: "center",
+                maxWidth: "100%",
                 transition:
                   "background-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease",
               },
@@ -201,8 +208,17 @@ const App: React.FC = () => {
                   overflow: "hidden",
                 },
               ".MuiDrawer-docked .MuiListItemIcon-root": {
+                width: "38px",
+                height: "34px",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "10px",
                 transition:
-                  "transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), color 180ms ease",
+                  "background-color 180ms ease, transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), color 180ms ease",
+              },
+              ".MuiDrawer-docked .MuiListItemIcon-root .MuiSvgIcon-root": {
+                fontSize: "22px",
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiListItemIcon-root":
                 {
@@ -211,8 +227,9 @@ const App: React.FC = () => {
                 },
               "nav:has([data-sidebar-collapsed='false']) .MuiListItemIcon-root":
                 {
-                  minWidth: "28px !important",
-                  marginRight: "12px !important",
+                  minWidth: "38px !important",
+                  marginRight: "8px !important",
+                  flexShrink: 0,
                 },
               "nav:has([data-sidebar-collapsed='true']) .MuiListItemText-root":
                 {
@@ -238,11 +255,20 @@ const App: React.FC = () => {
                 },
               "nav:has([data-sidebar-collapsed='false']) .MuiListItemText-root":
                 {
-                  position: "static",
-                  margin: 0,
-                  opacity: 1,
-                  transform: "none",
-                  pointerEvents: "auto",
+                  position: "static !important",
+                  minWidth: "0 !important",
+                  margin: "0 !important",
+                  padding: "0 !important",
+                  borderRadius: "0 !important",
+                  color: "inherit !important",
+                  backgroundColor: "transparent !important",
+                  boxShadow: "none !important",
+                  opacity: "1 !important",
+                  pointerEvents: "auto !important",
+                  transform: "none !important",
+                  whiteSpace: "normal !important",
+                  overflow: "hidden !important",
+                  flex: "1 1 auto",
                 },
               ".MuiDrawer-docked .MuiListItemText-primary": {
                 fontWeight: 700,
@@ -262,6 +288,19 @@ const App: React.FC = () => {
                   transform: "translateY(-50%) rotate(45deg)",
                   borderRadius: "4px",
                 },
+              "nav:has([data-sidebar-collapsed='false']) .MuiListItemText-root::before":
+                {
+                  content: "none !important",
+                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiListItemText-primary":
+                {
+                  display: "block",
+                  maxWidth: "100%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  lineHeight: 1.25,
+              },
               ".MuiDrawer-docked .MuiListItemButton-root:hover": {
                 backgroundColor: "rgba(255, 255, 255, 0.88)",
                 boxShadow:
