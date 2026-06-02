@@ -460,6 +460,60 @@ const App: React.FC = () => {
                 {
                   content: "none !important",
                 },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiList-root":
+                {
+                  display: "flex !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  pointerEvents: "auto !important",
+                  transform: "translateX(0) !important",
+                  alignItems: "stretch !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItem-root":
+                {
+                  display: "block !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemButton-root":
+                {
+                  display: "flex !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  pointerEvents: "auto !important",
+                  width: "100% !important",
+                  justifyContent: "flex-start !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemIcon-root":
+                {
+                  display: "inline-flex !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  minWidth: "38px !important",
+                  width: "38px !important",
+                  marginRight: "8px !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemText-root":
+                {
+                  display: "block !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  position: "static !important",
+                  transform: "none !important",
+                  pointerEvents: "auto !important",
+                  flex: "1 1 auto !important",
+                  minWidth: "0 !important",
+                  maxWidth: "calc(100% - 46px) !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemText-primary":
+                {
+                  display: "block !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  overflow: "hidden !important",
+                  textOverflow: "ellipsis !important",
+                  whiteSpace: "nowrap !important",
+                },
               ".MuiDrawer-docked a": {
                 textDecoration: "none",
               },
