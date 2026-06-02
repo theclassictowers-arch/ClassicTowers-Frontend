@@ -28,10 +28,11 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
 }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isFullWidth, setIsFullWidth] = useState(false);
+  const [widthPercent, setWidthPercent] = useState(40);
   const [expandedHeight, setExpandedHeight] = useState(250);
   const [isResizing, setIsResizing] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const isFullWidth = widthPercent === 100;
 
   useEffect(() => {
     if (!isResizing) return;
@@ -103,13 +104,24 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
     });
   };
 
+  const handleWidthClick = () => {
+    setWidthPercent((current) => {
+      if (current >= 100) {
+        setIsExpanded(false);
+        return 40;
+      }
+
+      return Math.min(current + 20, 100);
+    });
+  };
+
   return (
     <Box
       ref={containerRef}
       sx={{
         width: {
           xs: "100%",
-          md: isFullWidth ? "100%" : "40%",
+          md: `${widthPercent}%`,
         },
         mx: 0,
         mt: 0,
@@ -176,13 +188,19 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
               borderLeft: `1px solid ${theme.palette.divider}`,
             }}
           >
-            <Tooltip title={isFullWidth ? "40% width" : "Full width"}>
+            <Tooltip
+              title={
+                isFullWidth
+                  ? "Back to 40% width"
+                  : `Increase width to ${widthPercent + 20}%`
+              }
+            >
               <IconButton
-                onClick={() => setIsFullWidth((current) => !current)}
+                onClick={handleWidthClick}
                 aria-label={
                   isFullWidth
                     ? "Set alerts to 40 percent width"
-                    : "Set alerts to full width"
+                    : "Increase alerts width"
                 }
                 size="small"
                 sx={{
@@ -206,33 +224,39 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
                 )}
               </IconButton>
             </Tooltip>
-            <Tooltip title={isExpanded ? "Collapse" : "Expand"}>
-              <IconButton
-                onClick={() => setIsExpanded((current) => !current)}
-                aria-label={isExpanded ? "Collapse alerts" : "Expand alerts"}
-                size="small"
-                sx={{
-                  color: theme.palette.primary.main,
-                  transition:
-                    "color 180ms ease, transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
-                  transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                  "&:hover": {
-                    color: theme.palette.primary.dark,
-                    bgcolor: "transparent",
-                  },
-                  "&:active": {
-                    transform: isExpanded
-                      ? "rotate(180deg) scale(0.94)"
-                      : "rotate(0deg) scale(0.94)",
-                  },
-                }}
-              >
-                <KeyboardArrowDownIcon fontSize="medium" />
-              </IconButton>
-            </Tooltip>
+            {isFullWidth && (
+              <Tooltip title={isExpanded ? "Collapse height" : "Increase height"}>
+                <IconButton
+                  onClick={() => setIsExpanded((current) => !current)}
+                  aria-label={
+                    isExpanded
+                      ? "Collapse alerts height"
+                      : "Increase alerts height"
+                  }
+                  size="small"
+                  sx={{
+                    color: theme.palette.primary.main,
+                    transition:
+                      "color 180ms ease, transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+                    transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                    "&:hover": {
+                      color: theme.palette.primary.dark,
+                      bgcolor: "transparent",
+                    },
+                    "&:active": {
+                      transform: isExpanded
+                        ? "rotate(180deg) scale(0.94)"
+                        : "rotate(0deg) scale(0.94)",
+                    },
+                  }}
+                >
+                  <KeyboardArrowDownIcon fontSize="medium" />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         </Box>
-        {allowResize && isExpanded && (
+        {allowResize && isFullWidth && isExpanded && (
           <Box
             onMouseDown={(event) => {
               event.preventDefault();

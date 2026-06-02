@@ -96,6 +96,14 @@ const App: React.FC = () => {
                 overflow: "visible !important",
                 zIndex: 1300,
               },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) .map-table-page-shell":
+                {
+                  paddingLeft: "76px !important",
+                },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) .map-table-page-shell":
+                {
+                  paddingLeft: "284px !important",
+                },
               ".MuiDrawer-docked": {
                 height: "100dvh !important",
                 overflow: "visible !important",
@@ -104,9 +112,10 @@ const App: React.FC = () => {
                 height: "100dvh !important",
                 maxHeight: "100dvh !important",
                 borderRight: "1px solid rgba(148, 163, 184, 0.28)",
-                background:
-                  "linear-gradient(180deg, rgba(248,250,252,0.98) 0%, rgba(226,232,240,0.96) 100%)",
-                boxShadow: "8px 0 24px rgba(15, 23, 42, 0.08)",
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
+                backdropFilter: "none",
+                boxShadow: "none",
                 transition:
                   "width 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease",
               },
@@ -127,6 +136,9 @@ const App: React.FC = () => {
                 minHeight: "56px !important",
                 paddingLeft: "0 !important",
                 paddingRight: "0 !important",
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
+                borderBottom: "1px solid rgba(148, 163, 184, 0.22)",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiPaper-root": {
                 paddingLeft: "14px !important",
@@ -141,7 +153,7 @@ const App: React.FC = () => {
                   "background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
               },
               ".MuiDrawer-docked .MuiPaper-root .MuiIconButton-root:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.9)",
+                backgroundColor: "rgba(255, 255, 255, 0.22)",
                 boxShadow: "0 8px 18px rgba(15, 23, 42, 0.14)",
                 transform: "scale(1.05)",
               },
@@ -302,7 +314,7 @@ const App: React.FC = () => {
                   lineHeight: 1.25,
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.88)",
+                backgroundColor: "rgba(255, 255, 255, 0.22)",
                 boxShadow:
                   "0 8px 20px rgba(15, 23, 42, 0.14), inset 3px 0 0 currentColor",
                 transform: "translateX(2px)",
