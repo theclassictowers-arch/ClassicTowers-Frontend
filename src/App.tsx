@@ -244,10 +244,17 @@ const App: React.FC = () => {
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiList-root": {
                 alignItems: "center",
-                display: "none !important",
+                opacity: 0,
+                pointerEvents: "none",
+                transform: "translateX(-14px)",
+                transition:
+                  "opacity 180ms ease, transform 180ms ease",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiList-root": {
                 display: "flex !important",
+                opacity: "1 !important",
+                pointerEvents: "auto !important",
+                transform: "translateX(0) !important",
                 alignItems: "stretch",
                 paddingLeft: "10px !important",
                 paddingRight: "10px !important",
@@ -273,11 +280,15 @@ const App: React.FC = () => {
                   paddingRight: "0 !important",
                   justifyContent: "center",
                   overflow: "hidden",
-                  display: "none !important",
+                  opacity: 0,
+                  pointerEvents: "none",
                 },
               "nav:has([data-sidebar-collapsed='false']) .MuiListItemButton-root":
                 {
                   display: "flex !important",
+                  opacity: "1 !important",
+                  pointerEvents: "auto !important",
+                  visibility: "visible !important",
                   width: "100%",
                   paddingLeft: "12px !important",
                   paddingRight: "12px !important",
@@ -300,6 +311,13 @@ const App: React.FC = () => {
                   visibility: "visible !important",
                   opacity: "1 !important",
                 },
+              "nav:has([data-sidebar-collapsed='false']) .MuiList-root, nav:has([data-sidebar-collapsed='false']) .MuiListItem-root, nav:has([data-sidebar-collapsed='false']) .MuiListItemButton-root":
+                {
+                  display: "flex !important",
+                  visibility: "visible !important",
+                  opacity: "1 !important",
+                  pointerEvents: "auto !important",
+                },
               ".MuiDrawer-docked .MuiListItemIcon-root": {
                 width: "38px",
                 height: "34px",
@@ -315,8 +333,8 @@ const App: React.FC = () => {
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiListItemIcon-root":
                 {
-                  display: "none !important",
-                  visibility: "hidden !important",
+                  opacity: 0,
+                  visibility: "hidden",
                   minWidth: "0 !important",
                   marginRight: "0 !important",
                 },
@@ -353,6 +371,8 @@ const App: React.FC = () => {
                   flex: "1 1 auto",
                   display: "block !important",
                   visibility: "visible !important",
+                  width: "auto !important",
+                  maxWidth: "calc(100% - 46px) !important",
                 },
               ".MuiDrawer-docked .MuiListItemText-primary": {
                 fontWeight: 700,
