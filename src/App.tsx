@@ -86,26 +86,44 @@ const App: React.FC = () => {
             "@media (min-width: 900px)": {
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > .MuiBox-root:first-of-type":
                 {
-                  width: "52px !important",
-                  minWidth: "52px !important",
+                  width: "0 !important",
+                  minWidth: "0 !important",
                   height: "100dvh !important",
                 },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) > .MuiBox-root:first-of-type":
                 {
-                  width: "260px !important",
-                  minWidth: "260px !important",
+                  width: "0 !important",
+                  minWidth: "0 !important",
                   height: "100dvh !important",
                 },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > nav": {
+                position: "fixed !important",
+                top: "0 !important",
+                left: "0 !important",
+                bottom: "0 !important",
                 width: "52px !important",
                 overflow: "visible !important",
                 zIndex: 1300,
               },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) > nav": {
+                position: "fixed !important",
+                top: "0 !important",
+                left: "0 !important",
+                bottom: "0 !important",
                 width: "260px !important",
                 overflow: "visible !important",
                 zIndex: 1300,
               },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > main.MuiBox-root":
+                {
+                  width: "100% !important",
+                  maxWidth: "100% !important",
+                },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) > main.MuiBox-root":
+                {
+                  width: "100% !important",
+                  maxWidth: "100% !important",
+                },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) .map-table-page-shell":
                 {
                   paddingLeft: "76px !important",

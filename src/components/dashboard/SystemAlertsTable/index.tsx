@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
@@ -130,6 +131,12 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
 
       return nextWidth;
     });
+  };
+
+  const handleIncreaseWidthClick = () => {
+    setWidthPercent((current) =>
+      Math.min(current + WIDTH_STEP_PERCENT, FULL_WIDTH_PERCENT)
+    );
   };
 
   const handleFullWidthClick = () => {
@@ -313,7 +320,12 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
             </IconButton>
           </span>
         </Tooltip>
-        <Tooltip title={`Decrease width to ${Math.max(widthPercent - 20, 20)}%`}>
+        <Tooltip
+          title={`Decrease width to ${Math.max(
+            widthPercent - WIDTH_STEP_PERCENT,
+            MIN_WIDTH_PERCENT
+          )}%`}
+        >
           <span>
             <IconButton
               onClick={handleDecreaseWidthClick}
@@ -344,6 +356,45 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
               }}
             >
               <KeyboardArrowLeftIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
+        <Tooltip
+          title={`Increase width to ${Math.min(
+            widthPercent + WIDTH_STEP_PERCENT,
+            FULL_WIDTH_PERCENT
+          )}%`}
+        >
+          <span>
+            <IconButton
+              onClick={handleIncreaseWidthClick}
+              aria-label="Increase alerts width"
+              disabled={isFullWidth}
+              size="small"
+              sx={{
+                width: 30,
+                height: 30,
+                color: theme.palette.primary.main,
+                border: `1px solid ${theme.palette.primary.main}`,
+                bgcolor: "background.paper",
+                boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
+                transition:
+                  "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
+                "&:hover": {
+                  color: theme.palette.primary.dark,
+                  bgcolor: "action.hover",
+                  boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
+                  transform: "scale(1.06)",
+                },
+                "&:active": {
+                  transform: "scale(0.94)",
+                },
+                "&.Mui-disabled": {
+                  opacity: 0.42,
+                },
+              }}
+            >
+              <KeyboardArrowRightIcon fontSize="small" />
             </IconButton>
           </span>
         </Tooltip>
