@@ -140,13 +140,23 @@ const App: React.FC = () => {
                 height: "100dvh !important",
                 maxHeight: "100dvh !important",
                 borderRight: "1px solid rgba(148, 163, 184, 0.28)",
-                background: "transparent !important",
-                backgroundColor: "transparent !important",
-                backdropFilter: "none",
-                boxShadow: "none",
+                background: "rgba(255, 255, 255, 0.30) !important",
+                backgroundColor: "rgba(255, 255, 255, 0.30) !important",
+                backdropFilter: "blur(8px)",
+                boxShadow: "8px 0 24px rgba(15, 23, 42, 0.08)",
                 transition:
                   "width 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease",
               },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) .dashboard-alert-shell":
+                {
+                  left: "64px !important",
+                  width: "calc(100% - 64px) !important",
+                },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) .dashboard-alert-shell":
+                {
+                  left: "272px !important",
+                  width: "calc(100% - 272px) !important",
+                },
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper": {
                 width: "52px !important",
                 overflow: "visible !important",

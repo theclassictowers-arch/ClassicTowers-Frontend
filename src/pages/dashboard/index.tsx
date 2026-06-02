@@ -104,6 +104,7 @@ export const DashboardPage: React.FC = () => {
       }}
     >
       <Box
+        className="dashboard-alert-shell"
         sx={{
           flexShrink: 0,
           position: isAdmin ? "absolute" : "relative",
