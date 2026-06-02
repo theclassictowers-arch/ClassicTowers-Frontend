@@ -235,8 +235,10 @@ const App: React.FC = () => {
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiList-root": {
                 alignItems: "center",
+                display: "none !important",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiList-root": {
+                display: "flex !important",
                 alignItems: "stretch",
                 paddingLeft: "10px !important",
                 paddingRight: "10px !important",
@@ -259,10 +261,12 @@ const App: React.FC = () => {
                   paddingLeft: "0 !important",
                   paddingRight: "0 !important",
                   justifyContent: "center",
-                  overflow: "visible",
+                  overflow: "hidden",
+                  display: "none !important",
                 },
               "nav:has([data-sidebar-collapsed='false']) .MuiListItemButton-root":
                 {
+                  display: "flex !important",
                   width: "100%",
                   paddingLeft: "12px !important",
                   paddingRight: "12px !important",
@@ -300,11 +304,15 @@ const App: React.FC = () => {
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiListItemIcon-root":
                 {
+                  display: "none !important",
+                  visibility: "hidden !important",
                   minWidth: "0 !important",
                   marginRight: "0 !important",
                 },
               "nav:has([data-sidebar-collapsed='false']) .MuiListItemIcon-root":
                 {
+                  display: "inline-flex !important",
+                  visibility: "visible !important",
                   minWidth: "38px !important",
                   marginRight: "8px !important",
                   flexShrink: 0,
