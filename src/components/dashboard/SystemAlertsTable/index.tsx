@@ -13,6 +13,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
@@ -22,17 +23,24 @@ interface SystemAlertsTableProps {
   allowResize?: boolean;
 }
 
+const MIN_WIDTH_PERCENT = 20;
+const DEFAULT_WIDTH_PERCENT = 40;
+const FULL_WIDTH_PERCENT = 100;
+const WIDTH_STEP_PERCENT = 20;
+
 export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
   latestStatus,
   allowResize = false,
 }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [widthPercent, setWidthPercent] = useState(40);
+  const [widthPercent, setWidthPercent] = useState(DEFAULT_WIDTH_PERCENT);
   const [expandedHeight, setExpandedHeight] = useState(250);
   const [isResizing, setIsResizing] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const isFullWidth = widthPercent === 100;
+  const isFullWidth = widthPercent === FULL_WIDTH_PERCENT;
+  const isMinWidth = widthPercent === MIN_WIDTH_PERCENT;
+  const isCompactWidth = widthPercent < DEFAULT_WIDTH_PERCENT;
 
   useEffect(() => {
     if (!isResizing) return;
@@ -104,15 +112,28 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
     });
   };
 
-  const handleWidthClick = () => {
+  const handleMinWidthClick = () => {
+    setIsExpanded(false);
+    setWidthPercent(MIN_WIDTH_PERCENT);
+  };
+
+  const handleDecreaseWidthClick = () => {
     setWidthPercent((current) => {
-      if (current >= 100) {
+      const nextWidth = Math.max(
+        current - WIDTH_STEP_PERCENT,
+        MIN_WIDTH_PERCENT
+      );
+
+      if (nextWidth < FULL_WIDTH_PERCENT) {
         setIsExpanded(false);
-        return 40;
       }
 
-      return Math.min(current + 20, 100);
+      return nextWidth;
     });
+  };
+
+  const handleFullWidthClick = () => {
+    setWidthPercent(FULL_WIDTH_PERCENT);
   };
 
   return (
@@ -139,6 +160,18 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
           overflow: "hidden",
           border: `1px solid ${theme.palette.divider}`,
           boxShadow: "0 14px 38px rgba(15, 23, 42, 0.22)",
+          "& .MuiTableCell-root": {
+            fontSize: isCompactWidth ? "0.68rem" : "0.8125rem",
+            px: isCompactWidth ? 0.65 : 1,
+            py: 0,
+            lineHeight: 1.15,
+            transition:
+              "font-size 220ms ease, padding 220ms ease",
+          },
+          "& .MuiTypography-root": {
+            fontSize: isCompactWidth ? "0.68rem" : "0.8125rem",
+            transition: "font-size 220ms ease",
+          },
         }}
       >
         <Box sx={{ display: "flex", alignItems: "stretch" }}>
@@ -246,20 +279,79 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
           boxShadow: "0 10px 24px rgba(15, 23, 42, 0.18)",
         }}
       >
-        <Tooltip
-          title={
-            isFullWidth
-              ? "Back to 40% width"
-              : `Increase width to ${widthPercent + 20}%`
-          }
-        >
+        <Tooltip title="Set width to 20%">
+          <span>
+            <IconButton
+              onClick={handleMinWidthClick}
+              aria-label="Set alerts width to 20 percent"
+              disabled={isMinWidth}
+              size="small"
+              sx={{
+                width: 30,
+                height: 30,
+                color: theme.palette.primary.main,
+                border: `1px solid ${theme.palette.primary.main}`,
+                bgcolor: "background.paper",
+                boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
+                transition:
+                  "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
+                "&:hover": {
+                  color: theme.palette.primary.dark,
+                  bgcolor: "action.hover",
+                  boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
+                  transform: "scale(1.06)",
+                },
+                "&:active": {
+                  transform: "scale(0.94)",
+                },
+                "&.Mui-disabled": {
+                  opacity: 0.42,
+                },
+              }}
+            >
+              <KeyboardDoubleArrowLeftIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
+        <Tooltip title={`Decrease width to ${Math.max(widthPercent - 20, 20)}%`}>
+          <span>
+            <IconButton
+              onClick={handleDecreaseWidthClick}
+              aria-label="Decrease alerts width"
+              disabled={isMinWidth}
+              size="small"
+              sx={{
+                width: 30,
+                height: 30,
+                color: theme.palette.primary.main,
+                border: `1px solid ${theme.palette.primary.main}`,
+                bgcolor: "background.paper",
+                boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
+                transition:
+                  "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
+                "&:hover": {
+                  color: theme.palette.primary.dark,
+                  bgcolor: "action.hover",
+                  boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
+                  transform: "scale(1.06)",
+                },
+                "&:active": {
+                  transform: "scale(0.94)",
+                },
+                "&.Mui-disabled": {
+                  opacity: 0.42,
+                },
+              }}
+            >
+              <KeyboardArrowLeftIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
+        <Tooltip title="Set width to 100%">
           <IconButton
-            onClick={handleWidthClick}
-            aria-label={
-              isFullWidth
-                ? "Set alerts to 40 percent width"
-                : "Increase alerts width"
-            }
+            onClick={handleFullWidthClick}
+            aria-label="Set alerts width to 100 percent"
+            disabled={isFullWidth}
             size="small"
             sx={{
               width: 30,
@@ -279,13 +371,12 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
               "&:active": {
                 transform: "scale(0.94)",
               },
+              "&.Mui-disabled": {
+                opacity: 0.42,
+              },
             }}
           >
-            {isFullWidth ? (
-              <KeyboardDoubleArrowLeftIcon fontSize="small" />
-            ) : (
-              <KeyboardDoubleArrowRightIcon fontSize="small" />
-            )}
+            <KeyboardDoubleArrowRightIcon fontSize="small" />
           </IconButton>
         </Tooltip>
         {isFullWidth && (
