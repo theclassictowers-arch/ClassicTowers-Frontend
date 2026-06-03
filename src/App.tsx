@@ -136,7 +136,7 @@ const App: React.FC = () => {
                 top: "0 !important",
                 left: "0 !important",
                 bottom: "0 !important",
-                width: "260px !important",
+                width: "240px !important",
                 overflow: "visible !important",
                 zIndex: 1300,
                 transition:
@@ -158,7 +158,7 @@ const App: React.FC = () => {
                 },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) .map-table-page-shell":
                 {
-                  paddingLeft: "284px !important",
+                  paddingLeft: "264px !important",
                 },
               ".MuiDrawer-docked": {
                 height: "100dvh !important",
@@ -196,8 +196,8 @@ const App: React.FC = () => {
                 },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) .dashboard-alert-shell":
                 {
-                  left: "272px !important",
-                  width: "calc(100% - 272px) !important",
+                  left: "252px !important",
+                  width: "calc(100% - 252px) !important",
                 },
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper": {
                 width: "52px !important",
@@ -209,7 +209,7 @@ const App: React.FC = () => {
                 boxShadow: "none !important",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper": {
-                width: "260px !important",
+                width: "240px !important",
                 overflow: "hidden !important",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper *":
@@ -337,7 +337,7 @@ const App: React.FC = () => {
                 maxWidth: "100%",
                 paddingTop: "0 !important",
                 paddingBottom: "0 !important",
-                border: "0 !important",
+                border: "1px solid rgba(15, 23, 42, 0.14)",
                 background: "transparent !important",
                 backgroundColor: "transparent !important",
                 backdropFilter: "none",
@@ -496,6 +496,7 @@ const App: React.FC = () => {
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover": {
                 backgroundColor: "rgba(255, 255, 255, 0.12) !important",
+                borderColor: "currentColor",
                 backdropFilter: "blur(4px)",
                 boxShadow:
                   "0 10px 22px rgba(15, 23, 42, 0.14), inset 3px 0 0 currentColor, inset 0 1px 0 rgba(255, 255, 255, 0.28)",
@@ -521,7 +522,7 @@ const App: React.FC = () => {
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected": {
                 backgroundColor: "rgba(25, 118, 210, 0.10) !important",
-                border: "0 !important",
+                borderColor: "currentColor",
                 color: "primary.main",
                 backdropFilter: "blur(4px)",
                 boxShadow:
