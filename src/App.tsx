@@ -1,5 +1,6 @@
 ﻿import React from "react";
 import { BrowserRouter } from "react-router-dom";
+import { useEffect } from "react";
 import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import {
@@ -29,6 +30,43 @@ const App: React.FC = () => {
   const { confirm } = useLogoutConfirm();
   const authProvider = useAuthProvider(confirm);
   const resources = role ? getResources(role) : [];
+
+  useEffect(() => {
+    const splitSidebarLabels = () => {
+      document
+        .querySelectorAll<HTMLElement>(
+          ".MuiDrawer-docked .MuiListItemText-primary"
+        )
+        .forEach((label) => {
+          if (label.dataset.sidebarCharacters === "true") return;
+
+          const text = label.textContent ?? "";
+          if (!text.trim()) return;
+
+          label.dataset.sidebarCharacters = "true";
+          label.setAttribute("aria-label", text);
+          label.textContent = "";
+
+          Array.from(text).forEach((character, index) => {
+            const characterNode = document.createElement("span");
+            characterNode.className =
+              character === " "
+                ? "sidebar-menu-char sidebar-menu-space"
+                : "sidebar-menu-char";
+            characterNode.style.setProperty("--char-index", String(index));
+            characterNode.textContent = character === " " ? "\u00a0" : character;
+            label.appendChild(characterNode);
+          });
+        });
+    };
+
+    splitSidebarLabels();
+
+    const observer = new MutationObserver(splitSidebarLabels);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [role]);
 
   return (
     <BrowserRouter>
@@ -62,6 +100,42 @@ const App: React.FC = () => {
               },
               "100%": {
                 transform: "translateX(1px) translateZ(3px) rotateX(0deg)",
+              },
+            },
+            "@keyframes sidebarCharacterFlip": {
+              "0%": {
+                transform:
+                  "translateX(0) translateZ(0) rotateY(0deg) scale(1)",
+              },
+              "45%": {
+                transform:
+                  "translateX(3px) translateZ(12px) rotateY(-82deg) scale(1.08)",
+              },
+              "72%": {
+                transform:
+                  "translateX(5px) translateZ(8px) rotateY(18deg) scale(1.04)",
+              },
+              "100%": {
+                transform:
+                  "translateX(1px) translateZ(0) rotateY(0deg) scale(1)",
+              },
+            },
+            "@keyframes sidebarIconSweep": {
+              "0%": {
+                transform:
+                  "translateX(0) translateZ(0) rotateY(0deg) rotateZ(0deg) scale(1)",
+              },
+              "45%": {
+                transform:
+                  "translateX(5px) translateZ(16px) rotateY(-120deg) rotateZ(-8deg) scale(1.16)",
+              },
+              "72%": {
+                transform:
+                  "translateX(8px) translateZ(10px) rotateY(-210deg) rotateZ(5deg) scale(1.1)",
+              },
+              "100%": {
+                transform:
+                  "translateX(2px) translateZ(3px) rotateY(-360deg) rotateZ(0deg) scale(1.08)",
               },
             },
             "@keyframes sidebarItemReveal": {
@@ -477,6 +551,16 @@ const App: React.FC = () => {
                 transformOrigin: "left center",
                 transformStyle: "preserve-3d",
               },
+              ".MuiDrawer-docked .sidebar-menu-char": {
+                display: "inline-block",
+                transformOrigin: "left center",
+                transformStyle: "preserve-3d",
+                backfaceVisibility: "hidden",
+                willChange: "transform",
+              },
+              ".MuiDrawer-docked .sidebar-menu-space": {
+                width: "0.28em",
+              },
               "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemText-root::before":
                 {
                   content: "none !important",
@@ -506,7 +590,7 @@ const App: React.FC = () => {
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemIcon-root":
                 {
                   animation:
-                    "sidebarIconTwist 300ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                    "sidebarIconSweep 620ms cubic-bezier(0.16, 1, 0.3, 1) both",
                 },
               "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root:hover .MuiListItemText-root":
                 {
@@ -517,8 +601,13 @@ const App: React.FC = () => {
                 },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemText-primary":
                 {
+                  animation: "none",
+                },
+              ".MuiDrawer-docked .MuiListItemButton-root:hover .sidebar-menu-char":
+                {
                   animation:
-                    "sidebarTextFlip 360ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                    "sidebarCharacterFlip 520ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                  animationDelay: "calc(var(--char-index) * 34ms)",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected": {
                 backgroundColor: "rgba(25, 118, 210, 0.10) !important",
