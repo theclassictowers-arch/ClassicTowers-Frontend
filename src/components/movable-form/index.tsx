@@ -1,9 +1,9 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
 import { type SxProps, type Theme, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import CloseIcon from "@mui/icons-material/Close";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 type Position = {
   x: number;
@@ -140,6 +140,30 @@ export const MovableForm: React.FC<MovableFormProps> = ({
     initialPosition || { x: 0, y: 0 }
   );
   const [isInitialized, setIsInitialized] = useState(false);
+  const backButtonSx: SxProps<Theme> = {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 4,
+    minHeight: 30,
+    px: 1.25,
+    py: 0.25,
+    borderRadius: 1.25,
+    color: "text.secondary",
+    border: `1px solid ${theme.palette.divider}`,
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    backdropFilter: "blur(4px)",
+    boxShadow: "none",
+    textTransform: "none",
+    fontWeight: 700,
+    lineHeight: 1,
+    cursor: "pointer",
+    "&:hover": {
+      color: "text.primary",
+      backgroundColor: "action.hover",
+      boxShadow: "none",
+    },
+  };
 
   const clampPosition = (
     nextPosition: Position,
@@ -369,27 +393,16 @@ export const MovableForm: React.FC<MovableFormProps> = ({
     return (
       <Box sx={{ position: "relative", width: "100%", ...sx }}>
         {onClose && (
-          <IconButton
-            aria-label="Close window"
+          <Button
+            aria-label="Back"
             data-no-drag="true"
             onClick={onClose}
             size="small"
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              zIndex: 4,
-              color: "text.secondary",
-              backgroundColor: "background.paper",
-              boxShadow: 2,
-              "&:hover": {
-                color: "text.primary",
-                backgroundColor: "action.hover",
-              },
-            }}
+            startIcon={<ArrowBackIcon fontSize="small" />}
+            sx={backButtonSx}
           >
-            <CloseIcon fontSize="small" />
-          </IconButton>
+            Back
+          </Button>
         )}
         {children}
       </Box>
@@ -414,28 +427,16 @@ export const MovableForm: React.FC<MovableFormProps> = ({
       }}
     >
       {onClose && (
-        <IconButton
-          aria-label="Close window"
+        <Button
+          aria-label="Back"
           data-no-drag="true"
           onClick={onClose}
           size="small"
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            zIndex: 4,
-            color: "text.secondary",
-            backgroundColor: "background.paper",
-            boxShadow: 2,
-            cursor: "pointer",
-            "&:hover": {
-              color: "text.primary",
-              backgroundColor: "action.hover",
-            },
-          }}
+          startIcon={<ArrowBackIcon fontSize="small" />}
+          sx={backButtonSx}
         >
-          <CloseIcon fontSize="small" />
-        </IconButton>
+          Back
+        </Button>
       )}
 
       <Box
