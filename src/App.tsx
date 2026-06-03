@@ -8,7 +8,6 @@ import {
 } from "@refinedev/mui";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { alpha } from "@mui/material/styles";
 import routerProvider, {
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
@@ -36,63 +35,51 @@ const App: React.FC = () => {
       <RefineKbarProvider>
         <CssBaseline />
         <GlobalStyles
-          styles={(theme) => {
-            const isDark = theme.palette.mode === "dark";
-            const primaryMain = theme.palette.primary.main;
-            const sidebarLine = alpha(theme.palette.divider, isDark ? 0.38 : 0.58);
-            const hoverSurface = alpha(
-              theme.palette.background.paper,
-              isDark ? 0.22 : 0.62
-            );
-            const neutralShadow = alpha(
-              isDark ? theme.palette.common.black : theme.palette.text.primary,
-              isDark ? 0.32 : 0.14
-            );
-            const activeShadow = alpha(primaryMain, isDark ? 0.42 : 0.30);
-            const activeShadowStrong = alpha(primaryMain, isDark ? 0.56 : 0.42);
-            const activeInset = alpha(
-              theme.palette.primary.contrastText,
-              isDark ? 0.62 : 0.82
-            );
-            const activeInsetStrong = alpha(
-              theme.palette.primary.contrastText,
-              isDark ? 0.78 : 0.96
-            );
-            const tooltipBg = isDark
-              ? theme.palette.background.paper
-              : theme.palette.text.primary;
-
-            return {
+          styles={{
             html: { WebkitFontSmoothing: "auto" },
             body: { margin: 0, padding: 0 },
             "#root": { minHeight: "100dvh" },
             "@keyframes sidebarIconTwist": {
-              "0%": { transform: "rotate(0deg) scale(1)" },
-              "45%": { transform: "rotate(-14deg) scale(1.18)" },
-              "100%": { transform: "rotate(-8deg) scale(1.12)" },
+              "0%": { transform: "translateX(0) scale(1)" },
+              "55%": { transform: "translateX(3px) scale(1.14)" },
+              "100%": { transform: "translateX(1px) scale(1.08)" },
+            },
+            "@keyframes sidebarItemReveal": {
+              "0%": {
+                opacity: 0,
+                transform: "translateX(-18px) scale(0.98)",
+              },
+              "60%": {
+                opacity: 1,
+                transform: "translateX(4px) scale(1.01)",
+              },
+              "100%": {
+                opacity: 1,
+                transform: "translateX(0) scale(1)",
+              },
             },
             "@keyframes sidebarLabelFloat": {
               "0%": {
                 opacity: 0,
-                transform: "translate(-24px, -50%) scale(0.92)",
+                transform: "translate(-26px, -50%) scale(0.9) rotateY(-18deg)",
               },
               "65%": {
                 opacity: 1,
-                transform: "translate(4px, -50%) scale(1.02)",
+                transform: "translate(4px, -50%) scale(1.02) rotateY(2deg)",
               },
               "100%": {
                 opacity: 1,
-                transform: "translate(0, -50%) scale(1)",
+                transform: "translate(0, -50%) scale(1) rotateY(0deg)",
               },
             },
             "@keyframes sidebarActiveGlow": {
               "0%, 100%": {
                 boxShadow:
-                  `0 10px 24px ${activeShadow}, inset 3px 0 0 ${activeInset}`,
+                  "0 8px 18px rgba(25, 118, 210, 0.14), inset 3px 0 0 currentColor, inset 0 1px 0 rgba(255, 255, 255, 0.3)",
               },
               "50%": {
                 boxShadow:
-                  `0 14px 30px ${activeShadowStrong}, inset 3px 0 0 ${activeInsetStrong}`,
+                  "0 12px 24px rgba(25, 118, 210, 0.22), inset 3px 0 0 currentColor, inset 0 1px 0 rgba(255, 255, 255, 0.38)",
               },
             },
             "main.MuiBox-root": {
@@ -101,164 +88,343 @@ const App: React.FC = () => {
               overflow: "hidden",
             },
             "@media (min-width: 900px)": {
-              ".MuiBox-root:has(+ nav .MuiDrawer-docked [data-sidebar-collapsed='true'])":
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > .MuiBox-root:first-of-type":
                 {
-                  width: "56px !important",
-                  minWidth: "56px !important",
-                  height: "100vh !important",
+                  width: "0 !important",
+                  minWidth: "0 !important",
+                  height: "100dvh !important",
                 },
-              ".MuiBox-root:has(+ nav .MuiDrawer-docked [data-sidebar-collapsed='false'])":
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) > .MuiBox-root:first-of-type":
                 {
-                  width: "240px !important",
-                  minWidth: "240px !important",
-                  height: "100vh !important",
+                  width: "0 !important",
+                  minWidth: "0 !important",
+                  height: "100dvh !important",
                 },
-              "nav:has(.MuiDrawer-docked [data-sidebar-collapsed='true'])": {
-                width: "56px !important",
-                height: "100vh !important",
-                background: "transparent !important",
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > nav": {
+                position: "fixed !important",
+                top: "0 !important",
+                left: "0 !important",
+                bottom: "0 !important",
+                width: "52px !important",
+                overflow: "visible !important",
+                zIndex: 1300,
+                transition:
+                  "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
               },
-              "nav:has(.MuiDrawer-docked [data-sidebar-collapsed='false'])": {
-                width: "240px !important",
-                height: "100vh !important",
-                background: "transparent !important",
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) > nav": {
+                position: "fixed !important",
+                top: "0 !important",
+                left: "0 !important",
+                bottom: "0 !important",
+                width: "260px !important",
+                overflow: "visible !important",
+                zIndex: 1300,
+                transition:
+                  "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
               },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > main.MuiBox-root":
+                {
+                  width: "100% !important",
+                  maxWidth: "100% !important",
+                },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) > main.MuiBox-root":
+                {
+                  width: "100% !important",
+                  maxWidth: "100% !important",
+                },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) .map-table-page-shell":
+                {
+                  paddingLeft: "76px !important",
+                },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) .map-table-page-shell":
+                {
+                  paddingLeft: "284px !important",
+                },
               ".MuiDrawer-docked": {
-                height: "100vh !important",
-                background: "transparent !important",
+                height: "100dvh !important",
+                overflow: "visible !important",
+              },
+              // Fallback: make sidebar visible when refine opens it
+              "nav .MuiDrawer-paper[aria-hidden='false'], nav .MuiDrawer-paper": {
+                minWidth: "52px !important",
+              },
+              "nav .MuiDrawer-paper .MuiList-root": {
+                minHeight: "calc(100dvh - 56px) !important",
+                height: "calc(100dvh - 56px) !important",
               },
               ".MuiDrawer-docked .MuiDrawer-paper": {
+                position: "fixed !important",
                 top: "0 !important",
+                left: "0 !important",
                 bottom: "0 !important",
-                height: "100vh !important",
-                minHeight: "100vh !important",
-                maxHeight: "100vh !important",
-                borderRight: `1px solid ${sidebarLine}`,
+                height: "100dvh !important",
+                maxHeight: "100dvh !important",
+                overflow: "visible !important",
+                zIndex: "1300 !important",
+                borderRight: "1px solid rgba(148, 163, 184, 0.18)",
+                background: "rgba(255, 255, 255, 0.12) !important",
+                backgroundColor: "rgba(255, 255, 255, 0.12) !important",
+                backdropFilter: "blur(6px)",
+                boxShadow: "6px 0 18px rgba(15, 23, 42, 0.06)",
+                transition:
+                  "width 320ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease, background-color 220ms ease",
+              },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) .dashboard-alert-shell":
+                {
+                  left: "64px !important",
+                  width: "calc(100% - 64px) !important",
+                },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) .dashboard-alert-shell":
+                {
+                  left: "272px !important",
+                  width: "calc(100% - 272px) !important",
+                },
+              "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper": {
+                width: "52px !important",
+                overflow: "visible !important",
+                borderRight: "0 !important",
                 background: "transparent !important",
                 backgroundColor: "transparent !important",
-                boxShadow: "none",
-                transition:
-                  "width 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease",
+                backdropFilter: "none !important",
+                boxShadow: "none !important",
+              },
+              "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper": {
+                width: "260px !important",
                 overflow: "hidden !important",
               },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiDrawer-paper":
-                {
-                  width: "56px !important",
-                  overflow: "visible !important",
-                },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiDrawer-paper":
-                {
-                  width: "240px !important",
-                  overflow: "hidden !important",
-                },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiDrawer-paper *":
+              "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper *":
                 {
                   boxSizing: "border-box",
                 },
-              ".MuiDrawer-docked .MuiPaper-root": {
-                height: "64px !important",
-                minHeight: "64px !important",
-                background: "transparent !important",
-                borderBottom: `1px solid ${sidebarLine}`,
+              // Sidebar header only - do not apply this to Drawer paper
+              ".MuiDrawer-docked .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)": {
+                height: "56px !important",
+                minHeight: "56px !important",
+                paddingLeft: "0 !important",
+                paddingRight: "0 !important",
+                background: "rgba(255, 255, 255, 0.12) !important",
+                backgroundColor: "rgba(255, 255, 255, 0.12) !important",
+                backdropFilter: "blur(6px)",
+                borderBottom: "1px solid rgba(148, 163, 184, 0.22)",
+              },
+              "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)": {
+                paddingLeft: "14px !important",
+                paddingRight: "10px !important",
+                justifyContent: "space-between !important",
+              },
+              "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)": {
+                borderBottom: "0 !important",
+                borderRight: "1px solid rgba(148, 163, 184, 0.18)",
+                boxShadow: "6px 0 18px rgba(15, 23, 42, 0.06)",
               },
               ".MuiDrawer-docked .MuiPaper-root .MuiIconButton-root": {
                 width: "34px",
                 height: "34px",
                 borderRadius: "12px",
-                color: "text.secondary",
                 transition:
                   "background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
               },
               ".MuiDrawer-docked .MuiPaper-root .MuiIconButton-root:hover": {
-                backgroundColor: hoverSurface,
-                boxShadow: `0 8px 18px ${neutralShadow}`,
+                backgroundColor: "transparent",
+                boxShadow: "none",
                 transform: "scale(1.05)",
               },
+              "nav:has([data-sidebar-collapsed='true']) .MuiPaper-root .MuiIconButton-root":
+                {
+                  color: "primary.main",
+                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiPaper-root .MuiIconButton-root":
+                {
+                  color: "text.secondary",
+                  marginLeft: "8px",
+                },
               ".MuiDrawer-docked .MuiDrawer-paper > .MuiBox-root": {
-                height: "calc(100vh - 64px) !important",
-                background: "transparent !important",
-                backgroundColor: "transparent !important",
-                overflowX: "hidden !important",
-                overflowY: "auto !important",
+                height: "calc(100dvh - 56px) !important",
+                background: "rgba(255, 255, 255, 0.12) !important",
+                backgroundColor: "rgba(255, 255, 255, 0.12) !important",
+                backdropFilter: "blur(6px)",
               },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiBox-root":
+              "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiBox-root":
                 {
                   overflow: "visible !important",
+                  background: "transparent !important",
+                  backgroundColor: "transparent !important",
+                  backdropFilter: "none !important",
+                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper > .MuiBox-root":
+                {
+                  display: "flex !important",
+                  flexDirection: "column !important",
+                  overflowX: "hidden !important",
+                  overflowY: "auto !important",
                 },
               ".MuiDrawer-docked .MuiList-root": {
-                paddingTop: "8px !important",
-                paddingBottom: "8px !important",
+                display: "flex",
+                flexDirection: "column",
+                gap: "3px",
+                paddingTop: "4px !important",
+                paddingBottom: "4px !important",
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
+                backdropFilter: "none",
               },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiList-root": {
-                overflow: "visible !important",
+              ".MuiDrawer-docked .MuiListItem-root": {
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
+                minHeight: "46px !important",
+                height: "46px !important",
+                padding: "0 !important",
+                paddingTop: "0 !important",
+                paddingBottom: "0 !important",
+                paddingLeft: "0 !important",
+                paddingRight: "0 !important",
+              },
+              ".MuiDrawer-docked .MuiList-root > .MuiListItem-root:last-child": {
+                marginTop: "auto !important",
+                marginBottom: "0 !important",
+              },
+              ".MuiDrawer-docked .MuiList-root > *:last-child": {
+                marginTop: "auto !important",
+              },
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiList-root": {
+                alignItems: "center",
+                opacity: 0,
+                pointerEvents: "none",
+                transform: "translateX(-14px)",
+                transition:
+                  "opacity 180ms ease, transform 180ms ease",
+              },
+              "nav:has([data-sidebar-collapsed='false']) .MuiList-root": {
+                display: "flex !important",
+                opacity: "1 !important",
+                pointerEvents: "auto !important",
+                transform: "translateX(0) !important",
+                alignItems: "stretch",
+                flex: "1 1 auto !important",
+                minHeight: "calc(100dvh - 56px) !important",
+                paddingLeft: "6px !important",
+                paddingRight: "6px !important",
+                animation:
+                  "sidebarItemReveal 320ms cubic-bezier(0.16, 1, 0.3, 1) both",
               },
               ".MuiDrawer-docked .MuiListItemButton-root": {
-                minHeight: "42px",
-                margin: "3px 7px",
-                borderRadius: "12px",
+                minHeight: "44px !important",
+                height: "44px !important",
                 position: "relative",
+                borderRadius: "7px",
                 display: "flex",
                 alignItems: "center",
-                width: "calc(100% - 14px)",
-                maxWidth: "calc(100% - 14px)",
+                maxWidth: "100%",
+                paddingTop: "0 !important",
+                paddingBottom: "0 !important",
+                border: "1px solid rgba(15, 23, 42, 0.14)",
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
+                backdropFilter: "none",
+                boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.18)",
                 transition:
-                  "background-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease",
+                  "background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
               },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiListItemButton-root":
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root":
                 {
-                  overflow: "visible",
-                },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiListItemText-root":
-                {
-                  position: "absolute",
-                  left: "54px",
-                  top: "50%",
-                  minWidth: "170px",
-                  margin: 0,
-                  padding: "10px 16px",
-                  borderRadius: "999px",
-                  color: "#fff",
-                  backgroundColor: tooltipBg,
-                  boxShadow: `0 14px 34px ${neutralShadow}`,
+                  width: "38px",
+                  paddingLeft: "0 !important",
+                  paddingRight: "0 !important",
+                  paddingTop: "1px !important",
+                  paddingBottom: "1px !important",
+                  justifyContent: "center",
+                  overflow: "hidden",
                   opacity: 0,
                   pointerEvents: "none",
-                  transform: "translate(-24px, -50%) scale(0.92)",
-                  transformOrigin: "left center",
-                  whiteSpace: "nowrap",
-                  zIndex: 1400,
                 },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiListItemText-root::before":
+              "nav:has([data-sidebar-collapsed='false']) .MuiListItemButton-root":
                 {
-                  content: "\"\"",
-                  position: "absolute",
-                  left: "-6px",
-                  top: "50%",
-                  width: "12px",
-                  height: "12px",
-                  backgroundColor: tooltipBg,
-                  transform: "translateY(-50%) rotate(45deg)",
-                  borderRadius: "4px",
+                  display: "grid !important",
+                  gridTemplateColumns: "30px minmax(0, 1fr)",
+                  columnGap: "8px",
+                  opacity: "1 !important",
+                  pointerEvents: "auto !important",
+                  visibility: "visible !important",
+                  width: "100%",
+                  paddingLeft: "10px !important",
+                  paddingRight: "10px !important",
+                  paddingTop: "0 !important",
+                  paddingBottom: "0 !important",
+                  justifyContent: "stretch",
+                  alignItems: "center !important",
+                  overflow: "hidden",
+                  animation:
+                    "sidebarItemReveal 340ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiListItemButton-root .MuiListItemText-root":
+                {
+                  display: "flex !important",
+                  alignItems: "center !important",
+                  justifyContent: "flex-start !important",
+                  visibility: "visible !important",
+                  opacity: "1 !important",
+                  minWidth: "0 !important",
+                  width: "auto !important",
+                  maxWidth: "100% !important",
+                  height: "auto !important",
+                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiListItemButton-root .MuiListItemText-primary":
+                {
+                  display: "block !important",
+                  visibility: "visible !important",
+                  opacity: "1 !important",
+                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiList-root, nav:has([data-sidebar-collapsed='false']) .MuiListItem-root, nav:has([data-sidebar-collapsed='false']) .MuiListItemButton-root":
+                {
+                  display: "flex !important",
+                  visibility: "visible !important",
+                  opacity: "1 !important",
+                  pointerEvents: "auto !important",
                 },
               ".MuiDrawer-docked .MuiListItemIcon-root": {
-                minWidth: "38px",
-                width: "38px",
-                height: "34px",
+                width: "28px",
+                height: "28px",
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
-                borderRadius: "10px",
-                color: "text.secondary",
+                borderRadius: "8px",
                 transition:
                   "background-color 180ms ease, transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), color 180ms ease",
               },
               ".MuiDrawer-docked .MuiListItemIcon-root .MuiSvgIcon-root": {
-                fontSize: "22px",
+                fontSize: "20px",
               },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemText-root":
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemIcon-root":
+                {
+                  opacity: 0,
+                  visibility: "hidden",
+                  minWidth: "0 !important",
+                  marginRight: "0 !important",
+                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiListItemIcon-root":
+                {
+                  display: "inline-flex !important",
+                  visibility: "visible !important",
+                  alignItems: "center !important",
+                  justifyContent: "center !important",
+                  minWidth: "28px !important",
+                  width: "30px !important",
+                  height: "28px !important",
+                  marginRight: "0 !important",
+                  flexShrink: 0,
+                },
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemText-root":
+                {
+                  display: "none !important",
+                  visibility: "hidden !important",
+                  opacity: "0 !important",
+                  pointerEvents: "none !important",
+                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiListItemText-root":
                 {
                   position: "static !important",
                   minWidth: "0 !important",
-                  margin: "0 0 0 6px !important",
+                  margin: "0 !important",
                   padding: "0 !important",
                   borderRadius: "0 !important",
                   color: "inherit !important",
@@ -270,108 +436,206 @@ const App: React.FC = () => {
                   whiteSpace: "normal !important",
                   overflow: "hidden !important",
                   flex: "1 1 auto",
+                  display: "flex !important",
+                  alignItems: "center !important",
+                  justifyContent: "flex-start !important",
+                  visibility: "visible !important",
+                  width: "auto !important",
+                  maxWidth: "100% !important",
+                  height: "auto !important",
                 },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemText-root::before":
+              ".MuiDrawer-docked .MuiListItemText-primary": {
+                fontSize: "0.95rem !important",
+                fontWeight: 700,
+                letterSpacing: "0 !important",
+                transition:
+                  "transform 260ms cubic-bezier(0.16, 1, 0.3, 1), color 180ms ease",
+              },
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemText-root::before":
                 {
                   content: "none !important",
                 },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemText-primary":
+              "nav:has([data-sidebar-collapsed='false']) .MuiListItemText-root::before":
+                {
+                  content: "none !important",
+                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiListItemText-primary":
                 {
                   display: "block",
                   maxWidth: "100%",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
-                  lineHeight: 1.25,
-              },
-              ".MuiDrawer-docked .MuiListItemText-primary": {
-                fontWeight: 600,
-                letterSpacing: "0 !important",
-                transition:
-                  "transform 260ms cubic-bezier(0.16, 1, 0.3, 1), color 180ms ease",
+                  lineHeight: "1 !important",
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover": {
-                backgroundColor: hoverSurface,
-                boxShadow: `0 8px 20px ${neutralShadow}`,
-                transform: "translateX(1px)",
+                backgroundColor: "rgba(255, 255, 255, 0.10) !important",
+                borderColor: "currentColor",
+                backdropFilter: "blur(4px)",
+                boxShadow:
+                  "0 8px 18px rgba(15, 23, 42, 0.12), inset 3px 0 0 currentColor, inset 0 1px 0 rgba(255, 255, 255, 0.28)",
+                transform: "translateX(2px)",
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemIcon-root":
                 {
                   animation:
-                    "sidebarIconTwist 260ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                    "sidebarIconTwist 300ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                },
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root:hover .MuiListItemText-root":
+                {
+                  display: "none !important",
+                  visibility: "hidden !important",
+                  opacity: "0 !important",
+                  animation: "none !important",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemText-primary":
                 {
-                  transform: "translateX(2px)",
-                },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiListItemButton-root:hover .MuiListItemText-root":
-                {
-                  animation:
-                    "sidebarLabelFloat 340ms cubic-bezier(0.16, 1, 0.3, 1) both",
-                },
-              ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected.Mui-selected":
-                {
-                  backgroundColor: "#1976d2 !important",
-                  color: "#fff !important",
-                  boxShadow:
-                    `0 10px 24px ${activeShadow}, inset 3px 0 0 ${activeInset}`,
-                  animation: "sidebarActiveGlow 2200ms ease-in-out infinite",
-                },
-              ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected.Mui-selected .MuiListItemIcon-root":
-                {
-                  color: "#fff !important",
-                  transform: "scale(1.08)",
-                },
-              ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected.Mui-selected .MuiListItemText-root":
-                {
-                  color: "#fff !important",
-                },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiListItemButton-root.Mui-selected.Mui-selected .MuiListItemText-root":
-                {
-                  backgroundColor: "#1976d2",
-                  color: "#fff",
-                },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiListItemButton-root.Mui-selected.Mui-selected .MuiListItemText-root::before":
-                {
-                  backgroundColor: "#1976d2",
-                },
-              ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected.Mui-selected:hover":
-                {
-                  backgroundColor: "#115293 !important",
-                },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiListItemButton-root.Mui-selected.Mui-selected:hover .MuiListItemText-root":
-                {
-                  backgroundColor: "#115293",
-                },
-              ".MuiDrawer-docked:has([data-sidebar-collapsed='true']) .MuiListItemButton-root.Mui-selected.Mui-selected:hover .MuiListItemText-root::before":
-                {
-                  backgroundColor: "#115293",
-                },
-              ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected.Mui-selected:hover .MuiListItemIcon-root":
-                {
-                  transform: "rotate(-10deg) scale(1.16)",
+                  transform: "translateX(1px)",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected": {
+                backgroundColor: "rgba(25, 118, 210, 0.10) !important",
+                borderColor: "currentColor",
+                color: "primary.main",
+                backdropFilter: "blur(4px)",
                 boxShadow:
-                  `0 10px 24px ${activeShadow}, inset 3px 0 0 ${activeInset}`,
+                  "0 8px 18px rgba(25, 118, 210, 0.14), inset 3px 0 0 currentColor, inset 0 1px 0 rgba(255, 255, 255, 0.3)",
+                animation: "sidebarActiveGlow 2200ms ease-in-out infinite",
               },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected:hover": {
-                backgroundColor: "primary.dark",
+                backgroundColor: "rgba(25, 118, 210, 0.14) !important",
               },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root":
                 {
+                  color: "primary.main",
                   transform: "scale(1.08)",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected:hover .MuiListItemIcon-root":
                 {
-                  transform: "rotate(-10deg) scale(1.16)",
+                  transform: "translateX(2px) scale(1.14)",
+                },
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root.Mui-selected .MuiListItemText-root":
+                {
+                  display: "none !important",
+                  visibility: "hidden !important",
+                  opacity: "0 !important",
+                },
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root.Mui-selected .MuiListItemText-root::before":
+                {
+                  content: "none !important",
+                },
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root.Mui-selected:hover .MuiListItemText-root":
+                {
+                  display: "none !important",
+                  visibility: "hidden !important",
+                  opacity: "0 !important",
+                },
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root.Mui-selected:hover .MuiListItemText-root::before":
+                {
+                  content: "none !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiList-root":
+                {
+                  display: "flex !important",
+                  gap: "3px !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  pointerEvents: "auto !important",
+                  transform: "translateX(0) !important",
+                  alignItems: "stretch !important",
+                  flex: "1 1 auto !important",
+                  minHeight: "calc(100dvh - 56px) !important",
+                  paddingLeft: "6px !important",
+                  paddingRight: "6px !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItem-root":
+                {
+                  display: "block !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  minHeight: "46px !important",
+                  height: "46px !important",
+                  padding: "0 !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiList-root > .MuiListItem-root:last-child":
+                {
+                  marginTop: "auto !important",
+                  marginBottom: "4px !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiList-root > *:last-child":
+                {
+                  marginTop: "auto !important",
+                  marginBottom: "4px !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiList-root a":
+                {
+                  display: "block !important",
+                  height: "46px !important",
+                  minHeight: "46px !important",
+                  maxHeight: "46px !important",
+                  margin: "0 !important",
+                  padding: "0 !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemButton-root":
+                {
+                  display: "grid !important",
+                  gridTemplateColumns: "30px minmax(0, 1fr)",
+                  columnGap: "8px",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  pointerEvents: "auto !important",
+                  width: "100% !important",
+                  minHeight: "44px !important",
+                  height: "44px !important",
+                  maxHeight: "44px !important",
+                  paddingLeft: "10px !important",
+                  paddingRight: "10px !important",
+                  paddingTop: "0 !important",
+                  paddingBottom: "0 !important",
+                  justifyContent: "stretch !important",
+                  alignItems: "center !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemIcon-root":
+                {
+                  display: "inline-flex !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  alignItems: "center !important",
+                  justifyContent: "center !important",
+                  minWidth: "28px !important",
+                  width: "30px !important",
+                  height: "28px !important",
+                  marginRight: "0 !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemText-root":
+                {
+                  display: "flex !important",
+                  alignItems: "center !important",
+                  justifyContent: "flex-start !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  position: "static !important",
+                  transform: "none !important",
+                  pointerEvents: "auto !important",
+                  flex: "1 1 auto !important",
+                  minWidth: "0 !important",
+                  height: "auto !important",
+                  maxWidth: "100% !important",
+                },
+              ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemText-primary":
+                {
+                  display: "block !important",
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  overflow: "hidden !important",
+                  textOverflow: "ellipsis !important",
+                  whiteSpace: "nowrap !important",
+                  lineHeight: "1 !important",
                 },
               ".MuiDrawer-docked a": {
                 textDecoration: "none",
               },
             },
-          };
-        }}
+          }}
         />
         <RefineSnackbarProvider>
           <Refine
