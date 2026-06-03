@@ -568,10 +568,11 @@ const App: React.FC = () => {
                 },
               ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiList-root a":
                 {
-                  display: "block !important",
+                  display: "flex !important",
                   height: "46px !important",
                   minHeight: "46px !important",
                   maxHeight: "46px !important",
+                  alignItems: "center !important",
                   margin: "0 !important",
                   padding: "0 !important",
                 },
