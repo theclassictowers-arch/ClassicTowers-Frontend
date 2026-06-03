@@ -184,6 +184,7 @@ export const LimitsShow = () => {
         minWidth={460}
         maxWidth={1250}
         onClose={() => navigate("/limits")}
+        showFullPageButton
         sx={{
           "& .MuiPaper-root, & .MuiCard-root": {
             background: "rgba(164, 198, 236, 0.03) !important",
@@ -193,7 +194,7 @@ export const LimitsShow = () => {
           },
         }}
       >
-        <Show isLoading={isLoading}>
+        <Show isLoading={isLoading} goBack={false}>
           <Card
             sx={{
               ...formStyles.container,

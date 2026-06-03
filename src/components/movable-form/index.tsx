@@ -4,6 +4,8 @@ import Button from "@mui/material/Button";
 import { type SxProps, type Theme, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 
 type Position = {
   x: number;
@@ -48,6 +50,7 @@ type MovableFormProps = {
   maxHeight?: number;
   initialPosition?: Position;
   onClose?: () => void;
+  showFullPageButton?: boolean;
   sx?: SxProps<Theme>;
 };
 
@@ -109,6 +112,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   maxHeight = 920,
   initialPosition,
   onClose,
+  showFullPageButton = false,
   sx,
 }) => {
   const theme = useTheme();
@@ -140,10 +144,10 @@ export const MovableForm: React.FC<MovableFormProps> = ({
     initialPosition || { x: 0, y: 0 }
   );
   const [isInitialized, setIsInitialized] = useState(false);
-  const backButtonSx: SxProps<Theme> = {
+  const [isFullPage, setIsFullPage] = useState(false);
+  const windowButtonBaseSx = {
     position: "absolute",
     top: 10,
-    right: 10,
     zIndex: 4,
     minHeight: 30,
     px: 1.25,
@@ -163,6 +167,14 @@ export const MovableForm: React.FC<MovableFormProps> = ({
       backgroundColor: "action.hover",
       boxShadow: "none",
     },
+  };
+  const backButtonSx: SxProps<Theme> = {
+    ...windowButtonBaseSx,
+    left: 10,
+  };
+  const fullPageButtonSx: SxProps<Theme> = {
+    ...windowButtonBaseSx,
+    right: 10,
   };
 
   const clampPosition = (
@@ -227,7 +239,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
         if (typeof parsed.x === "number" && typeof parsed.y === "number") {
           nextPosition = { x: parsed.x, y: parsed.y };
         }
-      } catch (_error) {
+      } catch {
         // Ignore invalid storage values and use defaults.
       }
     }
@@ -342,6 +354,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
   const handleDragStart = (event: React.MouseEvent<HTMLElement>) => {
     if (!isDesktop) return;
+    if (isFullPage) return;
     if (event.button !== 0) return;
     if (isNonDraggableTarget(event.target)) return;
     event.preventDefault();
@@ -356,6 +369,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
   const handleResizeStart = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isDesktop) return;
+    if (isFullPage) return;
     event.preventDefault();
     event.stopPropagation();
     interactionRef.current = {
@@ -367,6 +381,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
   const handleResizeHeightStart = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isDesktop) return;
+    if (isFullPage) return;
     event.preventDefault();
     event.stopPropagation();
     interactionRef.current = {
@@ -378,6 +393,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
   const handleResizeBothStart = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isDesktop) return;
+    if (isFullPage) return;
     event.preventDefault();
     event.stopPropagation();
     interactionRef.current = {
@@ -404,6 +420,24 @@ export const MovableForm: React.FC<MovableFormProps> = ({
             Back
           </Button>
         )}
+        {showFullPageButton && (
+          <Button
+            aria-label={isFullPage ? "Exit full page" : "Full page view"}
+            data-no-drag="true"
+            onClick={() => setIsFullPage((prev) => !prev)}
+            size="small"
+            startIcon={
+              isFullPage ? (
+                <CloseFullscreenIcon fontSize="small" />
+              ) : (
+                <OpenInFullIcon fontSize="small" />
+              )
+            }
+            sx={fullPageButtonSx}
+          >
+            {isFullPage ? "Exit" : "Full page"}
+          </Button>
+        )}
         {children}
       </Box>
     );
@@ -415,12 +449,16 @@ export const MovableForm: React.FC<MovableFormProps> = ({
       onMouseDown={handleDragStart}
       sx={{
         position: "fixed",
-        left: position.x,
-        top: position.y,
-        width,
-        height: height ?? "auto",
+        left: isFullPage ? VIEWPORT_MARGIN : position.x,
+        top: isFullPage ? VIEWPORT_MARGIN : position.y,
+        width: isFullPage
+          ? `calc(100vw - ${VIEWPORT_MARGIN * 2}px)`
+          : width,
+        height: isFullPage
+          ? `calc(100dvh - ${VIEWPORT_MARGIN * 2}px)`
+          : height ?? "auto",
         zIndex: 1300,
-        cursor: "grab",
+        cursor: isFullPage ? "default" : "grab",
         visibility: isInitialized ? "visible" : "hidden",
         pointerEvents: isInitialized ? "auto" : "none",
         ...sx,
@@ -438,11 +476,29 @@ export const MovableForm: React.FC<MovableFormProps> = ({
           Back
         </Button>
       )}
+      {showFullPageButton && (
+        <Button
+          aria-label={isFullPage ? "Exit full page" : "Full page view"}
+          data-no-drag="true"
+          onClick={() => setIsFullPage((prev) => !prev)}
+          size="small"
+          startIcon={
+            isFullPage ? (
+              <CloseFullscreenIcon fontSize="small" />
+            ) : (
+              <OpenInFullIcon fontSize="small" />
+            )
+          }
+          sx={fullPageButtonSx}
+        >
+          {isFullPage ? "Exit" : "Full page"}
+        </Button>
+      )}
 
       <Box
         sx={{
-          height: height ? "100%" : "auto",
-          overflow: height ? "auto" : "visible",
+          height: height || isFullPage ? "100%" : "auto",
+          overflow: height || isFullPage ? "auto" : "visible",
           pr: 0.25,
           pb: 0.25,
         }}
@@ -450,47 +506,51 @@ export const MovableForm: React.FC<MovableFormProps> = ({
         {children}
       </Box>
 
-      <Box
-        onMouseDown={handleResizeStart}
-        sx={{
-          position: "absolute",
-          top: 0,
-          right: -6,
-          width: 12,
-          height: "100%",
-          cursor: "ew-resize",
-          zIndex: 1,
-        }}
-      />
+      {!isFullPage && (
+        <>
+          <Box
+            onMouseDown={handleResizeStart}
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: -6,
+              width: 12,
+              height: "100%",
+              cursor: "ew-resize",
+              zIndex: 1,
+            }}
+          />
 
-      <Box
-        onMouseDown={handleResizeHeightStart}
-        sx={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: -6,
-          height: 12,
-          cursor: "ns-resize",
-          zIndex: 1,
-        }}
-      />
+          <Box
+            onMouseDown={handleResizeHeightStart}
+            sx={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: -6,
+              height: 12,
+              cursor: "ns-resize",
+              zIndex: 1,
+            }}
+          />
 
-      <Box
-        onMouseDown={handleResizeBothStart}
-        sx={{
-          position: "absolute",
-          right: -7,
-          bottom: -7,
-          width: 14,
-          height: 14,
-          borderRadius: 1,
-          cursor: "nwse-resize",
-          zIndex: 2,
-          backgroundColor: "transparent",
-          border: "none",
-        }}
-      />
+          <Box
+            onMouseDown={handleResizeBothStart}
+            sx={{
+              position: "absolute",
+              right: -7,
+              bottom: -7,
+              width: 14,
+              height: 14,
+              borderRadius: 1,
+              cursor: "nwse-resize",
+              zIndex: 2,
+              backgroundColor: "transparent",
+              border: "none",
+            }}
+          />
+        </>
+      )}
     </Box>
   );
 };

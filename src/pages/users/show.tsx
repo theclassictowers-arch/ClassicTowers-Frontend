@@ -103,6 +103,7 @@ export const UserShow = () => {
         minWidth={360}
         maxWidth={980}
         onClose={() => navigate("/users")}
+        showFullPageButton
         sx={{
           "& .MuiPaper-root, & .MuiCard-root": {
             background: "rgba(164, 198, 236, 0.03) !important",
@@ -112,7 +113,7 @@ export const UserShow = () => {
           },
         }}
       >
-        <Show isLoading={isLoading}>
+        <Show isLoading={isLoading} goBack={false}>
           <Card
             sx={{
               ...formStyles.container,
