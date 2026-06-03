@@ -59,8 +59,24 @@ const AppRoutes: React.FC = () => {
           {(isAdmin || isOrganization) && (
             <>
               <Route path="create" element={<SiteCreate />} />
-              <Route path="edit/:id" element={<SiteEdit />} />
-              <Route path="show/:id" element={<SiteShow />} />
+              <Route
+                path="edit/:id"
+                element={
+                  <>
+                    <SiteList />
+                    <SiteEdit />
+                  </>
+                }
+              />
+              <Route
+                path="show/:id"
+                element={
+                  <>
+                    <SiteList />
+                    <SiteShow />
+                  </>
+                }
+              />
             </>
           )}
         </Route>
@@ -68,8 +84,26 @@ const AppRoutes: React.FC = () => {
         {isAdmin || isTeamLead ? (
           <Route path="/limits">
             <Route index element={<LimitsList />} />
-            <Route path="show/:id" element={<LimitsShow />} />
-            {isAdmin && <Route path="edit/:id" element={<LimitsEdit />} />}
+            <Route
+              path="show/:id"
+              element={
+                <>
+                  <LimitsList />
+                  <LimitsShow />
+                </>
+              }
+            />
+            {isAdmin && (
+              <Route
+                path="edit/:id"
+                element={
+                  <>
+                    <LimitsList />
+                    <LimitsEdit />
+                  </>
+                }
+              />
+            )}
           </Route>
         ) : null}
 
@@ -77,8 +111,24 @@ const AppRoutes: React.FC = () => {
           <Route path="/users">
             <Route index element={<UserList />} />
             {canAddUsers && <Route path="create" element={<UserCreate />} />}
-            <Route path="edit/:id" element={<UsersEdit />} />
-            <Route path="show/:id" element={<UserShow />} />
+            <Route
+              path="edit/:id"
+              element={
+                <>
+                  <UserList />
+                  <UsersEdit />
+                </>
+              }
+            />
+            <Route
+              path="show/:id"
+              element={
+                <>
+                  <UserList />
+                  <UserShow />
+                </>
+              }
+            />
           </Route>
         ) : null}
         <Route path="*" element={<ErrorComponent />} />
