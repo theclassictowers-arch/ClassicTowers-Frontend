@@ -1,4 +1,4 @@
-import {
+﻿import {
   Typography,
   Card,
   CardContent,
@@ -10,9 +10,9 @@ import {
 } from "@mui/material";
 import { Edit } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
-import { MapBackgroundPage } from "../../components/map-background-page";
 
 const SectionHeading = ({ title }: { title: string }) => (
   <Typography
@@ -114,6 +114,7 @@ const AxisSection = ({
 );
 
 export const LimitsEdit = () => {
+  const navigate = useNavigate();
   const {
     saveButtonProps,
     refineCore: { queryResult },
@@ -123,41 +124,41 @@ export const LimitsEdit = () => {
 
   return (
     <Edit saveButtonProps={saveButtonProps}>
-      <MapBackgroundPage>
-        <MovableForm
-          panelId="limits-edit-form"
-          initialWidth={760}
-          minWidth={460}
-          maxWidth={1250}
+      <MovableForm
+        panelId="limits-edit-form"
+        initialWidth={760}
+        minWidth={460}
+        maxWidth={1250}
+        onClose={() => navigate("/limits")}
+      >
+        <Card
+          sx={{
+            ...formStyles.container,
+            m: 0,
+            width: "100%",
+            maxWidth: "100%",
+            maxHeight: "90vh",
+            overflowY: "auto",
+            borderRadius: 2,
+            boxShadow: (theme) => theme.shadows[5],
+          }}
         >
-          <Card
-            sx={{
-              ...formStyles.container,
-              m: 0,
-              width: "100%",
-              maxWidth: "100%",
-              maxHeight: "90vh",
-              overflowY: "auto",
-              borderRadius: 2,
-              boxShadow: (theme) => theme.shadows[5],
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              <Typography
-                variant="h5"
-                gutterBottom
-                sx={{
-                  fontWeight: 700,
-                  color: (theme) => theme.palette.text.primary,
-                  mb: 2,
-                }}
-              >
-                Edit Sensor Limits Configuration
-              </Typography>
-              <Divider sx={{ mb: 4 }} />
+          <CardContent sx={{ p: 3 }}>
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{
+                fontWeight: 700,
+                color: (theme) => theme.palette.text.primary,
+                mb: 2,
+              }}
+            >
+              Edit Sensor Limits Configuration
+            </Typography>
+            <Divider sx={{ mb: 4 }} />
 
-              <Box component="form" autoComplete="off">
-                <Grid container spacing={6}>
+            <Box component="form" autoComplete="off">
+              <Grid container spacing={6}>
                   {/* Vibration Parameters */}
                   <Grid item xs={12} md={6}>
                     <SectionHeading title="Vibration Parameters" />
@@ -311,12 +312,11 @@ export const LimitsEdit = () => {
                       </Paper>
                     </Box>
                   </Grid>
-                </Grid>
-              </Box>
-            </CardContent>
-          </Card>
-        </MovableForm>
-      </MapBackgroundPage>
+              </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+      </MovableForm>
     </Edit>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import {
   Avatar,
   Box,
@@ -23,7 +23,6 @@ import { useAuthContext } from "../../contexts";
 import AssignSite from "../../components/site-assign/assignSite";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
-import { MapBackgroundPage } from "../../components/map-background-page";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
@@ -195,7 +194,7 @@ export const UsersEdit: React.FC = () => {
   if (!id) return null;
 
   return (
-    <MapBackgroundPage>
+    <>
       {isInitialLoading ? (
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
           <CircularProgress />
@@ -206,6 +205,7 @@ export const UsersEdit: React.FC = () => {
           initialWidth={400}
           minWidth={320}
           maxWidth={980}
+          onClose={() => navigate("/users")}
         >
           <Box
             component="form"
@@ -392,7 +392,7 @@ export const UsersEdit: React.FC = () => {
           </Box>
         </MovableForm>
       )}
-    </MapBackgroundPage>
+    </>
   );
 };
 

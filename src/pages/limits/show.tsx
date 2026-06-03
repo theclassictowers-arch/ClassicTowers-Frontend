@@ -1,4 +1,4 @@
-import {
+﻿import {
   Stack,
   Typography,
   Card,
@@ -12,6 +12,9 @@ import {
 } from "@mui/material";
 import { useShow } from "@refinedev/core";
 import { Show } from "@refinedev/mui";
+import { useNavigate } from "react-router-dom";
+import { formStyles } from "../auth/styles";
+import { MovableForm } from "../../components/movable-form";
 
 const DomainChip = ({ domain }: { domain: string }) => {
   const theme = useTheme();
@@ -141,7 +144,8 @@ const AxisSection = ({
     sx={{
       p: 2,
       mb: 2,
-      backgroundColor: "#333",
+      backgroundColor: "rgba(51, 51, 51, 0.08)",
+      backdropFilter: "blur(6px)",
       borderRadius: 2,
     }}
   >
@@ -151,6 +155,7 @@ const AxisSection = ({
 );
 
 export const LimitsShow = () => {
+  const navigate = useNavigate();
   const { query } = useShow({
     dataProviderName: "limits",
     resource: "limits",
@@ -172,26 +177,48 @@ export const LimitsShow = () => {
   } = record;
 
   return (
-    <Show isLoading={isLoading}>
-      <Card
+    <>
+      <MovableForm
+        panelId="limits-show-window"
+        initialWidth={760}
+        minWidth={460}
+        maxWidth={1250}
+        onClose={() => navigate("/limits")}
         sx={{
-          borderRadius: 2,
-          boxShadow: (theme) => theme.shadows[5],
+          "& .MuiPaper-root, & .MuiCard-root": {
+            background: "rgba(164, 198, 236, 0.03) !important",
+            backgroundColor: "rgba(164, 198, 236, 0.03) !important",
+            backdropFilter: "blur(8px)",
+            boxShadow: "0 10px 28px rgba(15, 23, 42, 0.10)",
+          },
         }}
       >
-        <CardContent sx={{ p: 3 }}>
-          <Typography
-            variant="h5"
-            gutterBottom
+        <Show isLoading={isLoading}>
+          <Card
             sx={{
-              fontWeight: 700,
-              color: (theme) => theme.palette.text.primary,
-              mb: 2,
+              ...formStyles.container,
+              m: 0,
+              width: "100%",
+              maxWidth: "100%",
+              maxHeight: "88vh",
+              overflowY: "auto",
+              background: "rgba(164, 198, 236, 0.03)",
+              borderRadius: 2,
+              boxShadow: (theme) => theme.shadows[5],
             }}
           >
-            Sensor Limits Configuration
-          </Typography>
-          <Divider sx={{ mb: 4 }} />
+            <CardContent sx={{ p: 3 }}>
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{
+                  ...formStyles.title,
+                  mb: 2,
+                }}
+              >
+                Sensor Limits Configuration
+              </Typography>
+              <Divider sx={{ mb: 4 }} />
 
           <Grid container spacing={6}>
             {/* Vibration Parameters */}
@@ -259,7 +286,8 @@ export const LimitsShow = () => {
                     p: 2,
                     mb: 2,
                     borderRadius: 1,
-                    backgroundColor: "#333",
+                    backgroundColor: "rgba(51, 51, 51, 0.08)",
+                    backdropFilter: "blur(6px)",
                   }}
                 >
                   <SubSectionHeading title="Direction" />
@@ -271,7 +299,8 @@ export const LimitsShow = () => {
                   sx={{
                     p: 2,
                     borderRadius: 1,
-                    backgroundColor: "#333",
+                    backgroundColor: "rgba(51, 51, 51, 0.08)",
+                    backdropFilter: "blur(6px)",
                   }}
                 >
                   <SubSectionHeading title="Speed" />
@@ -286,7 +315,8 @@ export const LimitsShow = () => {
                   sx={{
                     p: 2,
                     borderRadius: 1,
-                    backgroundColor: "#333",
+                    backgroundColor: "rgba(51, 51, 51, 0.08)",
+                    backdropFilter: "blur(6px)",
                   }}
                 >
                   {generateAxisRows("temperature", windTemperature, "")}
@@ -300,7 +330,8 @@ export const LimitsShow = () => {
                   sx={{
                     p: 2,
                     borderRadius: 1,
-                    backgroundColor: "#333",
+                    backgroundColor: "rgba(51, 51, 51, 0.08)",
+                    backdropFilter: "blur(6px)",
                   }}
                 >
                   {generateAxisRows("humidity", windHumidity, "")}
@@ -315,7 +346,8 @@ export const LimitsShow = () => {
                     p: 2,
                     mb: 2,
                     borderRadius: 1,
-                    backgroundColor: "#333",
+                    backgroundColor: "rgba(51, 51, 51, 0.08)",
+                    backdropFilter: "blur(6px)",
                   }}
                 >
                   <SubSectionHeading title="Pitch Angle" />
@@ -327,7 +359,8 @@ export const LimitsShow = () => {
                   sx={{
                     p: 2,
                     borderRadius: 1,
-                    backgroundColor: "#333",
+                    backgroundColor: "rgba(51, 51, 51, 0.08)",
+                    backdropFilter: "blur(6px)",
                   }}
                 >
                   <SubSectionHeading title="Roll Angle" />
@@ -336,9 +369,11 @@ export const LimitsShow = () => {
               </Box>
             </Grid>
           </Grid>
-        </CardContent>
-      </Card>
-    </Show>
+            </CardContent>
+          </Card>
+        </Show>
+      </MovableForm>
+    </>
   );
 };
 

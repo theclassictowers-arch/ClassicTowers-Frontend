@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,7 +12,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { axiosInstance } from "../../utils";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
-import { MapBackgroundPage } from "../../components/map-background-page";
 
 const defaultAxisData = { x: [0], y: [0], z: [0] };
 
@@ -148,7 +147,7 @@ export const SiteEdit: React.FC = () => {
   if (!id) return null;
 
   return (
-    <MapBackgroundPage>
+    <>
       {isInitialLoading ? (
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
           <CircularProgress />
@@ -159,6 +158,7 @@ export const SiteEdit: React.FC = () => {
           initialWidth={400}
           minWidth={320}
           maxWidth={760}
+          onClose={() => navigate("/sites")}
         >
           <Box
             component="form"
@@ -299,6 +299,6 @@ export const SiteEdit: React.FC = () => {
           </Box>
         </MovableForm>
       )}
-    </MapBackgroundPage>
+    </>
   );
 };

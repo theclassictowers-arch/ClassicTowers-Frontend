@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { useForm } from "@refinedev/react-hook-form";
 import {
   TextField,
@@ -112,7 +112,7 @@ const SignInForm: React.FC = () => {
             InputLabelProps={{
               sx: {
                 "&.MuiInputLabel-shrink": {
-                  fontSize: "1rem",
+                  fontSize: "1.15rem",
                 },
               },
             }}
@@ -129,6 +129,13 @@ const SignInForm: React.FC = () => {
             error={!!errors.password}
             helperText={errors.password?.message?.toString()}
             margin="normal"
+            InputLabelProps={{
+              sx: {
+                "&.MuiInputLabel-shrink": {
+                  fontSize: "1.15rem",
+                },
+              },
+            }}
             InputProps={{
               sx: { borderRadius: 2 },
               endAdornment: (

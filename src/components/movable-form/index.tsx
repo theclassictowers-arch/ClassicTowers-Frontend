@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+﻿import React, { useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import { type SxProps, type Theme, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import CloseIcon from "@mui/icons-material/Close";
 
 type Position = {
   x: number;
@@ -45,6 +47,7 @@ type MovableFormProps = {
   minHeight?: number;
   maxHeight?: number;
   initialPosition?: Position;
+  onClose?: () => void;
   sx?: SxProps<Theme>;
 };
 
@@ -105,6 +108,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   minHeight = 280,
   maxHeight = 920,
   initialPosition,
+  onClose,
   sx,
 }) => {
   const theme = useTheme();
@@ -363,7 +367,30 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
   if (!isDesktop) {
     return (
-      <Box sx={{ width: "100%", ...sx }}>
+      <Box sx={{ position: "relative", width: "100%", ...sx }}>
+        {onClose && (
+          <IconButton
+            aria-label="Close window"
+            data-no-drag="true"
+            onClick={onClose}
+            size="small"
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              zIndex: 4,
+              color: "text.secondary",
+              backgroundColor: "background.paper",
+              boxShadow: 2,
+              "&:hover": {
+                color: "text.primary",
+                backgroundColor: "action.hover",
+              },
+            }}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        )}
         {children}
       </Box>
     );
@@ -386,6 +413,31 @@ export const MovableForm: React.FC<MovableFormProps> = ({
         ...sx,
       }}
     >
+      {onClose && (
+        <IconButton
+          aria-label="Close window"
+          data-no-drag="true"
+          onClick={onClose}
+          size="small"
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            zIndex: 4,
+            color: "text.secondary",
+            backgroundColor: "background.paper",
+            boxShadow: 2,
+            cursor: "pointer",
+            "&:hover": {
+              color: "text.primary",
+              backgroundColor: "action.hover",
+            },
+          }}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      )}
+
       <Box
         sx={{
           height: height ? "100%" : "auto",
