@@ -102,40 +102,44 @@ const App: React.FC = () => {
                 transform: "translateX(1px) translateZ(3px) rotateX(0deg)",
               },
             },
-            "@keyframes sidebarCharacterFlip": {
+            "@keyframes sidebarCharacterDrop": {
               "0%": {
                 transform:
-                  "translateX(0) translateZ(0) rotateY(0deg) scale(1)",
+                  "translateY(-14px) translateZ(8px) rotateX(-82deg) scale(0.94)",
+                opacity: 0.25,
               },
-              "45%": {
+              "48%": {
                 transform:
-                  "translateX(3px) translateZ(12px) rotateY(-82deg) scale(1.08)",
+                  "translateY(5px) translateZ(14px) rotateX(18deg) scale(1.08)",
+                opacity: 1,
               },
-              "72%": {
+              "76%": {
                 transform:
-                  "translateX(5px) translateZ(8px) rotateY(18deg) scale(1.04)",
+                  "translateY(-2px) translateZ(5px) rotateX(-7deg) scale(1.02)",
+                opacity: 1,
               },
               "100%": {
                 transform:
-                  "translateX(1px) translateZ(0) rotateY(0deg) scale(1)",
+                  "translateY(0) translateZ(0) rotateX(0deg) scale(1)",
+                opacity: 1,
               },
             },
-            "@keyframes sidebarIconSweep": {
+            "@keyframes sidebarIconDrop": {
               "0%": {
                 transform:
-                  "translateX(0) translateZ(0) rotateY(0deg) rotateZ(0deg) scale(1)",
+                  "translateY(-10px) translateZ(0) rotateX(-55deg) rotateZ(-8deg) scale(0.96)",
               },
-              "45%": {
+              "48%": {
                 transform:
-                  "translateX(5px) translateZ(16px) rotateY(-120deg) rotateZ(-8deg) scale(1.16)",
+                  "translateY(6px) translateZ(15px) rotateX(18deg) rotateZ(8deg) scale(1.16)",
               },
-              "72%": {
+              "76%": {
                 transform:
-                  "translateX(8px) translateZ(10px) rotateY(-210deg) rotateZ(5deg) scale(1.1)",
+                  "translateY(-2px) translateZ(8px) rotateX(-8deg) rotateZ(-3deg) scale(1.1)",
               },
               "100%": {
                 transform:
-                  "translateX(2px) translateZ(3px) rotateY(-360deg) rotateZ(0deg) scale(1.08)",
+                  "translateY(0) translateZ(3px) rotateX(0deg) rotateZ(0deg) scale(1.08)",
               },
             },
             "@keyframes sidebarItemReveal": {
@@ -590,7 +594,7 @@ const App: React.FC = () => {
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemIcon-root":
                 {
                   animation:
-                    "sidebarIconSweep 620ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                    "sidebarIconDrop 620ms cubic-bezier(0.16, 1, 0.3, 1) both",
                 },
               "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root:hover .MuiListItemText-root":
                 {
@@ -606,8 +610,8 @@ const App: React.FC = () => {
               ".MuiDrawer-docked .MuiListItemButton-root:hover .sidebar-menu-char":
                 {
                   animation:
-                    "sidebarCharacterFlip 520ms cubic-bezier(0.16, 1, 0.3, 1) both",
-                  animationDelay: "calc(var(--char-index) * 34ms)",
+                    "sidebarCharacterDrop 560ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                  animationDelay: "calc(var(--char-index) * 30ms)",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected": {
                 backgroundColor: "rgba(25, 118, 210, 0.10) !important",
