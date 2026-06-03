@@ -83,3 +83,12 @@ div.css-hpgf8j {
 div.css-tc3bt8 {
   background-color: #eeeeee;
 }
+
+.MuiDrawer-docked:has([data-sidebar-collapsed="false"]) .MuiList-root a {
+  display: flex;
+  height: 52px !important;
+  min-height: 52px !important;
+  max-height: 52px !important;
+  margin: 0px !important;
+  padding: 0px !important;
+}
