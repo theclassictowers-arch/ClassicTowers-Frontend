@@ -145,10 +145,8 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   );
   const [isInitialized, setIsInitialized] = useState(false);
   const [isFullPage, setIsFullPage] = useState(false);
-  const windowButtonBaseSx = {
-    position: "absolute",
-    top: 10,
-    zIndex: 4,
+  const shouldUseInlineActions = showFullPageButton;
+  const windowButtonBaseSx: SxProps<Theme> = {
     minHeight: 30,
     px: 1.25,
     py: 0.25,
@@ -170,11 +168,25 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   };
   const backButtonSx: SxProps<Theme> = {
     ...windowButtonBaseSx,
+    position: "absolute",
+    top: 10,
+    zIndex: 4,
     left: 10,
   };
   const fullPageButtonSx: SxProps<Theme> = {
     ...windowButtonBaseSx,
+    position: "absolute",
+    top: 10,
+    zIndex: 4,
     right: 10,
+  };
+  const inlineBackButtonSx: SxProps<Theme> = {
+    ...windowButtonBaseSx,
+    flexShrink: 0,
+  };
+  const inlineFullPageButtonSx: SxProps<Theme> = {
+    ...windowButtonBaseSx,
+    flexShrink: 0,
   };
 
   const clampPosition = (
@@ -405,39 +417,66 @@ export const MovableForm: React.FC<MovableFormProps> = ({
     };
   };
 
+  const actions = (
+    <>
+      {onClose && (
+        <Button
+          aria-label="Back"
+          data-no-drag="true"
+          onClick={onClose}
+          size="small"
+          startIcon={<ArrowBackIcon fontSize="small" />}
+          sx={shouldUseInlineActions ? inlineBackButtonSx : backButtonSx}
+        >
+          Back
+        </Button>
+      )}
+      {showFullPageButton && (
+        <Button
+          aria-label={isFullPage ? "Exit full page" : "Full page view"}
+          data-no-drag="true"
+          onClick={() => setIsFullPage((prev) => !prev)}
+          size="small"
+          startIcon={
+            isFullPage ? (
+              <CloseFullscreenIcon fontSize="small" />
+            ) : (
+              <OpenInFullIcon fontSize="small" />
+            )
+          }
+          sx={
+            shouldUseInlineActions ? inlineFullPageButtonSx : fullPageButtonSx
+          }
+        >
+          {isFullPage ? "Exit" : "Full page"}
+        </Button>
+      )}
+    </>
+  );
+
+  const inlineActions = shouldUseInlineActions ? (
+    <Box
+      data-no-drag="true"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 1,
+        px: 1.25,
+        pt: 1.25,
+        pb: 0.75,
+        width: "100%",
+      }}
+    >
+      {actions}
+    </Box>
+  ) : null;
+
   if (!isDesktop) {
     return (
       <Box sx={{ position: "relative", width: "100%", ...sx }}>
-        {onClose && (
-          <Button
-            aria-label="Back"
-            data-no-drag="true"
-            onClick={onClose}
-            size="small"
-            startIcon={<ArrowBackIcon fontSize="small" />}
-            sx={backButtonSx}
-          >
-            Back
-          </Button>
-        )}
-        {showFullPageButton && (
-          <Button
-            aria-label={isFullPage ? "Exit full page" : "Full page view"}
-            data-no-drag="true"
-            onClick={() => setIsFullPage((prev) => !prev)}
-            size="small"
-            startIcon={
-              isFullPage ? (
-                <CloseFullscreenIcon fontSize="small" />
-              ) : (
-                <OpenInFullIcon fontSize="small" />
-              )
-            }
-            sx={fullPageButtonSx}
-          >
-            {isFullPage ? "Exit" : "Full page"}
-          </Button>
-        )}
+        {inlineActions}
+        {!shouldUseInlineActions && actions}
         {children}
       </Box>
     );
@@ -464,36 +503,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
         ...sx,
       }}
     >
-      {onClose && (
-        <Button
-          aria-label="Back"
-          data-no-drag="true"
-          onClick={onClose}
-          size="small"
-          startIcon={<ArrowBackIcon fontSize="small" />}
-          sx={backButtonSx}
-        >
-          Back
-        </Button>
-      )}
-      {showFullPageButton && (
-        <Button
-          aria-label={isFullPage ? "Exit full page" : "Full page view"}
-          data-no-drag="true"
-          onClick={() => setIsFullPage((prev) => !prev)}
-          size="small"
-          startIcon={
-            isFullPage ? (
-              <CloseFullscreenIcon fontSize="small" />
-            ) : (
-              <OpenInFullIcon fontSize="small" />
-            )
-          }
-          sx={fullPageButtonSx}
-        >
-          {isFullPage ? "Exit" : "Full page"}
-        </Button>
-      )}
+      {!shouldUseInlineActions && actions}
 
       <Box
         sx={{
@@ -503,6 +513,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
           pb: 0.25,
         }}
       >
+        {inlineActions}
         {children}
       </Box>
 
