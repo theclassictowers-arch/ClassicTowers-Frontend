@@ -40,9 +40,29 @@ const App: React.FC = () => {
             body: { margin: 0, padding: 0 },
             "#root": { minHeight: "100dvh" },
             "@keyframes sidebarIconTwist": {
-              "0%": { transform: "translateX(0) scale(1)" },
-              "55%": { transform: "translateX(3px) scale(1.14)" },
-              "100%": { transform: "translateX(1px) scale(1.08)" },
+              "0%": {
+                transform:
+                  "translateX(0) translateZ(0) rotateY(0deg) scale(1)",
+              },
+              "55%": {
+                transform:
+                  "translateX(3px) translateZ(12px) rotateY(-18deg) scale(1.14)",
+              },
+              "100%": {
+                transform:
+                  "translateX(1px) translateZ(4px) rotateY(-7deg) scale(1.08)",
+              },
+            },
+            "@keyframes sidebarTextFlip": {
+              "0%": {
+                transform: "translateX(0) translateZ(0) rotateX(0deg)",
+              },
+              "45%": {
+                transform: "translateX(3px) translateZ(10px) rotateX(10deg)",
+              },
+              "100%": {
+                transform: "translateX(1px) translateZ(3px) rotateX(0deg)",
+              },
             },
             "@keyframes sidebarItemReveal": {
               "0%": {
@@ -317,13 +337,15 @@ const App: React.FC = () => {
                 maxWidth: "100%",
                 paddingTop: "0 !important",
                 paddingBottom: "0 !important",
-                border: "1px solid rgba(15, 23, 42, 0.14)",
+                border: "0 !important",
                 background: "transparent !important",
                 backgroundColor: "transparent !important",
                 backdropFilter: "none",
                 boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.18)",
+                perspective: "900px",
+                transformStyle: "preserve-3d",
                 transition:
-                  "background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
+                  "background-color 180ms ease, color 180ms ease, box-shadow 220ms ease, transform 260ms cubic-bezier(0.16, 1, 0.3, 1)",
               },
               "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root":
                 {
@@ -388,8 +410,10 @@ const App: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "8px",
+                transformOrigin: "center",
+                transformStyle: "preserve-3d",
                 transition:
-                  "background-color 180ms ease, transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), color 180ms ease",
+                  "background-color 180ms ease, transform 320ms cubic-bezier(0.16, 1, 0.3, 1), color 180ms ease",
               },
               ".MuiDrawer-docked .MuiListItemIcon-root .MuiSvgIcon-root": {
                 fontSize: "20px",
@@ -450,6 +474,8 @@ const App: React.FC = () => {
                 letterSpacing: "0 !important",
                 transition:
                   "transform 260ms cubic-bezier(0.16, 1, 0.3, 1), color 180ms ease",
+                transformOrigin: "left center",
+                transformStyle: "preserve-3d",
               },
               "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemText-root::before":
                 {
@@ -469,12 +495,12 @@ const App: React.FC = () => {
                   lineHeight: "1 !important",
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.10) !important",
-                borderColor: "currentColor",
+                backgroundColor: "rgba(255, 255, 255, 0.12) !important",
                 backdropFilter: "blur(4px)",
                 boxShadow:
-                  "0 8px 18px rgba(15, 23, 42, 0.12), inset 3px 0 0 currentColor, inset 0 1px 0 rgba(255, 255, 255, 0.28)",
-                transform: "translateX(2px)",
+                  "0 10px 22px rgba(15, 23, 42, 0.14), inset 3px 0 0 currentColor, inset 0 1px 0 rgba(255, 255, 255, 0.28)",
+                transform:
+                  "translateX(2px) perspective(900px) rotateY(-4deg) translateZ(2px)",
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemIcon-root":
                 {
@@ -490,11 +516,12 @@ const App: React.FC = () => {
                 },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemText-primary":
                 {
-                  transform: "translateX(1px)",
+                  animation:
+                    "sidebarTextFlip 360ms cubic-bezier(0.16, 1, 0.3, 1) both",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected": {
                 backgroundColor: "rgba(25, 118, 210, 0.10) !important",
-                borderColor: "currentColor",
+                border: "0 !important",
                 color: "primary.main",
                 backdropFilter: "blur(4px)",
                 boxShadow:
