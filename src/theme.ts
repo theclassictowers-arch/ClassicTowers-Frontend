@@ -94,6 +94,16 @@ export const DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
       textColor: "#0f172a",
     },
   },
+  {
+    id: "violet-cloud",
+    name: "Violet Cloud",
+    description: "Soft violet with clear contrast",
+    colors: {
+      primaryColor: "#7c3aed",
+      backgroundColor: "#f5f3ff",
+      textColor: "#2e1065",
+    },
+  },
 ];
 
 const HEX_COLOR_REGEX = /^#([A-Fa-f0-9]{6})$/;
@@ -127,7 +137,10 @@ export const normalizeDashboardTheme = (
     input?.backgroundColor,
     DEFAULT_DASHBOARD_THEME.backgroundColor
   ),
-  textColor: normalizeHexColor(input?.textColor, DEFAULT_DASHBOARD_THEME.textColor),
+  textColor: normalizeHexColor(
+    input?.textColor,
+    DEFAULT_DASHBOARD_THEME.textColor
+  ),
 });
 
 export const isDefaultDashboardTheme = (
@@ -218,7 +231,9 @@ export const createAppTheme = (
   const backgroundColor = dashboardTheme.backgroundColor;
   const textColor = dashboardTheme.textColor;
   const paperBackground =
-    mode === "dark" ? darken(backgroundColor, 0.12) : lighten(backgroundColor, 0.03);
+    mode === "dark"
+      ? darken(backgroundColor, 0.12)
+      : lighten(backgroundColor, 0.03);
 
   const baseTheme = createTheme({
     ...RefineThemes.Blue,

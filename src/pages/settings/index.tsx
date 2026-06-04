@@ -297,7 +297,7 @@ export const SettingsPage: React.FC = () => {
           overflowY: "auto",
           boxSizing: "border-box",
           pl: { xs: 0.75, sm: 1.25, md: "76px" },
-          pr: { xs: 0.75, sm: 1.25, md: 2 },
+          pr: { xs: 0.75, sm: 1.25, md: 1.5 },
           py: { xs: 0.75, sm: 1.25 },
         }}
       >
@@ -305,11 +305,11 @@ export const SettingsPage: React.FC = () => {
           component="form"
           sx={{
             ...formStyles.container,
-            m: 0,
+            mx: "auto",
+            my: 0,
             width: "100%",
-            maxWidth: "none",
+            maxWidth: 1100,
             boxSizing: "border-box",
-            minHeight: "calc(100dvh - 20px)",
             px: { xs: 1.5, sm: 2, md: 2.5 },
             py: { xs: 1.5, sm: 2 },
             borderRadius: { xs: 1.5, sm: 2 },
@@ -324,31 +324,64 @@ export const SettingsPage: React.FC = () => {
             }
           }}
         >
-          <Typography variant="h4" gutterBottom sx={formStyles.title}>
-            Settings
-          </Typography>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr minmax(220px, 360px) 1fr",
+              },
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <Typography
+              variant="h5"
+              sx={{ fontWeight: 700, color: "text.primary", textAlign: "left" }}
+            >
+              Settings
+            </Typography>
 
-          {role === "admin" && (
-            <FormControl fullWidth sx={{ mt: 1.5 }}>
-              <InputLabel id="settings-target-label">Target</InputLabel>
-              <Select
-                labelId="settings-target-label"
-                label="Target"
-                value={selectedTargetUserId}
-                disabled={loadingOrganizations}
-                onChange={(event) =>
-                  setSelectedTargetUserId(String(event.target.value))
-                }
-              >
-                <MenuItem value={currentUserId}>My Account (Admin)</MenuItem>
-                {organizations.map((org) => (
-                  <MenuItem key={org._id} value={org._id}>
-                    {org.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
+            {role === "admin" ? (
+              <FormControl fullWidth size="small">
+                <InputLabel id="settings-target-label">Target</InputLabel>
+                <Select
+                  labelId="settings-target-label"
+                  label="Target"
+                  value={selectedTargetUserId}
+                  disabled={loadingOrganizations}
+                  onChange={(event) =>
+                    setSelectedTargetUserId(String(event.target.value))
+                  }
+                >
+                  <MenuItem value={currentUserId}>My Account (Admin)</MenuItem>
+                  {organizations.map((org) => (
+                    <MenuItem key={org._id} value={org._id}>
+                      {org.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ) : (
+              <Typography sx={{ textAlign: "center", color: "text.secondary" }}>
+                My Organization
+              </Typography>
+            )}
+
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isSaving}
+              sx={{
+                justifySelf: { xs: "stretch", sm: "end" },
+                minWidth: 90,
+                textTransform: "none",
+                fontWeight: 700,
+              }}
+            >
+              Save
+            </Button>
+          </Box>
 
           {loadingTheme ? (
             <Box sx={{ py: 3, display: "flex", justifyContent: "center" }}>
@@ -401,8 +434,11 @@ export const SettingsPage: React.FC = () => {
                     <Box
                       sx={{
                         display: "grid",
-                        gridTemplateColumns:
-                          "repeat(auto-fit, minmax(min(180px, 100%), 1fr))",
+                        gridTemplateColumns: {
+                          xs: "1fr",
+                          sm: "repeat(2, minmax(0, 1fr))",
+                          md: "repeat(4, minmax(0, 1fr))",
+                        },
                         gap: 0.75,
                       }}
                     >
@@ -491,25 +527,19 @@ export const SettingsPage: React.FC = () => {
                   <Box
                     sx={{
                       display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fit, minmax(min(260px, 100%), 1fr))",
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "repeat(3, minmax(0, 1fr))",
+                      },
                       gap: 1,
                     }}
                   >
-                    <Stack direction="row" spacing={0.75}>
+                    <Stack spacing={0.5}>
+                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                        Primary Color
+                      </Typography>
                       <TextField
                         fullWidth
-                        label="Primary Color"
-                        value={themeInput.primaryColor}
-                        onChange={(event) =>
-                          handleChangeThemeInput(
-                            "primaryColor",
-                            event.target.value
-                          )
-                        }
-                        InputProps={{ sx: { borderRadius: 2 } }}
-                      />
-                      <TextField
                         type="color"
                         value={
                           isHexColor(themeInput.primaryColor)
@@ -522,24 +552,16 @@ export const SettingsPage: React.FC = () => {
                             event.target.value
                           )
                         }
-                        sx={{ width: { xs: "100%", sm: 72 } }}
+                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
                         inputProps={{ "aria-label": "Pick primary color" }}
                       />
                     </Stack>
-                    <Stack direction="row" spacing={0.75}>
+                    <Stack spacing={0.5}>
+                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                        Background Color
+                      </Typography>
                       <TextField
                         fullWidth
-                        label="Background Color"
-                        value={themeInput.backgroundColor}
-                        onChange={(event) =>
-                          handleChangeThemeInput(
-                            "backgroundColor",
-                            event.target.value
-                          )
-                        }
-                        InputProps={{ sx: { borderRadius: 2 } }}
-                      />
-                      <TextField
                         type="color"
                         value={
                           isHexColor(themeInput.backgroundColor)
@@ -552,24 +574,16 @@ export const SettingsPage: React.FC = () => {
                             event.target.value
                           )
                         }
-                        sx={{ width: { xs: "100%", sm: 72 } }}
+                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
                         inputProps={{ "aria-label": "Pick background color" }}
                       />
                     </Stack>
-                    <Stack direction="row" spacing={0.75}>
+                    <Stack spacing={0.5}>
+                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                        Text Color
+                      </Typography>
                       <TextField
                         fullWidth
-                        label="Text Color"
-                        value={themeInput.textColor}
-                        onChange={(event) =>
-                          handleChangeThemeInput(
-                            "textColor",
-                            event.target.value
-                          )
-                        }
-                        InputProps={{ sx: { borderRadius: 2 } }}
-                      />
-                      <TextField
                         type="color"
                         value={
                           isHexColor(themeInput.textColor)
@@ -582,7 +596,7 @@ export const SettingsPage: React.FC = () => {
                             event.target.value
                           )
                         }
-                        sx={{ width: { xs: "100%", sm: 72 } }}
+                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
                         inputProps={{ "aria-label": "Pick text color" }}
                       />
                     </Stack>
@@ -654,26 +668,6 @@ export const SettingsPage: React.FC = () => {
                   )}
                 </>
               )}
-
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{
-                  ...formStyles.submitButton,
-                  opacity: isSaving ? 0.7 : 1,
-                }}
-                disabled={isSaving}
-              >
-                {isSaving ? (
-                  <CircularProgress size={24} color="inherit" />
-                ) : activeSection === "colors" ? (
-                  "Save Color Settings"
-                ) : (
-                  "Save Logo Settings"
-                )}
-              </Button>
             </Stack>
           )}
         </Box>
