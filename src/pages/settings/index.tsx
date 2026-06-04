@@ -24,7 +24,7 @@ import {
 } from "../../contexts";
 import { axiosInstance } from "../../utils";
 import { formStyles } from "../auth/styles";
-import { MapBackgroundPage } from "../../components/map-background-page";
+import { MapTablePage } from "../../components/map-table-page";
 import {
   DASHBOARD_THEME_PRESETS,
   DEFAULT_DASHBOARD_THEME,
@@ -289,389 +289,372 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <MapBackgroundPage>
+    <MapTablePage>
       <Box
+        component="form"
         sx={{
+          ...formStyles.container,
+          mx: "auto",
+          my: 0,
           width: "100%",
-          height: "100dvh",
-          overflowY: "auto",
+          maxWidth: 1100,
           boxSizing: "border-box",
-          pl: { xs: 0.75, sm: 1.25, md: "76px" },
-          pr: { xs: 0.75, sm: 1.25, md: 1.5 },
-          py: { xs: 0.75, sm: 1.25 },
+          px: { xs: 1.5, sm: 2, md: 2.5 },
+          py: { xs: 1.5, sm: 2 },
+          borderRadius: { xs: 1.5, sm: 2 },
+          overflow: "visible",
+        }}
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (activeSection === "colors") {
+            handleSaveColors();
+          } else {
+            handleSaveBranding();
+          }
         }}
       >
         <Box
-          component="form"
           sx={{
-            ...formStyles.container,
-            mx: "auto",
-            my: 0,
-            width: "100%",
-            maxWidth: 1100,
-            boxSizing: "border-box",
-            px: { xs: 1.5, sm: 2, md: 2.5 },
-            py: { xs: 1.5, sm: 2 },
-            borderRadius: { xs: 1.5, sm: 2 },
-            overflow: "visible",
-          }}
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (activeSection === "colors") {
-              handleSaveColors();
-            } else {
-              handleSaveBranding();
-            }
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "1fr minmax(220px, 360px) 1fr",
+            },
+            alignItems: "center",
+            gap: 1,
           }}
         >
-          <Box
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: 700, color: "text.primary", textAlign: "left" }}
+          >
+            Settings
+          </Typography>
+
+          {role === "admin" ? (
+            <FormControl fullWidth size="small">
+              <InputLabel id="settings-target-label">Target</InputLabel>
+              <Select
+                labelId="settings-target-label"
+                label="Target"
+                value={selectedTargetUserId}
+                disabled={loadingOrganizations}
+                onChange={(event) =>
+                  setSelectedTargetUserId(String(event.target.value))
+                }
+              >
+                <MenuItem value={currentUserId}>My Account (Admin)</MenuItem>
+                {organizations.map((org) => (
+                  <MenuItem key={org._id} value={org._id}>
+                    {org.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : (
+            <Typography sx={{ textAlign: "center", color: "text.secondary" }}>
+              My Organization
+            </Typography>
+          )}
+
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={isSaving}
             sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "1fr minmax(220px, 360px) 1fr",
-              },
-              alignItems: "center",
-              gap: 1,
+              justifySelf: { xs: "stretch", sm: "end" },
+              minWidth: 90,
+              textTransform: "none",
+              fontWeight: 700,
             }}
           >
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: 700, color: "text.primary", textAlign: "left" }}
-            >
-              Settings
-            </Typography>
+            Save
+          </Button>
+        </Box>
 
-            {role === "admin" ? (
-              <FormControl fullWidth size="small">
-                <InputLabel id="settings-target-label">Target</InputLabel>
-                <Select
-                  labelId="settings-target-label"
-                  label="Target"
-                  value={selectedTargetUserId}
-                  disabled={loadingOrganizations}
-                  onChange={(event) =>
-                    setSelectedTargetUserId(String(event.target.value))
-                  }
-                >
-                  <MenuItem value={currentUserId}>My Account (Admin)</MenuItem>
-                  {organizations.map((org) => (
-                    <MenuItem key={org._id} value={org._id}>
-                      {org.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ) : (
-              <Typography sx={{ textAlign: "center", color: "text.secondary" }}>
-                My Organization
-              </Typography>
-            )}
-
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={isSaving}
+        {loadingTheme ? (
+          <Box sx={{ py: 3, display: "flex", justifyContent: "center" }}>
+            <CircularProgress size={24} />
+          </Box>
+        ) : (
+          <Stack spacing={1.5} sx={{ mt: 1.5 }}>
+            <Tabs
+              value={activeSection}
+              onChange={(_, value: "colors" | "logo") =>
+                setActiveSection(value)
+              }
+              variant="fullWidth"
               sx={{
-                justifySelf: { xs: "stretch", sm: "end" },
-                minWidth: 90,
-                textTransform: "none",
-                fontWeight: 700,
+                minHeight: 44,
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 1.5,
+                bgcolor: "background.paper",
+                "& .MuiTab-root": {
+                  minHeight: 44,
+                  fontWeight: 700,
+                  textTransform: "none",
+                },
               }}
             >
-              Save
-            </Button>
-          </Box>
+              <Tab
+                value="colors"
+                icon={<PaletteOutlinedIcon />}
+                iconPosition="start"
+                label="Color Settings"
+              />
+              <Tab
+                value="logo"
+                icon={<ImageOutlinedIcon />}
+                iconPosition="start"
+                label="Logo Settings"
+              />
+            </Tabs>
 
-          {loadingTheme ? (
-            <Box sx={{ py: 3, display: "flex", justifyContent: "center" }}>
-              <CircularProgress size={24} />
-            </Box>
-          ) : (
-            <Stack spacing={1.5} sx={{ mt: 1.5 }}>
-              <Tabs
-                value={activeSection}
-                onChange={(_, value: "colors" | "logo") =>
-                  setActiveSection(value)
-                }
-                variant="fullWidth"
-                sx={{
-                  minHeight: 44,
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 1.5,
-                  bgcolor: "background.paper",
-                  "& .MuiTab-root": {
-                    minHeight: 44,
-                    fontWeight: 700,
-                    textTransform: "none",
-                  },
-                }}
-              >
-                <Tab
-                  value="colors"
-                  icon={<PaletteOutlinedIcon />}
-                  iconPosition="start"
-                  label="Color Settings"
-                />
-                <Tab
-                  value="logo"
-                  icon={<ImageOutlinedIcon />}
-                  iconPosition="start"
-                  label="Logo Settings"
-                />
-              </Tabs>
-
-              {activeSection === "colors" && (
-                <>
-                  <Box>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ mb: 1, fontWeight: 700, color: "text.primary" }}
-                    >
-                      Theme Presets
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "grid",
-                        gridTemplateColumns: {
-                          xs: "1fr",
-                          sm: "repeat(2, minmax(0, 1fr))",
-                          md: "repeat(4, minmax(0, 1fr))",
-                        },
-                        gap: 0.75,
-                      }}
-                    >
-                      {DASHBOARD_THEME_PRESETS.map((preset) => {
-                        const isSelected = areSameTheme(
-                          normalizeDashboardTheme(themeInput),
-                          preset.colors
-                        );
-
-                        return (
-                          <Button
-                            key={preset.id}
-                            type="button"
-                            onClick={() => handleSelectPreset(preset.colors)}
-                            sx={{
-                              alignItems: "stretch",
-                              border: "1px solid",
-                              borderColor: isSelected
-                                ? "primary.main"
-                                : "divider",
-                              borderRadius: 1,
-                              color: "text.primary",
-                              justifyContent: "flex-start",
-                              minHeight: 68,
-                              p: 0.75,
-                              textAlign: "left",
-                              textTransform: "none",
-                              bgcolor: isSelected
-                                ? (theme) =>
-                                    alpha(theme.palette.primary.main, 0.08)
-                                : "background.paper",
-                              "&:hover": {
-                                borderColor: "primary.main",
-                                bgcolor: (theme) =>
-                                  alpha(theme.palette.primary.main, 0.1),
-                              },
-                            }}
-                          >
-                            <Stack spacing={0.75} sx={{ width: "100%" }}>
-                              <Stack direction="row" spacing={0.5}>
-                                {Object.values(preset.colors).map((color) => (
-                                  <Box
-                                    key={`${preset.id}-${color}`}
-                                    sx={{
-                                      width: 24,
-                                      height: 24,
-                                      borderRadius: 0.75,
-                                      bgcolor: color,
-                                      border: "1px solid",
-                                      borderColor: alpha("#000000", 0.16),
-                                    }}
-                                  />
-                                ))}
-                              </Stack>
-                              <Box>
-                                <Typography
-                                  variant="body2"
-                                  sx={{ fontWeight: 700, lineHeight: 1.2 }}
-                                >
-                                  {preset.name}
-                                </Typography>
-                                <Typography
-                                  variant="caption"
-                                  sx={{
-                                    color: "text.secondary",
-                                    display: "block",
-                                    lineHeight: 1.25,
-                                  }}
-                                >
-                                  {preset.description}
-                                </Typography>
-                              </Box>
-                            </Stack>
-                          </Button>
-                        );
-                      })}
-                    </Box>
-                  </Box>
-
+            {activeSection === "colors" && (
+              <>
+                <Box>
                   <Typography
                     variant="subtitle2"
-                    sx={{ fontWeight: 700, color: "text.primary" }}
+                    sx={{ mb: 1, fontWeight: 700, color: "text.primary" }}
                   >
-                    Custom Theme
+                    Theme Presets
                   </Typography>
                   <Box
                     sx={{
                       display: "grid",
                       gridTemplateColumns: {
                         xs: "1fr",
-                        sm: "repeat(3, minmax(0, 1fr))",
+                        sm: "repeat(2, minmax(0, 1fr))",
+                        md: "repeat(4, minmax(0, 1fr))",
                       },
-                      gap: 1,
+                      gap: 0.75,
                     }}
                   >
-                    <Stack spacing={0.5}>
-                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                        Primary Color
-                      </Typography>
-                      <TextField
-                        fullWidth
-                        type="color"
-                        value={
-                          isHexColor(themeInput.primaryColor)
-                            ? themeInput.primaryColor
-                            : DEFAULT_DASHBOARD_THEME.primaryColor
-                        }
-                        onChange={(event) =>
-                          handleChangeThemeInput(
-                            "primaryColor",
-                            event.target.value
-                          )
-                        }
-                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
-                        inputProps={{ "aria-label": "Pick primary color" }}
-                      />
-                    </Stack>
-                    <Stack spacing={0.5}>
-                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                        Background Color
-                      </Typography>
-                      <TextField
-                        fullWidth
-                        type="color"
-                        value={
-                          isHexColor(themeInput.backgroundColor)
-                            ? themeInput.backgroundColor
-                            : DEFAULT_DASHBOARD_THEME.backgroundColor
-                        }
-                        onChange={(event) =>
-                          handleChangeThemeInput(
-                            "backgroundColor",
-                            event.target.value
-                          )
-                        }
-                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
-                        inputProps={{ "aria-label": "Pick background color" }}
-                      />
-                    </Stack>
-                    <Stack spacing={0.5}>
-                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                        Text Color
-                      </Typography>
-                      <TextField
-                        fullWidth
-                        type="color"
-                        value={
-                          isHexColor(themeInput.textColor)
-                            ? themeInput.textColor
-                            : DEFAULT_DASHBOARD_THEME.textColor
-                        }
-                        onChange={(event) =>
-                          handleChangeThemeInput(
-                            "textColor",
-                            event.target.value
-                          )
-                        }
-                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
-                        inputProps={{ "aria-label": "Pick text color" }}
-                      />
-                    </Stack>
-                  </Box>
-                </>
-              )}
+                    {DASHBOARD_THEME_PRESETS.map((preset) => {
+                      const isSelected = areSameTheme(
+                        normalizeDashboardTheme(themeInput),
+                        preset.colors
+                      );
 
-              {activeSection === "logo" && (
-                <>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ fontWeight: 700, color: "text.primary" }}
-                  >
-                    Sidebar Logo Settings
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    label="Logo Text"
-                    value={brandingInput.logoText}
-                    inputProps={{ maxLength: 60 }}
-                    helperText="This is displayed as text beside the logo icon."
-                    onChange={(event) =>
-                      setBrandingInput((prev) => ({
-                        ...prev,
-                        logoText: event.target.value,
-                      }))
-                    }
-                    InputProps={{ sx: { borderRadius: 2 } }}
-                  />
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    sx={{ textTransform: "none" }}
-                  >
-                    {logoIconFile
-                      ? logoIconFile.name
-                      : "Choose Logo Icon Image"}
-                    <input
-                      hidden
-                      type="file"
-                      accept="image/png,image/jpeg"
+                      return (
+                        <Button
+                          key={preset.id}
+                          type="button"
+                          onClick={() => handleSelectPreset(preset.colors)}
+                          sx={{
+                            alignItems: "stretch",
+                            border: "1px solid",
+                            borderColor: isSelected
+                              ? "primary.main"
+                              : "divider",
+                            borderRadius: 1,
+                            color: "text.primary",
+                            justifyContent: "flex-start",
+                            minHeight: 68,
+                            p: 0.75,
+                            textAlign: "left",
+                            textTransform: "none",
+                            bgcolor: isSelected
+                              ? (theme) =>
+                                  alpha(theme.palette.primary.main, 0.08)
+                              : "background.paper",
+                            "&:hover": {
+                              borderColor: "primary.main",
+                              bgcolor: (theme) =>
+                                alpha(theme.palette.primary.main, 0.1),
+                            },
+                          }}
+                        >
+                          <Stack spacing={0.75} sx={{ width: "100%" }}>
+                            <Stack direction="row" spacing={0.5}>
+                              {Object.values(preset.colors).map((color) => (
+                                <Box
+                                  key={`${preset.id}-${color}`}
+                                  sx={{
+                                    width: 24,
+                                    height: 24,
+                                    borderRadius: 0.75,
+                                    bgcolor: color,
+                                    border: "1px solid",
+                                    borderColor: alpha("#000000", 0.16),
+                                  }}
+                                />
+                              ))}
+                            </Stack>
+                            <Box>
+                              <Typography
+                                variant="body2"
+                                sx={{ fontWeight: 700, lineHeight: 1.2 }}
+                              >
+                                {preset.name}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "text.secondary",
+                                  display: "block",
+                                  lineHeight: 1.25,
+                                }}
+                              >
+                                {preset.description}
+                              </Typography>
+                            </Box>
+                          </Stack>
+                        </Button>
+                      );
+                    })}
+                  </Box>
+                </Box>
+
+                <Typography
+                  variant="subtitle2"
+                  sx={{ fontWeight: 700, color: "text.primary" }}
+                >
+                  Custom Theme
+                </Typography>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "1fr",
+                      sm: "repeat(3, minmax(0, 1fr))",
+                    },
+                    gap: 1,
+                  }}
+                >
+                  <Stack spacing={0.5}>
+                    <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                      Primary Color
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      type="color"
+                      value={
+                        isHexColor(themeInput.primaryColor)
+                          ? themeInput.primaryColor
+                          : DEFAULT_DASHBOARD_THEME.primaryColor
+                      }
                       onChange={(event) =>
-                        setLogoIconFile(event.target.files?.[0] || null)
+                        handleChangeThemeInput(
+                          "primaryColor",
+                          event.target.value
+                        )
                       }
+                      sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                      inputProps={{ "aria-label": "Pick primary color" }}
                     />
-                  </Button>
-                  {(logoIconFile || brandingInput.logoIcon) && (
-                    <Box
-                      component="img"
-                      src={
-                        logoIconFile
-                          ? URL.createObjectURL(logoIconFile)
-                          : `${import.meta.env.VITE_API_BASE_URL}${
-                              brandingInput.logoIcon
-                            }`
+                  </Stack>
+                  <Stack spacing={0.5}>
+                    <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                      Background Color
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      type="color"
+                      value={
+                        isHexColor(themeInput.backgroundColor)
+                          ? themeInput.backgroundColor
+                          : DEFAULT_DASHBOARD_THEME.backgroundColor
                       }
-                      alt="Logo icon preview"
-                      sx={{
-                        width: 64,
-                        height: 64,
-                        objectFit: "contain",
-                        alignSelf: "center",
-                        border: "1px solid",
-                        borderColor: "divider",
-                        borderRadius: 1,
-                        p: 0.5,
-                      }}
+                      onChange={(event) =>
+                        handleChangeThemeInput(
+                          "backgroundColor",
+                          event.target.value
+                        )
+                      }
+                      sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                      inputProps={{ "aria-label": "Pick background color" }}
                     />
-                  )}
-                </>
-              )}
-            </Stack>
-          )}
-        </Box>
+                  </Stack>
+                  <Stack spacing={0.5}>
+                    <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                      Text Color
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      type="color"
+                      value={
+                        isHexColor(themeInput.textColor)
+                          ? themeInput.textColor
+                          : DEFAULT_DASHBOARD_THEME.textColor
+                      }
+                      onChange={(event) =>
+                        handleChangeThemeInput("textColor", event.target.value)
+                      }
+                      sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                      inputProps={{ "aria-label": "Pick text color" }}
+                    />
+                  </Stack>
+                </Box>
+              </>
+            )}
+
+            {activeSection === "logo" && (
+              <>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ fontWeight: 700, color: "text.primary" }}
+                >
+                  Sidebar Logo Settings
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Logo Text"
+                  value={brandingInput.logoText}
+                  inputProps={{ maxLength: 60 }}
+                  helperText="This is displayed as text beside the logo icon."
+                  onChange={(event) =>
+                    setBrandingInput((prev) => ({
+                      ...prev,
+                      logoText: event.target.value,
+                    }))
+                  }
+                  InputProps={{ sx: { borderRadius: 2 } }}
+                />
+                <Button
+                  component="label"
+                  variant="outlined"
+                  sx={{ textTransform: "none" }}
+                >
+                  {logoIconFile ? logoIconFile.name : "Choose Logo Icon Image"}
+                  <input
+                    hidden
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    onChange={(event) =>
+                      setLogoIconFile(event.target.files?.[0] || null)
+                    }
+                  />
+                </Button>
+                {(logoIconFile || brandingInput.logoIcon) && (
+                  <Box
+                    component="img"
+                    src={
+                      logoIconFile
+                        ? URL.createObjectURL(logoIconFile)
+                        : `${import.meta.env.VITE_API_BASE_URL}${
+                            brandingInput.logoIcon
+                          }`
+                    }
+                    alt="Logo icon preview"
+                    sx={{
+                      width: 64,
+                      height: 64,
+                      objectFit: "contain",
+                      alignSelf: "center",
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 1,
+                      p: 0.5,
+                    }}
+                  />
+                )}
+              </>
+            )}
+          </Stack>
+        )}
       </Box>
-    </MapBackgroundPage>
+    </MapTablePage>
   );
 };
