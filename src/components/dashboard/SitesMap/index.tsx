@@ -8,6 +8,8 @@ import Typography from "@mui/material/Typography";
 import Markers from "./Markers";
 
 const { VITE_MAP_ID, VITE_MAP_API_KEY } = import.meta.env;
+const getCurrentMapViewStorageKey = () =>
+  `currentDashboardMapView:${localStorage.getItem("userId") || "guest"}`;
 const ADMIN_WORLD_VIEW = {
   center: { lat: 20, lng: 0 },
   zoom: 2,
@@ -35,7 +37,9 @@ const toFiniteNumber = (value: unknown): number | null => {
 };
 
 const resolveSiteLocation = (site: any): google.maps.LatLngLiteral | null => {
-  const coordinates = Array.isArray(site?.coordinates) ? site.coordinates : null;
+  const coordinates = Array.isArray(site?.coordinates)
+    ? site.coordinates
+    : null;
   const statusCoordinates = Array.isArray(site?.status?.coordinates)
     ? site.status.coordinates
     : null;
@@ -126,6 +130,26 @@ export const SitesMap = ({ siteData, isLoading }: any) => {
   const [mapLoadError, setMapLoadError] = useState<string | null>(null);
 
   const initialMapView = useMemo(() => {
+    const currentMapViewStorageKey = getCurrentMapViewStorageKey();
+    const storedCurrentView = localStorage.getItem(currentMapViewStorageKey);
+    if (storedCurrentView) {
+      try {
+        const parsed = JSON.parse(storedCurrentView);
+        const lat = toFiniteNumber(parsed?.lat);
+        const lng = toFiniteNumber(parsed?.lng);
+        const zoom = toFiniteNumber(parsed?.zoom);
+
+        if (lat !== null && lng !== null && zoom !== null) {
+          return {
+            center: { lat, lng },
+            zoom,
+          };
+        }
+      } catch {
+        localStorage.removeItem(currentMapViewStorageKey);
+      }
+    }
+
     const role = localStorage.getItem("role")?.toLowerCase();
     if (role === "admin") {
       return ADMIN_WORLD_VIEW;
@@ -207,6 +231,17 @@ export const SitesMap = ({ siteData, isLoading }: any) => {
             <Map
               defaultCenter={initialMapView.center}
               defaultZoom={initialMapView.zoom}
+              onCameraChanged={(event) => {
+                const { center, zoom } = event.detail;
+                localStorage.setItem(
+                  getCurrentMapViewStorageKey(),
+                  JSON.stringify({
+                    lat: center.lat,
+                    lng: center.lng,
+                    zoom,
+                  })
+                );
+              }}
               style={{ width: "100%", height: "100%" }}
               gestureHandling="greedy"
               disableDefaultUI
