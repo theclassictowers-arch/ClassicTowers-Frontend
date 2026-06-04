@@ -15,6 +15,7 @@ import routerProvider, {
 
 import {
   useAuthContext,
+  useBrandingContext,
   useColorModeContext,
   useLogoutConfirm,
 } from "./contexts";
@@ -32,6 +33,8 @@ import { getResources } from "./utils";
 const App: React.FC = () => {
   const { role } = useAuthContext();
   const { dashboardTheme } = useColorModeContext();
+  const { branding } = useBrandingContext();
+  const sidebarWidth = branding.sidebarWidth;
   const { confirm } = useLogoutConfirm();
   const authProvider = useAuthProvider(confirm);
   const resources = role ? getResources(role) : [];
@@ -263,6 +266,15 @@ const App: React.FC = () => {
                 backdropFilter: "blur(4px)",
                 WebkitBackdropFilter: "blur(4px)",
               },
+            "main.MuiBox-root .MuiDataGrid-cell": {
+              paddingLeft: "8px !important",
+              paddingRight: "8px !important",
+              lineHeight: "1.2 !important",
+            },
+            "main.MuiBox-root .MuiTableCell-root": {
+              padding: "5px 8px",
+              lineHeight: 1.2,
+            },
             "@media (min-width: 900px)": {
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > .MuiBox-root:first-of-type":
                 {
@@ -292,7 +304,7 @@ const App: React.FC = () => {
                   top: "0 !important",
                   left: "0 !important",
                   bottom: "0 !important",
-                  width: "240px !important",
+                  width: `${sidebarWidth}px !important`,
                   overflow: "visible !important",
                   zIndex: 1300,
                   transition: "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
@@ -313,7 +325,7 @@ const App: React.FC = () => {
                 },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) .map-table-page-shell":
                 {
-                  paddingLeft: "264px !important",
+                  paddingLeft: `${sidebarWidth + 24}px !important`,
                 },
               ".MuiDrawer-docked": {
                 height: "100dvh !important",
@@ -352,8 +364,8 @@ const App: React.FC = () => {
                 },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) .dashboard-alert-shell":
                 {
-                  left: "252px !important",
-                  width: "calc(100% - 252px) !important",
+                  left: `${sidebarWidth + 12}px !important`,
+                  width: `calc(100% - ${sidebarWidth + 12}px) !important`,
                 },
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper": {
                 width: "52px !important",
@@ -367,7 +379,7 @@ const App: React.FC = () => {
                 boxShadow: "none !important",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper": {
-                width: "240px !important",
+                width: `${sidebarWidth}px !important`,
                 overflow: "hidden !important",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper *": {

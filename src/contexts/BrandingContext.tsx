@@ -17,6 +17,7 @@ export type DashboardBranding = {
   logoTextEnabled: boolean;
   logoTextSize: number;
   logoTextWidth: number;
+  sidebarWidth: number;
 };
 
 type BrandingContextType = {
@@ -47,6 +48,12 @@ const normalizeBranding = (
     Number(branding?.logoTextWidth) <= 180
       ? Number(branding?.logoTextWidth)
       : 145,
+  sidebarWidth:
+    Number.isFinite(Number(branding?.sidebarWidth)) &&
+    Number(branding?.sidebarWidth) >= 200 &&
+    Number(branding?.sidebarWidth) <= 360
+      ? Number(branding?.sidebarWidth)
+      : 240,
 });
 
 declare global {

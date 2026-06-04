@@ -44,8 +44,10 @@ export const SiteList = () => {
         width: 70,
         flex: 1,
         filterable: true,
-        valueGetter: (params) => 
-          Array.isArray(params.value) ? params.value.join(", ") : String(params.value || ""),
+        valueGetter: (params) =>
+          Array.isArray(params.value)
+            ? params.value.join(", ")
+            : String(params.value || ""),
       },
       {
         field: "name",
@@ -105,26 +107,26 @@ export const SiteList = () => {
     <MapTablePage>
       <List
         headerButtons={
-          (role === "admin" || role === "organization") ? <CreateButton /> : null
+          role === "admin" || role === "organization" ? <CreateButton /> : null
         }
       >
         <DataGrid
           {...dataGridProps}
           columns={columns}
           autoHeight
+          rowHeight={40}
+          columnHeaderHeight={42}
           // Professional Full Client-side Configuration
           // Professional Uncontrolled Configuration for Instant Search
           filterModel={undefined}
           sortModel={undefined}
           paginationModel={undefined}
-          onFilterModelChange={undefined} 
+          onFilterModelChange={undefined}
           onSortModelChange={undefined}
           onPaginationModelChange={undefined}
-          
           sortingMode="client"
           filterMode="client"
           paginationMode="client"
-          
           initialState={{
             pagination: { paginationModel: { pageSize: 10, page: 0 } },
           }}
@@ -132,10 +134,10 @@ export const SiteList = () => {
             toolbar: GridToolbar,
           }}
           slotProps={{
-            toolbar: { 
+            toolbar: {
               showQuickFilter: true,
-              quickFilterProps: { 
-                debounceMs: 250, 
+              quickFilterProps: {
+                debounceMs: 250,
                 placeholder: "Search by Name, IMEI, Region...",
               },
             },

@@ -49,6 +49,7 @@ type DashboardBranding = {
   logoTextEnabled: boolean;
   logoTextSize: number;
   logoTextWidth: number;
+  sidebarWidth: number;
 };
 
 const DEFAULT_DASHBOARD_BRANDING: DashboardBranding = {
@@ -58,6 +59,7 @@ const DEFAULT_DASHBOARD_BRANDING: DashboardBranding = {
   logoTextEnabled: true,
   logoTextSize: 16,
   logoTextWidth: 145,
+  sidebarWidth: 240,
 };
 
 const isHexColor = (value: string) => /^#([A-Fa-f0-9]{6})$/.test(value.trim());
@@ -151,6 +153,8 @@ export const SettingsPage: React.FC = () => {
             Number(response.data?.dashboardBranding?.logoTextSize) || 16,
           logoTextWidth:
             Number(response.data?.dashboardBranding?.logoTextWidth) || 145,
+          sidebarWidth:
+            Number(response.data?.dashboardBranding?.sidebarWidth) || 240,
         });
         setLogoIconFile(null);
       } catch {
@@ -282,6 +286,7 @@ export const SettingsPage: React.FC = () => {
           "logoTextWidth",
           String(brandingInput.logoTextWidth)
         );
+        brandingData.append("sidebarWidth", String(brandingInput.sidebarWidth));
         if (useFallback) {
           brandingData.append("dashboardBrandingUpdate", "true");
         }
@@ -686,6 +691,30 @@ export const SettingsPage: React.FC = () => {
                   >
                     Sidebar Logo Settings
                   </Typography>
+                  {role === "admin" && (
+                    <Box>
+                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                        Sidebar Width: {brandingInput.sidebarWidth}px
+                      </Typography>
+                      <Slider
+                        value={brandingInput.sidebarWidth}
+                        min={200}
+                        max={360}
+                        step={10}
+                        marks={[
+                          { value: 200, label: "Small" },
+                          { value: 280, label: "Medium" },
+                          { value: 360, label: "Large" },
+                        ]}
+                        onChange={(_, value) =>
+                          setBrandingInput((prev) => ({
+                            ...prev,
+                            sidebarWidth: value as number,
+                          }))
+                        }
+                      />
+                    </Box>
+                  )}
                   <TextField
                     fullWidth
                     label="Logo Text"

@@ -66,7 +66,10 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
   });
 
   const isArchivesLoading = tableQueryResult.isLoading;
-  const archives = (tableQueryResult.data?.data as any)?.archives || tableQueryResult.data?.data || [];
+  const archives =
+    (tableQueryResult.data?.data as any)?.archives ||
+    tableQueryResult.data?.data ||
+    [];
 
   // Manual refresh handler
   const handleManualRefresh = () => {
@@ -132,30 +135,30 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
 
   const columns: GridColDef[] = [
     { field: "date", headerName: "Date", flex: 1 },
-    { 
-      field: "time", 
-      headerName: "Time", 
+    {
+      field: "time",
+      headerName: "Time",
       flex: 1,
       valueGetter: (params) => {
         const utcDate = new Date(`${params.row.date}T${params.value}Z`);
-        return utcDate.toLocaleTimeString('en-GB', { hour12: false });
-      }
+        return utcDate.toLocaleTimeString("en-GB", { hour12: false });
+      },
     },
     { field: "siteName", headerName: "Site", flex: 1.5 },
-    { 
-      field: "sensorName", 
-      headerName: "Sensor", 
+    {
+      field: "sensorName",
+      headerName: "Sensor",
       flex: 1,
       filterable: true,
       renderCell: (params) => (
         <Typography variant="body2" sx={{ fontWeight: "bold" }}>
           {params.value}
         </Typography>
-      )
+      ),
     },
-    { 
-      field: "message", 
-      headerName: "Message", 
+    {
+      field: "message",
+      headerName: "Message",
       flex: 2.5,
       filterable: true,
       renderCell: (params) => (
@@ -164,7 +167,7 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
             {params.value.split(" at ")[0]}
           </Typography>
         </Tooltip>
-      )
+      ),
     },
   ];
 
@@ -240,6 +243,8 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
           loading={isArchivesLoading}
           autoHeight={false}
           density="compact"
+          rowHeight={40}
+          columnHeaderHeight={42}
           // Matches Site List: Uncontrolled State for Instant Search
           filterModel={undefined}
           sortModel={undefined}
@@ -247,14 +252,11 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
           onFilterModelChange={undefined}
           onSortModelChange={undefined}
           onPaginationModelChange={undefined}
-          
           disableColumnMenu={false}
           hideFooterSelectedRowCount
-          
           filterMode="client"
           sortingMode="client"
           paginationMode="client"
-
           initialState={{
             pagination: { paginationModel: { pageSize: 10, page: 0 } },
           }}
@@ -262,15 +264,17 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
           slotProps={{
             toolbar: {
               showQuickFilter: true,
-              quickFilterProps: { 
-                debounceMs: 250, 
+              quickFilterProps: {
+                debounceMs: 250,
                 placeholder: "Search sensor or site...",
               },
             },
           }}
           sx={{
             border: "none",
-            "& .MuiDataGrid-cell": { borderBottom: `1px solid ${theme.palette.divider}` },
+            "& .MuiDataGrid-cell": {
+              borderBottom: `1px solid ${theme.palette.divider}`,
+            },
           }}
           getRowId={(row) => row.id}
         />

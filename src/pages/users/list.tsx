@@ -23,7 +23,8 @@ const ActionsCell = ({ row }: any) => (
 export const UserList = () => {
   const { role } = useAuthContext();
   // Permission check based on role
-  const canAddUsers = role === "admin" || role === "organization" || role === "team_lead";
+  const canAddUsers =
+    role === "admin" || role === "organization" || role === "team_lead";
   // Action check based on Site list logic (only Admin/Organization can edit/delete)
   const canManageUsers = role === "admin" || role === "organization";
 
@@ -95,7 +96,10 @@ export const UserList = () => {
         renderCell: (params) => (
           <Typography
             variant="body2"
-            sx={{ color: params.value === "Yes" ? "success.main" : "error.main", fontWeight: "bold" }}
+            sx={{
+              color: params.value === "Yes" ? "success.main" : "error.main",
+              fontWeight: "bold",
+            }}
           >
             {params.value}
           </Typography>
@@ -121,26 +125,24 @@ export const UserList = () => {
 
   return (
     <MapTablePage>
-      <List
-        headerButtons={canAddUsers ? <CreateButton /> : undefined}
-      >
+      <List headerButtons={canAddUsers ? <CreateButton /> : undefined}>
         <DataGrid
           {...dataGridProps}
           columns={columns}
           autoHeight
+          rowHeight={40}
+          columnHeaderHeight={42}
           // Professional Full Client-side Configuration
           // Professional Uncontrolled Configuration for Instant Search
           filterModel={undefined}
           sortModel={undefined}
           paginationModel={undefined}
-          onFilterModelChange={undefined} 
+          onFilterModelChange={undefined}
           onSortModelChange={undefined}
           onPaginationModelChange={undefined}
-          
           sortingMode="client"
           filterMode="client"
           paginationMode="client"
-          
           initialState={{
             pagination: { paginationModel: { pageSize: 10, page: 0 } },
           }}
@@ -148,10 +150,10 @@ export const UserList = () => {
             toolbar: GridToolbar,
           }}
           slotProps={{
-            toolbar: { 
+            toolbar: {
               showQuickFilter: true,
-              quickFilterProps: { 
-                debounceMs: 250, 
+              quickFilterProps: {
+                debounceMs: 250,
                 placeholder: "Search users by email, role, etc...",
               },
             },
