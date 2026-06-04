@@ -13,6 +13,10 @@ const DEFAULT_LOGO_TEXT = "The Classic Towers";
 export type DashboardBranding = {
   logoText: string;
   logoIcon: string | null;
+  logoIconEnabled: boolean;
+  logoTextEnabled: boolean;
+  logoTextSize: number;
+  logoTextWidth: number;
 };
 
 type BrandingContextType = {
@@ -29,13 +33,25 @@ const normalizeBranding = (
 ): DashboardBranding => ({
   logoText: String(branding?.logoText || DEFAULT_LOGO_TEXT).trim(),
   logoIcon: branding?.logoIcon || null,
+  logoIconEnabled: branding?.logoIconEnabled !== false,
+  logoTextEnabled: branding?.logoTextEnabled !== false,
+  logoTextSize:
+    Number.isFinite(Number(branding?.logoTextSize)) &&
+    Number(branding?.logoTextSize) >= 10 &&
+    Number(branding?.logoTextSize) <= 32
+      ? Number(branding?.logoTextSize)
+      : 16,
+  logoTextWidth:
+    Number.isFinite(Number(branding?.logoTextWidth)) &&
+    Number(branding?.logoTextWidth) >= 60 &&
+    Number(branding?.logoTextWidth) <= 180
+      ? Number(branding?.logoTextWidth)
+      : 145,
 });
 
 declare global {
   interface Window {
-    setDashboardBranding?: React.Dispatch<
-      Partial<DashboardBranding> | null
-    >;
+    setDashboardBranding?: React.Dispatch<Partial<DashboardBranding> | null>;
   }
 }
 

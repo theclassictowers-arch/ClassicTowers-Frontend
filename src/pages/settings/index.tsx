@@ -4,10 +4,13 @@ import {
   Button,
   CircularProgress,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
+  Slider,
   Stack,
+  Switch,
   Tab,
   Tabs,
   TextField,
@@ -42,11 +45,19 @@ type OrganizationUser = {
 type DashboardBranding = {
   logoText: string;
   logoIcon: string | null;
+  logoIconEnabled: boolean;
+  logoTextEnabled: boolean;
+  logoTextSize: number;
+  logoTextWidth: number;
 };
 
 const DEFAULT_DASHBOARD_BRANDING: DashboardBranding = {
   logoText: "The Classic Towers",
   logoIcon: null,
+  logoIconEnabled: true,
+  logoTextEnabled: true,
+  logoTextSize: 16,
+  logoTextWidth: 145,
 };
 
 const isHexColor = (value: string) => /^#([A-Fa-f0-9]{6})$/.test(value.trim());
@@ -132,6 +143,14 @@ export const SettingsPage: React.FC = () => {
             response.data?.dashboardBranding?.logoText ||
             DEFAULT_DASHBOARD_BRANDING.logoText,
           logoIcon: response.data?.dashboardBranding?.logoIcon || null,
+          logoIconEnabled:
+            response.data?.dashboardBranding?.logoIconEnabled !== false,
+          logoTextEnabled:
+            response.data?.dashboardBranding?.logoTextEnabled !== false,
+          logoTextSize:
+            Number(response.data?.dashboardBranding?.logoTextSize) || 16,
+          logoTextWidth:
+            Number(response.data?.dashboardBranding?.logoTextWidth) || 145,
         });
         setLogoIconFile(null);
       } catch {
@@ -236,7 +255,7 @@ export const SettingsPage: React.FC = () => {
 
   const handleSaveBranding = async () => {
     if (!targetUserId) return;
-    if (!brandingInput.logoText.trim()) {
+    if (brandingInput.logoTextEnabled && !brandingInput.logoText.trim()) {
       open?.({
         type: "error",
         message: "Logo text is required",
@@ -249,6 +268,16 @@ export const SettingsPage: React.FC = () => {
     try {
       const brandingData = new FormData();
       brandingData.append("logoText", brandingInput.logoText.trim());
+      brandingData.append(
+        "logoIconEnabled",
+        String(brandingInput.logoIconEnabled)
+      );
+      brandingData.append(
+        "logoTextEnabled",
+        String(brandingInput.logoTextEnabled)
+      );
+      brandingData.append("logoTextSize", String(brandingInput.logoTextSize));
+      brandingData.append("logoTextWidth", String(brandingInput.logoTextWidth));
       if (logoIconFile) {
         brandingData.append("logoIcon", logoIconFile);
       }
@@ -617,6 +646,7 @@ export const SettingsPage: React.FC = () => {
                     fullWidth
                     label="Logo Text"
                     value={brandingInput.logoText}
+                    disabled={!brandingInput.logoTextEnabled}
                     inputProps={{ maxLength: 60 }}
                     helperText="This is displayed as text beside the logo icon."
                     onChange={(event) =>
@@ -627,9 +657,74 @@ export const SettingsPage: React.FC = () => {
                     }
                     InputProps={{ sx: { borderRadius: 2 } }}
                   />
+                  {role === "admin" && (
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: {
+                          xs: "1fr",
+                          sm: "repeat(3, minmax(0, 1fr))",
+                        },
+                        gap: 2,
+                        alignItems: "center",
+                      }}
+                    >
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={brandingInput.logoTextEnabled}
+                            onChange={(event) =>
+                              setBrandingInput((prev) => ({
+                                ...prev,
+                                logoTextEnabled: event.target.checked,
+                              }))
+                            }
+                          />
+                        }
+                        label="Show Logo Text"
+                      />
+                      <Box>
+                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                          Text Size: {brandingInput.logoTextSize}px
+                        </Typography>
+                        <Slider
+                          value={brandingInput.logoTextSize}
+                          min={10}
+                          max={32}
+                          step={1}
+                          disabled={!brandingInput.logoTextEnabled}
+                          onChange={(_, value) =>
+                            setBrandingInput((prev) => ({
+                              ...prev,
+                              logoTextSize: value as number,
+                            }))
+                          }
+                        />
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                          Text Width: {brandingInput.logoTextWidth}px
+                        </Typography>
+                        <Slider
+                          value={brandingInput.logoTextWidth}
+                          min={60}
+                          max={180}
+                          step={5}
+                          disabled={!brandingInput.logoTextEnabled}
+                          onChange={(_, value) =>
+                            setBrandingInput((prev) => ({
+                              ...prev,
+                              logoTextWidth: value as number,
+                            }))
+                          }
+                        />
+                      </Box>
+                    </Box>
+                  )}
                   <Button
                     component="label"
                     variant="outlined"
+                    disabled={!brandingInput.logoIconEnabled}
                     sx={{ textTransform: "none" }}
                   >
                     {logoIconFile
@@ -644,29 +739,52 @@ export const SettingsPage: React.FC = () => {
                       }
                     />
                   </Button>
-                  {(logoIconFile || brandingInput.logoIcon) && (
-                    <Box
-                      component="img"
-                      src={
-                        logoIconFile
-                          ? URL.createObjectURL(logoIconFile)
-                          : `${import.meta.env.VITE_API_BASE_URL}${
-                              brandingInput.logoIcon
-                            }`
-                      }
-                      alt="Logo icon preview"
-                      sx={{
-                        width: 64,
-                        height: 64,
-                        objectFit: "contain",
-                        alignSelf: "center",
-                        border: "1px solid",
-                        borderColor: "divider",
-                        borderRadius: 1,
-                        p: 0.5,
-                      }}
-                    />
+                  {role === "admin" && (
+                    <>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={brandingInput.logoIconEnabled}
+                            onChange={(event) =>
+                              setBrandingInput((prev) => ({
+                                ...prev,
+                                logoIconEnabled: event.target.checked,
+                              }))
+                            }
+                          />
+                        }
+                        label="Show Logo Icon"
+                      />
+                      <Typography variant="caption" color="text.secondary">
+                        Recommended logo icon: 128 × 128px square PNG or JPG
+                        (displayed at 34 × 34px). Maximum file size: 5MB.
+                      </Typography>
+                    </>
                   )}
+                  {brandingInput.logoIconEnabled &&
+                    (logoIconFile || brandingInput.logoIcon) && (
+                      <Box
+                        component="img"
+                        src={
+                          logoIconFile
+                            ? URL.createObjectURL(logoIconFile)
+                            : `${import.meta.env.VITE_API_BASE_URL}${
+                                brandingInput.logoIcon
+                              }`
+                        }
+                        alt="Logo icon preview"
+                        sx={{
+                          width: 64,
+                          height: 64,
+                          objectFit: "contain",
+                          alignSelf: "center",
+                          border: "1px solid",
+                          borderColor: "divider",
+                          borderRadius: 1,
+                          p: 0.5,
+                        }}
+                      />
+                    )}
                 </>
               )}
             </Stack>

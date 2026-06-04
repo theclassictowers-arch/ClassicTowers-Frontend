@@ -65,7 +65,7 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
         }}
       >
         <Box display="flex" alignItems="center" gap={1.25} minWidth={0}>
-          {branding.logoIcon ? (
+          {branding.logoIconEnabled && branding.logoIcon ? (
             <Box
               component="img"
               src={`${apiBaseUrl}${branding.logoIcon}`}
@@ -77,7 +77,7 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
                 objectFit: "contain",
               }}
             />
-          ) : (
+          ) : branding.logoIconEnabled ? (
             <MemoryIcon
               sx={{
                 flexShrink: 0,
@@ -85,39 +85,43 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
                 color: theme.palette.mode === "light" ? "#0b70c2" : "#67B7F7",
               }}
             />
-          )}
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            minWidth={0}
-          >
-            <Typography
-              variant="subtitle1"
-              noWrap
-              sx={{
-                maxWidth: 145,
-                px: 0.45,
-                py: 0.1,
-                bgcolor: "#ffc107",
-                color: theme.palette.mode === "light" ? "#111111" : "#ffffff",
-                fontFamily:
-                  "\"Arial Narrow\", \"Roboto Condensed\", Arial, sans-serif",
-                fontSize: "0.98rem",
-                fontStretch: "condensed",
-                fontWeight: 400,
-                lineHeight: 1.05,
-                letterSpacing: 0.45,
-                textTransform: "uppercase",
-                textShadow:
-                  theme.palette.mode === "light"
-                    ? "0.35px 0 #ffffff"
-                    : "0.35px 0 #111111",
-              }}
+          ) : null}
+          {branding.logoTextEnabled && (
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              minWidth={0}
             >
-              {branding.logoText}
-            </Typography>
-          </Box>
+              <Typography
+                variant="subtitle1"
+                noWrap
+                sx={{
+                  width: branding.logoTextWidth,
+                  maxWidth: branding.logoTextWidth,
+                  px: 0.45,
+                  py: 0.1,
+                  bgcolor: "#ffc107",
+                  color: theme.palette.mode === "light" ? "#111111" : "#ffffff",
+                  fontFamily:
+                    "\"Arial Narrow\", \"Roboto Condensed\", Arial, sans-serif",
+                  fontSize: `${branding.logoTextSize}px`,
+                  fontStretch: "condensed",
+                  fontWeight: 400,
+                  lineHeight: 1.05,
+                  letterSpacing: 0.45,
+                  textAlign: "center",
+                  textTransform: "uppercase",
+                  textShadow:
+                    theme.palette.mode === "light"
+                      ? "0.35px 0 #ffffff"
+                      : "0.35px 0 #111111",
+                }}
+              >
+                {branding.logoText}
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Box>
     </Link>
