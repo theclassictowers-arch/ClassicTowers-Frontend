@@ -214,10 +214,6 @@ const App: React.FC = () => {
                 backdropFilter: "blur(4px)",
                 WebkitBackdropFilter: "blur(4px)",
               },
-            ".MuiDrawer-paper, .MuiDrawer-paper .MuiList-root, .MuiDrawer-paper .MuiListItem-root":
-              {
-                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
-              },
             "@media (min-width: 900px)": {
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > .MuiBox-root:first-of-type":
                 {
@@ -293,8 +289,8 @@ const App: React.FC = () => {
                 overflow: "visible !important",
                 zIndex: "1300 !important",
                 borderRight: "1px solid rgba(148, 163, 184, 0.18)",
-                background: `${dashboardTheme.backgroundColor} !important`,
-                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+                background: "rgba(255, 255, 255, 0.10) !important",
+                backgroundColor: "rgba(255, 255, 255, 0.10) !important",
                 backdropFilter: "blur(6px)",
                 boxShadow: "6px 0 18px rgba(15, 23, 42, 0.06)",
                 transition:
@@ -312,10 +308,13 @@ const App: React.FC = () => {
                 },
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper": {
                 width: "52px !important",
-                overflow: "visible !important",
+                height: "56px !important",
+                minHeight: "56px !important",
+                maxHeight: "56px !important",
+                overflow: "hidden !important",
                 borderRight: "0 !important",
-                background: `${dashboardTheme.backgroundColor} !important`,
-                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
                 boxShadow: "none !important",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper": {
@@ -332,8 +331,8 @@ const App: React.FC = () => {
                   minHeight: "56px !important",
                   paddingLeft: "0 !important",
                   paddingRight: "0 !important",
-                  background: `${dashboardTheme.backgroundColor} !important`,
-                  backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+                  background: "rgba(255, 255, 255, 0.10) !important",
+                  backgroundColor: "rgba(255, 255, 255, 0.10) !important",
                   backdropFilter: "blur(6px)",
                   borderBottom: "1px solid rgba(148, 163, 184, 0.22)",
                 },
@@ -345,6 +344,10 @@ const App: React.FC = () => {
                 },
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)":
                 {
+                  display: "flex !important",
+                  background: "rgba(255, 255, 255, 0.16) !important",
+                  backgroundColor: "rgba(255, 255, 255, 0.16) !important",
+                  backdropFilter: "blur(6px)",
                   borderBottom: "0 !important",
                   borderRight: "1px solid rgba(148, 163, 184, 0.18)",
                   boxShadow: "6px 0 18px rgba(15, 23, 42, 0.06)",
@@ -372,15 +375,17 @@ const App: React.FC = () => {
                 },
               ".MuiDrawer-docked .MuiDrawer-paper > .MuiBox-root": {
                 height: "calc(100dvh - 56px) !important",
-                background: `${dashboardTheme.backgroundColor} !important`,
-                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+                background: "rgba(255, 255, 255, 0.10) !important",
+                backgroundColor: "rgba(255, 255, 255, 0.10) !important",
                 backdropFilter: "blur(6px)",
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiBox-root":
                 {
-                  overflow: "visible !important",
-                  background: `${dashboardTheme.backgroundColor} !important`,
-                  backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+                  display: "none !important",
+                  height: "0 !important",
+                  overflow: "hidden !important",
+                  background: "transparent !important",
+                  backgroundColor: "transparent !important",
                 },
               "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper > .MuiBox-root":
                 {
@@ -395,13 +400,13 @@ const App: React.FC = () => {
                 gap: "3px",
                 paddingTop: "4px !important",
                 paddingBottom: "4px !important",
-                background: `${dashboardTheme.backgroundColor} !important`,
-                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
                 backdropFilter: "none",
               },
               ".MuiDrawer-docked .MuiListItem-root": {
-                background: `${dashboardTheme.backgroundColor} !important`,
-                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+                background: "transparent !important",
+                backgroundColor: "transparent !important",
                 minHeight: "46px !important",
                 height: "46px !important",
                 padding: "0 !important",
@@ -420,8 +425,9 @@ const App: React.FC = () => {
               },
               "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiList-root":
                 {
-                  alignItems: "center",
-                  opacity: 0,
+                  display: "none !important",
+                  visibility: "hidden !important",
+                  opacity: "0 !important",
                   pointerEvents: "none",
                   transform: "translateX(-14px)",
                   transition: "opacity 180ms ease, transform 180ms ease",
@@ -450,8 +456,8 @@ const App: React.FC = () => {
                 paddingTop: "0 !important",
                 paddingBottom: "0 !important",
                 border: "1px solid rgba(15, 23, 42, 0.14)",
-                background: `${dashboardTheme.backgroundColor} !important`,
-                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+                background: "rgba(255, 255, 255, 0.06) !important",
+                backgroundColor: "rgba(255, 255, 255, 0.06) !important",
                 backdropFilter: "none",
                 boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.18)",
                 perspective: "900px",

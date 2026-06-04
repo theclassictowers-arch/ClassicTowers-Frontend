@@ -23,6 +23,7 @@ import {
   NavigateToResource,
 } from "@refinedev/react-router-v6";
 import { Title } from "../components";
+import { PersistentDashboardMap } from "../components";
 
 const AppRoutes: React.FC = () => {
   const { role } = useAuthContext();
@@ -44,6 +45,7 @@ const AppRoutes: React.FC = () => {
               Title={Title}
               initialSiderCollapsed={true}
             >
+              <PersistentDashboardMap />
               <Outlet />
             </ThemedLayoutV2>
           </Authenticated>
@@ -146,10 +148,7 @@ const AppRoutes: React.FC = () => {
           path="/forgot-password"
           element={<AuthPage type="forgotPassword" />}
         />
-        <Route
-          path="/verify-otp"
-          element={<AuthPage type="verifyOtp" />}
-        />
+        <Route path="/verify-otp" element={<AuthPage type="verifyOtp" />} />
         <Route
           path="/update-password"
           element={<AuthPage type="updatePassword" />}
