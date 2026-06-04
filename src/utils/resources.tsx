@@ -54,7 +54,7 @@ export const getResources = (role: string) => {
           edit: "/limits/edit/:id",
           show: "/limits/show/:id",
           meta: {
-            label: "Sensor limits",
+            label: "Sensors",
             icon: <AdjustIcon />,
           },
         },
@@ -90,38 +90,39 @@ export const getResources = (role: string) => {
           list: "/limits",
           show: "/limits/show/:id",
           meta: {
-            label: "Sensor limits",
+            label: "Sensors",
             icon: <AdjustIcon />,
           },
         },
       ]
     : [];
 
-  const organizationResources = role === "organization"
-    ? [
-        {
-          name: "sites",
-          list: "/sites",
-          create: "/sites/create",
-          show: "/sites/show/:id",
-          meta: {
-            label: "Sites",
-            icon: <RoomTwoToneIcon />,
+  const organizationResources =
+    role === "organization"
+      ? [
+          {
+            name: "sites",
+            list: "/sites",
+            create: "/sites/create",
+            show: "/sites/show/:id",
+            meta: {
+              label: "Sites",
+              icon: <RoomTwoToneIcon />,
+            },
           },
-        },
-        {
-          name: "users",
-          list: "/users",
-          create: "/users/create",
-          edit: "/users/edit/:id",
-          show: "/users/show/:id",
-          meta: {
-            label: "Users",
-            icon: <PeopleAltTwoToneIcon />,
+          {
+            name: "users",
+            list: "/users",
+            create: "/users/create",
+            edit: "/users/edit/:id",
+            show: "/users/show/:id",
+            meta: {
+              label: "Users",
+              icon: <PeopleAltTwoToneIcon />,
+            },
           },
-        },
-      ]
-    : [];
+        ]
+      : [];
 
   const settingsResources = canManageSettings
     ? [

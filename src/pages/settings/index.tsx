@@ -50,6 +50,7 @@ type DashboardBranding = {
   logoTextSize: number;
   logoTextWidth: number;
   sidebarWidth: number;
+  sidebarHeight: number;
 };
 
 const DEFAULT_DASHBOARD_BRANDING: DashboardBranding = {
@@ -60,6 +61,7 @@ const DEFAULT_DASHBOARD_BRANDING: DashboardBranding = {
   logoTextSize: 16,
   logoTextWidth: 145,
   sidebarWidth: 240,
+  sidebarHeight: 100,
 };
 
 const isHexColor = (value: string) => /^#([A-Fa-f0-9]{6})$/.test(value.trim());
@@ -155,6 +157,8 @@ export const SettingsPage: React.FC = () => {
             Number(response.data?.dashboardBranding?.logoTextWidth) || 145,
           sidebarWidth:
             Number(response.data?.dashboardBranding?.sidebarWidth) || 240,
+          sidebarHeight:
+            Number(response.data?.dashboardBranding?.sidebarHeight) || 100,
         });
         setLogoIconFile(null);
       } catch {
@@ -287,6 +291,10 @@ export const SettingsPage: React.FC = () => {
           String(brandingInput.logoTextWidth)
         );
         brandingData.append("sidebarWidth", String(brandingInput.sidebarWidth));
+        brandingData.append(
+          "sidebarHeight",
+          String(brandingInput.sidebarHeight)
+        );
         if (useFallback) {
           brandingData.append("dashboardBrandingUpdate", "true");
         }
@@ -692,27 +700,60 @@ export const SettingsPage: React.FC = () => {
                     Sidebar Logo Settings
                   </Typography>
                   {role === "admin" && (
-                    <Box>
-                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                        Sidebar Width: {brandingInput.sidebarWidth}px
-                      </Typography>
-                      <Slider
-                        value={brandingInput.sidebarWidth}
-                        min={200}
-                        max={360}
-                        step={10}
-                        marks={[
-                          { value: 200, label: "Small" },
-                          { value: 280, label: "Medium" },
-                          { value: 360, label: "Large" },
-                        ]}
-                        onChange={(_, value) =>
-                          setBrandingInput((prev) => ({
-                            ...prev,
-                            sidebarWidth: value as number,
-                          }))
-                        }
-                      />
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: {
+                          xs: "1fr",
+                          sm: "repeat(2, minmax(0, 1fr))",
+                        },
+                        gap: 3,
+                      }}
+                    >
+                      <Box>
+                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                          Sidebar Width: {brandingInput.sidebarWidth}px
+                        </Typography>
+                        <Slider
+                          value={brandingInput.sidebarWidth}
+                          min={200}
+                          max={360}
+                          step={10}
+                          marks={[
+                            { value: 200, label: "Small" },
+                            { value: 280, label: "Medium" },
+                            { value: 360, label: "Large" },
+                          ]}
+                          onChange={(_, value) =>
+                            setBrandingInput((prev) => ({
+                              ...prev,
+                              sidebarWidth: value as number,
+                            }))
+                          }
+                        />
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                          Sidebar Height: {brandingInput.sidebarHeight}%
+                        </Typography>
+                        <Slider
+                          value={brandingInput.sidebarHeight}
+                          min={40}
+                          max={100}
+                          step={5}
+                          marks={[
+                            { value: 40, label: "Short" },
+                            { value: 70, label: "Medium" },
+                            { value: 100, label: "Full" },
+                          ]}
+                          onChange={(_, value) =>
+                            setBrandingInput((prev) => ({
+                              ...prev,
+                              sidebarHeight: value as number,
+                            }))
+                          }
+                        />
+                      </Box>
                     </Box>
                   )}
                   <TextField

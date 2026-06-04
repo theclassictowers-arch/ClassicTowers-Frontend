@@ -14,11 +14,11 @@ export const MapTablePage = ({ children }: { children: ReactNode }) => {
           width: "100%",
           minHeight: "100dvh",
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "flex-start",
           px: { xs: 1.5, sm: 2.5, md: 3 },
           pl: { xs: 1.5, sm: 2.5, md: "76px" },
-          py: { xs: 1.5, md: 3 },
+          py: { xs: 1, md: 1.5 },
           pointerEvents: "none",
         }}
       >
@@ -29,7 +29,7 @@ export const MapTablePage = ({ children }: { children: ReactNode }) => {
               md: "100%",
             },
             maxWidth: "1420px",
-            maxHeight: "calc(100dvh - 48px)",
+            maxHeight: "calc(100dvh - 24px)",
             ml: 0,
             overflow: "auto",
             pointerEvents: "auto",
@@ -58,6 +58,19 @@ export const MapTablePage = ({ children }: { children: ReactNode }) => {
               backdropFilter: "blur(6px)",
               border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
               boxShadow: "none",
+            },
+            "& .MuiCardHeader-root": {
+              padding: "8px 12px 4px",
+            },
+            "& .MuiCardHeader-action": {
+              marginTop: 0,
+              marginRight: 0,
+            },
+            "& .MuiCardContent-root": {
+              padding: "4px 8px 8px",
+            },
+            "& .MuiCardContent-root:last-child": {
+              paddingBottom: "8px",
             },
             "& .MuiDataGrid-root": {
               backgroundColor: alpha(theme.palette.background.paper, 0.3),

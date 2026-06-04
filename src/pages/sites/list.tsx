@@ -114,8 +114,8 @@ export const SiteList = () => {
           {...dataGridProps}
           columns={columns}
           autoHeight
-          rowHeight={40}
-          columnHeaderHeight={42}
+          rowHeight={34}
+          columnHeaderHeight={38}
           // Professional Full Client-side Configuration
           // Professional Uncontrolled Configuration for Instant Search
           filterModel={undefined}

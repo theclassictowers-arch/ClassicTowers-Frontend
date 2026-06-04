@@ -243,8 +243,8 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
           loading={isArchivesLoading}
           autoHeight={false}
           density="compact"
-          rowHeight={40}
-          columnHeaderHeight={42}
+          rowHeight={34}
+          columnHeaderHeight={38}
           // Matches Site List: Uncontrolled State for Instant Search
           filterModel={undefined}
           sortModel={undefined}

@@ -35,6 +35,7 @@ const App: React.FC = () => {
   const { dashboardTheme } = useColorModeContext();
   const { branding } = useBrandingContext();
   const sidebarWidth = branding.sidebarWidth;
+  const sidebarHeight = branding.sidebarHeight;
   const { confirm } = useLogoutConfirm();
   const authProvider = useAuthProvider(confirm);
   const resources = role ? getResources(role) : [];
@@ -211,7 +212,7 @@ const App: React.FC = () => {
                 filter: "blur(0)",
               },
             },
-            ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.Mui-disabled)":
+            ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.MuiSwitch-switchBase):not(.MuiSlider-thumb):not(.Mui-disabled)":
               {
                 transform: "perspective(700px) translateZ(0)",
                 transformStyle: "preserve-3d",
@@ -219,7 +220,7 @@ const App: React.FC = () => {
                   "transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease, filter 220ms ease",
                 willChange: "transform",
               },
-            ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.Mui-disabled):hover":
+            ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.MuiSwitch-switchBase):not(.MuiSlider-thumb):not(.Mui-disabled):hover":
               {
                 transform:
                   "perspective(700px) translateY(-2px) translateZ(8px) rotateX(2deg)",
@@ -227,7 +228,7 @@ const App: React.FC = () => {
                   "0 9px 16px rgba(15, 23, 42, 0.16), 0 3px 5px rgba(15, 23, 42, 0.1)",
                 filter: "brightness(1.025)",
               },
-            ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.Mui-disabled):active":
+            ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.MuiSwitch-switchBase):not(.MuiSlider-thumb):not(.Mui-disabled):active":
               {
                 transform:
                   "perspective(700px) translateY(1px) translateZ(1px) rotateX(0deg) scale(0.98)",
@@ -267,13 +268,13 @@ const App: React.FC = () => {
                 WebkitBackdropFilter: "blur(4px)",
               },
             "main.MuiBox-root .MuiDataGrid-cell": {
-              paddingLeft: "8px !important",
-              paddingRight: "8px !important",
-              lineHeight: "1.2 !important",
+              paddingLeft: "5px !important",
+              paddingRight: "5px !important",
+              lineHeight: "1.1 !important",
             },
             "main.MuiBox-root .MuiTableCell-root": {
-              padding: "5px 8px",
-              lineHeight: 1.2,
+              padding: "3px 6px",
+              lineHeight: 1.1,
             },
             "@media (min-width: 900px)": {
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > .MuiBox-root:first-of-type":
@@ -292,7 +293,7 @@ const App: React.FC = () => {
                 position: "fixed !important",
                 top: "0 !important",
                 left: "0 !important",
-                bottom: "0 !important",
+                bottom: "auto !important",
                 width: "52px !important",
                 overflow: "visible !important",
                 zIndex: 1300,
@@ -303,8 +304,9 @@ const App: React.FC = () => {
                   position: "fixed !important",
                   top: "0 !important",
                   left: "0 !important",
-                  bottom: "0 !important",
+                  bottom: "auto !important",
                   width: `${sidebarWidth}px !important`,
+                  height: `${sidebarHeight}dvh !important`,
                   overflow: "visible !important",
                   zIndex: 1300,
                   transition: "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
@@ -328,7 +330,7 @@ const App: React.FC = () => {
                   paddingLeft: `${sidebarWidth + 24}px !important`,
                 },
               ".MuiDrawer-docked": {
-                height: "100dvh !important",
+                height: `${sidebarHeight}dvh !important`,
                 overflow: "visible !important",
               },
               // Fallback: make sidebar visible when refine opens it
@@ -337,16 +339,16 @@ const App: React.FC = () => {
                   minWidth: "52px !important",
                 },
               "nav .MuiDrawer-paper .MuiList-root": {
-                minHeight: "calc(100dvh - 56px) !important",
-                height: "calc(100dvh - 56px) !important",
+                minHeight: `calc(${sidebarHeight}dvh - 56px) !important`,
+                height: `calc(${sidebarHeight}dvh - 56px) !important`,
               },
               ".MuiDrawer-docked .MuiDrawer-paper": {
                 position: "fixed !important",
                 top: "0 !important",
                 left: "0 !important",
                 bottom: "0 !important",
-                height: "100dvh !important",
-                maxHeight: "100dvh !important",
+                height: `${sidebarHeight}dvh !important`,
+                maxHeight: `${sidebarHeight}dvh !important`,
                 overflow: "visible !important",
                 zIndex: "1300 !important",
                 borderRight: "1px solid rgba(148, 163, 184, 0.18)",
@@ -435,7 +437,7 @@ const App: React.FC = () => {
                   marginLeft: "8px",
                 },
               ".MuiDrawer-docked .MuiDrawer-paper > .MuiBox-root": {
-                height: "calc(100dvh - 56px) !important",
+                height: `calc(${sidebarHeight}dvh - 56px) !important`,
                 background: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
                 backgroundColor: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
                 backdropFilter: "blur(6px)",
@@ -500,7 +502,7 @@ const App: React.FC = () => {
                 transform: "translateX(0) !important",
                 alignItems: "stretch",
                 flex: "1 1 auto !important",
-                minHeight: "calc(100dvh - 56px) !important",
+                minHeight: `calc(${sidebarHeight}dvh - 56px) !important`,
                 paddingLeft: "6px !important",
                 paddingRight: "6px !important",
                 animation:
@@ -765,7 +767,7 @@ const App: React.FC = () => {
                   transform: "translateX(0) !important",
                   alignItems: "stretch !important",
                   flex: "1 1 auto !important",
-                  minHeight: "calc(100dvh - 56px) !important",
+                  minHeight: `calc(${sidebarHeight}dvh - 56px) !important`,
                   paddingLeft: "6px !important",
                   paddingRight: "6px !important",
                 },

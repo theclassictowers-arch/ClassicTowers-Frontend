@@ -79,8 +79,8 @@ export const LimitsList = () => {
           {...dataGridProps}
           columns={columns}
           autoHeight
-          rowHeight={40}
-          columnHeaderHeight={42}
+          rowHeight={34}
+          columnHeaderHeight={38}
           // Professional Uncontrolled Configuration for Instant Search
           filterModel={undefined}
           sortModel={undefined}
