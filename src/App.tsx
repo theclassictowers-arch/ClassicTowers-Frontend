@@ -13,7 +13,11 @@ import routerProvider, {
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
 
-import { useAuthContext, useLogoutConfirm } from "./contexts";
+import {
+  useAuthContext,
+  useColorModeContext,
+  useLogoutConfirm,
+} from "./contexts";
 import Routes from "./routes";
 import {
   useAuthProvider,
@@ -27,6 +31,7 @@ import { getResources } from "./utils";
 
 const App: React.FC = () => {
   const { role } = useAuthContext();
+  const { dashboardTheme } = useColorModeContext();
   const { confirm } = useLogoutConfirm();
   const authProvider = useAuthProvider(confirm);
   const resources = role ? getResources(role) : [];
@@ -54,7 +59,8 @@ const App: React.FC = () => {
                 ? "sidebar-menu-char sidebar-menu-space"
                 : "sidebar-menu-char";
             characterNode.style.setProperty("--char-index", String(index));
-            characterNode.textContent = character === " " ? "\u00a0" : character;
+            characterNode.textContent =
+              character === " " ? "\u00a0" : character;
             label.appendChild(characterNode);
           });
         });
@@ -74,13 +80,22 @@ const App: React.FC = () => {
         <CssBaseline />
         <GlobalStyles
           styles={{
-            html: { WebkitFontSmoothing: "auto" },
-            body: { margin: 0, padding: 0 },
-            "#root": { minHeight: "100dvh" },
+            html: {
+              WebkitFontSmoothing: "auto",
+              backgroundColor: dashboardTheme.backgroundColor,
+            },
+            body: {
+              margin: 0,
+              padding: 0,
+              backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+            },
+            "#root": {
+              minHeight: "100dvh",
+              backgroundColor: dashboardTheme.backgroundColor,
+            },
             "@keyframes sidebarIconTwist": {
               "0%": {
-                transform:
-                  "translateX(0) translateZ(0) rotateY(0deg) scale(1)",
+                transform: "translateX(0) translateZ(0) rotateY(0deg) scale(1)",
               },
               "55%": {
                 transform:
@@ -119,8 +134,7 @@ const App: React.FC = () => {
                 opacity: 1,
               },
               "100%": {
-                transform:
-                  "translateY(0) translateZ(0) rotateX(0deg) scale(1)",
+                transform: "translateY(0) translateZ(0) rotateX(0deg) scale(1)",
                 opacity: 1,
               },
             },
@@ -184,7 +198,12 @@ const App: React.FC = () => {
               padding: "0 !important",
               margin: "0 !important",
               overflow: "hidden",
+              backgroundColor: `${dashboardTheme.backgroundColor} !important`,
             },
+            ".MuiDrawer-paper, .MuiDrawer-paper .MuiList-root, .MuiDrawer-paper .MuiListItem-root":
+              {
+                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+              },
             "@media (min-width: 900px)": {
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > .MuiBox-root:first-of-type":
                 {
@@ -206,20 +225,19 @@ const App: React.FC = () => {
                 width: "52px !important",
                 overflow: "visible !important",
                 zIndex: 1300,
-                transition:
-                  "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
+                transition: "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
               },
-              ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) > nav": {
-                position: "fixed !important",
-                top: "0 !important",
-                left: "0 !important",
-                bottom: "0 !important",
-                width: "240px !important",
-                overflow: "visible !important",
-                zIndex: 1300,
-                transition:
-                  "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
-              },
+              ".MuiBox-root:has(> nav [data-sidebar-collapsed='false']) > nav":
+                {
+                  position: "fixed !important",
+                  top: "0 !important",
+                  left: "0 !important",
+                  bottom: "0 !important",
+                  width: "240px !important",
+                  overflow: "visible !important",
+                  zIndex: 1300,
+                  transition: "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
+                },
               ".MuiBox-root:has(> nav [data-sidebar-collapsed='true']) > main.MuiBox-root":
                 {
                   width: "100% !important",
@@ -243,9 +261,10 @@ const App: React.FC = () => {
                 overflow: "visible !important",
               },
               // Fallback: make sidebar visible when refine opens it
-              "nav .MuiDrawer-paper[aria-hidden='false'], nav .MuiDrawer-paper": {
-                minWidth: "52px !important",
-              },
+              "nav .MuiDrawer-paper[aria-hidden='false'], nav .MuiDrawer-paper":
+                {
+                  minWidth: "52px !important",
+                },
               "nav .MuiDrawer-paper .MuiList-root": {
                 minHeight: "calc(100dvh - 56px) !important",
                 height: "calc(100dvh - 56px) !important",
@@ -260,8 +279,8 @@ const App: React.FC = () => {
                 overflow: "visible !important",
                 zIndex: "1300 !important",
                 borderRight: "1px solid rgba(148, 163, 184, 0.18)",
-                background: "rgba(255, 255, 255, 0.12) !important",
-                backgroundColor: "rgba(255, 255, 255, 0.12) !important",
+                background: `${dashboardTheme.backgroundColor} !important`,
+                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
                 backdropFilter: "blur(6px)",
                 boxShadow: "6px 0 18px rgba(15, 23, 42, 0.06)",
                 transition:
@@ -281,40 +300,41 @@ const App: React.FC = () => {
                 width: "52px !important",
                 overflow: "visible !important",
                 borderRight: "0 !important",
-                background: "transparent !important",
-                backgroundColor: "transparent !important",
-                backdropFilter: "none !important",
+                background: `${dashboardTheme.backgroundColor} !important`,
+                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
                 boxShadow: "none !important",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper": {
                 width: "240px !important",
                 overflow: "hidden !important",
               },
-              "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper *":
-                {
-                  boxSizing: "border-box",
-                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper *": {
+                boxSizing: "border-box",
+              },
               // Sidebar header only - do not apply this to Drawer paper
-              ".MuiDrawer-docked .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)": {
-                height: "56px !important",
-                minHeight: "56px !important",
-                paddingLeft: "0 !important",
-                paddingRight: "0 !important",
-                background: "rgba(255, 255, 255, 0.12) !important",
-                backgroundColor: "rgba(255, 255, 255, 0.12) !important",
-                backdropFilter: "blur(6px)",
-                borderBottom: "1px solid rgba(148, 163, 184, 0.22)",
-              },
-              "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)": {
-                paddingLeft: "14px !important",
-                paddingRight: "10px !important",
-                justifyContent: "space-between !important",
-              },
-              "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)": {
-                borderBottom: "0 !important",
-                borderRight: "1px solid rgba(148, 163, 184, 0.18)",
-                boxShadow: "6px 0 18px rgba(15, 23, 42, 0.06)",
-              },
+              ".MuiDrawer-docked .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)":
+                {
+                  height: "56px !important",
+                  minHeight: "56px !important",
+                  paddingLeft: "0 !important",
+                  paddingRight: "0 !important",
+                  background: `${dashboardTheme.backgroundColor} !important`,
+                  backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+                  backdropFilter: "blur(6px)",
+                  borderBottom: "1px solid rgba(148, 163, 184, 0.22)",
+                },
+              "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)":
+                {
+                  paddingLeft: "14px !important",
+                  paddingRight: "10px !important",
+                  justifyContent: "space-between !important",
+                },
+              "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)":
+                {
+                  borderBottom: "0 !important",
+                  borderRight: "1px solid rgba(148, 163, 184, 0.18)",
+                  boxShadow: "6px 0 18px rgba(15, 23, 42, 0.06)",
+                },
               ".MuiDrawer-docked .MuiPaper-root .MuiIconButton-root": {
                 width: "34px",
                 height: "34px",
@@ -338,16 +358,15 @@ const App: React.FC = () => {
                 },
               ".MuiDrawer-docked .MuiDrawer-paper > .MuiBox-root": {
                 height: "calc(100dvh - 56px) !important",
-                background: "rgba(255, 255, 255, 0.12) !important",
-                backgroundColor: "rgba(255, 255, 255, 0.12) !important",
+                background: `${dashboardTheme.backgroundColor} !important`,
+                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
                 backdropFilter: "blur(6px)",
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiBox-root":
                 {
                   overflow: "visible !important",
-                  background: "transparent !important",
-                  backgroundColor: "transparent !important",
-                  backdropFilter: "none !important",
+                  background: `${dashboardTheme.backgroundColor} !important`,
+                  backgroundColor: `${dashboardTheme.backgroundColor} !important`,
                 },
               "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper > .MuiBox-root":
                 {
@@ -362,13 +381,13 @@ const App: React.FC = () => {
                 gap: "3px",
                 paddingTop: "4px !important",
                 paddingBottom: "4px !important",
-                background: "transparent !important",
-                backgroundColor: "transparent !important",
+                background: `${dashboardTheme.backgroundColor} !important`,
+                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
                 backdropFilter: "none",
               },
               ".MuiDrawer-docked .MuiListItem-root": {
-                background: "transparent !important",
-                backgroundColor: "transparent !important",
+                background: `${dashboardTheme.backgroundColor} !important`,
+                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
                 minHeight: "46px !important",
                 height: "46px !important",
                 padding: "0 !important",
@@ -377,21 +396,22 @@ const App: React.FC = () => {
                 paddingLeft: "0 !important",
                 paddingRight: "0 !important",
               },
-              ".MuiDrawer-docked .MuiList-root > .MuiListItem-root:last-child": {
-                marginTop: "auto !important",
-                marginBottom: "0 !important",
-              },
+              ".MuiDrawer-docked .MuiList-root > .MuiListItem-root:last-child":
+                {
+                  marginTop: "auto !important",
+                  marginBottom: "0 !important",
+                },
               ".MuiDrawer-docked .MuiList-root > *:last-child": {
                 marginTop: "auto !important",
               },
-              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiList-root": {
-                alignItems: "center",
-                opacity: 0,
-                pointerEvents: "none",
-                transform: "translateX(-14px)",
-                transition:
-                  "opacity 180ms ease, transform 180ms ease",
-              },
+              "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiList-root":
+                {
+                  alignItems: "center",
+                  opacity: 0,
+                  pointerEvents: "none",
+                  transform: "translateX(-14px)",
+                  transition: "opacity 180ms ease, transform 180ms ease",
+                },
               "nav:has([data-sidebar-collapsed='false']) .MuiList-root": {
                 display: "flex !important",
                 opacity: "1 !important",
@@ -416,8 +436,8 @@ const App: React.FC = () => {
                 paddingTop: "0 !important",
                 paddingBottom: "0 !important",
                 border: "1px solid rgba(15, 23, 42, 0.14)",
-                background: "transparent !important",
-                backgroundColor: "transparent !important",
+                background: `${dashboardTheme.backgroundColor} !important`,
+                backgroundColor: `${dashboardTheme.backgroundColor} !important`,
                 backdropFilter: "none",
                 boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.18)",
                 perspective: "900px",
@@ -581,7 +601,7 @@ const App: React.FC = () => {
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
                   lineHeight: "1 !important",
-              },
+                },
               ".MuiDrawer-docked .MuiListItemButton-root:hover": {
                 backgroundColor: "rgba(255, 255, 255, 0.12) !important",
                 borderColor: "currentColor",

@@ -2,10 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useList } from "@refinedev/core";
 import { Box } from "@mui/material";
 import { io } from "socket.io-client";
-import {
-  SystemAlertsTable,
-  SitesMap,
-} from "../../components/dashboard";
+import { SystemAlertsTable, SitesMap } from "../../components/dashboard";
 import { useAuthContext } from "../../contexts";
 
 const { VITE_API_BASE_URL } = import.meta.env;

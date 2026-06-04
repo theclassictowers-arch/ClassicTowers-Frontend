@@ -219,14 +219,9 @@ export const createAppTheme = (
   mode: "light" | "dark",
   dashboardThemeInput?: Partial<DashboardThemeColors> | null
 ) => {
-  // Keep original app look when no explicit custom theme is active.
-  if (!dashboardThemeInput || isDefaultDashboardTheme(dashboardThemeInput)) {
-    return mode === "light"
-      ? LightThemeWithResponsiveFontSizes
-      : DarkThemeWithResponsiveFontSizes;
-  }
-
-  const dashboardTheme = normalizeDashboardTheme(dashboardThemeInput);
+  const dashboardTheme = normalizeDashboardTheme(
+    dashboardThemeInput || DEFAULT_DASHBOARD_THEME
+  );
   const primaryColor = dashboardTheme.primaryColor;
   const backgroundColor = dashboardTheme.backgroundColor;
   const textColor = dashboardTheme.textColor;
