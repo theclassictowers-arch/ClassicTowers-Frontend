@@ -24,7 +24,6 @@ import {
 } from "../../contexts";
 import { axiosInstance } from "../../utils";
 import { formStyles } from "../auth/styles";
-import { MapTablePage } from "../../components/map-table-page";
 import {
   DASHBOARD_THEME_PRESETS,
   DEFAULT_DASHBOARD_THEME,
@@ -289,7 +288,19 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <MapTablePage>
+    <Box
+      className="map-table-page-shell"
+      sx={{
+        width: "100%",
+        minHeight: "100dvh",
+        boxSizing: "border-box",
+        overflowY: "auto",
+        px: { xs: 0.75, sm: 1.25, md: 1.5 },
+        pl: { xs: 0.75, sm: 1.25, md: "76px" },
+        py: { xs: 0.75, sm: 1.25 },
+        backgroundColor: "background.default",
+      }}
+    >
       <Box
         component="form"
         sx={{
@@ -655,6 +666,6 @@ export const SettingsPage: React.FC = () => {
           </Stack>
         )}
       </Box>
-    </MapTablePage>
+    </Box>
   );
 };

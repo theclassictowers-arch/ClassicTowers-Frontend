@@ -200,6 +200,20 @@ const App: React.FC = () => {
               overflow: "hidden",
               backgroundColor: `${dashboardTheme.backgroundColor} !important`,
             },
+            "main.MuiBox-root .MuiPaper-root:not(.MuiDrawer-paper), main.MuiBox-root .MuiCard-root, main.MuiBox-root form":
+              {
+                background: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
+                backgroundColor: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
+                backdropFilter: "blur(6px)",
+                WebkitBackdropFilter: "blur(6px)",
+                borderColor: "rgba(148, 163, 184, 0.22)",
+              },
+            "main.MuiBox-root .MuiDataGrid-root, main.MuiBox-root .MuiDataGrid-toolbarContainer, main.MuiBox-root .MuiDataGrid-columnHeaders, main.MuiBox-root .MuiDataGrid-row":
+              {
+                backgroundColor: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 30%, transparent) !important`,
+                backdropFilter: "blur(4px)",
+                WebkitBackdropFilter: "blur(4px)",
+              },
             ".MuiDrawer-paper, .MuiDrawer-paper .MuiList-root, .MuiDrawer-paper .MuiListItem-root":
               {
                 backgroundColor: `${dashboardTheme.backgroundColor} !important`,
