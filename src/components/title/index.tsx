@@ -97,11 +97,22 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
               noWrap
               sx={{
                 maxWidth: 145,
-                fontWeight: 800,
-                lineHeight: 1.1,
-                letterSpacing: 0.2,
-                color: "text.primary",
-                textShadow: `0 1px 2px ${theme.palette.divider}`,
+                px: 0.45,
+                py: 0.1,
+                bgcolor: "#ffc107",
+                color: theme.palette.mode === "light" ? "#111111" : "#ffffff",
+                fontFamily:
+                  "\"Arial Narrow\", \"Roboto Condensed\", Arial, sans-serif",
+                fontSize: "0.98rem",
+                fontStretch: "condensed",
+                fontWeight: 400,
+                lineHeight: 1.05,
+                letterSpacing: 0.45,
+                textTransform: "uppercase",
+                textShadow:
+                  theme.palette.mode === "light"
+                    ? "0.35px 0 #ffffff"
+                    : "0.35px 0 #111111",
               }}
             >
               {branding.logoText}

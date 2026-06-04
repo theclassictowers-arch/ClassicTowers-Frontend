@@ -8,9 +8,13 @@ import {
   MenuItem,
   Select,
   Stack,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import { alpha } from "@mui/material/styles";
 import { useNotification } from "@refinedev/core";
 import {
@@ -52,7 +56,8 @@ const areSameTheme = (
   second: DashboardThemeColors
 ) =>
   first.primaryColor.toLowerCase() === second.primaryColor.toLowerCase() &&
-  first.backgroundColor.toLowerCase() === second.backgroundColor.toLowerCase() &&
+  first.backgroundColor.toLowerCase() ===
+    second.backgroundColor.toLowerCase() &&
   first.textColor.toLowerCase() === second.textColor.toLowerCase();
 
 export const SettingsPage: React.FC = () => {
@@ -68,13 +73,17 @@ export const SettingsPage: React.FC = () => {
   const [selectedTargetUserId, setSelectedTargetUserId] = useState(
     currentUserId || ""
   );
-  const [themeInput, setThemeInput] = useState<DashboardThemeColors>(dashboardTheme);
+  const [themeInput, setThemeInput] =
+    useState<DashboardThemeColors>(dashboardTheme);
   const [loadingTheme, setLoadingTheme] = useState(false);
   const [brandingInput, setBrandingInput] = useState<DashboardBranding>(
     DEFAULT_DASHBOARD_BRANDING
   );
   const [logoIconFile, setLogoIconFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [activeSection, setActiveSection] = useState<"colors" | "logo">(
+    "colors"
+  );
 
   useEffect(() => {
     setThemeInput(dashboardTheme);
@@ -169,8 +178,63 @@ export const SettingsPage: React.FC = () => {
     return true;
   };
 
-  const handleSave = async () => {
+  const handleSaveColors = async () => {
     if (!validateTheme()) return;
+    if (!targetUserId) return;
+
+    const payload = normalizeDashboardTheme(themeInput);
+    setIsSaving(true);
+    try {
+      try {
+        await axiosInstance.patch(
+          `/users/${targetUserId}/dashboard-theme`,
+          payload
+        );
+      } catch (error: unknown) {
+        const statusCode = (error as { response?: { status?: number } })
+          ?.response?.status;
+        if (statusCode !== 404) {
+          throw error;
+        }
+
+        await axiosInstance.patch(`/users/${targetUserId}`, {
+          dashboardTheme: payload,
+        });
+      }
+
+      setThemeInput(payload);
+      if (targetUserId === currentUserId) {
+        setDashboardTheme(payload);
+      }
+      setOrganizations((prev) =>
+        prev.map((org) =>
+          org._id === targetUserId
+            ? {
+                ...org,
+                dashboardTheme: payload,
+              }
+            : org
+        )
+      );
+
+      open?.({
+        type: "success",
+        message: "Color settings saved",
+        description: "Dashboard colors updated successfully.",
+      });
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      open?.({
+        type: "error",
+        message: "Failed to save settings",
+        description: err.response?.data?.message || "Please try again.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveBranding = async () => {
     if (!targetUserId) return;
     if (!brandingInput.logoText.trim()) {
       open?.({
@@ -181,64 +245,42 @@ export const SettingsPage: React.FC = () => {
       return;
     }
 
-    const payload = normalizeDashboardTheme(themeInput);
     setIsSaving(true);
     try {
-      try {
-        await axiosInstance.patch(`/users/${targetUserId}/dashboard-theme`, payload);
-      } catch (error: unknown) {
-        const statusCode = (error as { response?: { status?: number } })?.response
-          ?.status;
-        if (statusCode !== 404) {
-          throw error;
-        }
-
-        await axiosInstance.patch(`/users/${targetUserId}`, {
-          dashboardTheme: payload,
-        });
-      }
-
       const brandingData = new FormData();
       brandingData.append("logoText", brandingInput.logoText.trim());
       if (logoIconFile) {
         brandingData.append("logoIcon", logoIconFile);
       }
-      const brandingResponse = await axiosInstance.patch(
+      const response = await axiosInstance.patch(
         `/users/${targetUserId}/dashboard-branding`,
         brandingData
       );
-      const savedBranding =
-        brandingResponse.data?.dashboardBranding || brandingInput;
+      const savedBranding = response.data?.dashboardBranding || brandingInput;
 
-      setThemeInput(payload);
-      if (targetUserId === currentUserId) {
-        setDashboardTheme(payload);
-        setBranding(savedBranding);
-      }
       setBrandingInput(savedBranding);
       setLogoIconFile(null);
+      if (targetUserId === currentUserId) {
+        setBranding(savedBranding);
+      }
       setOrganizations((prev) =>
         prev.map((org) =>
           org._id === targetUserId
-            ? {
-                ...org,
-                dashboardTheme: payload,
-                dashboardBranding: savedBranding,
-              }
+            ? { ...org, dashboardBranding: savedBranding }
             : org
         )
       );
 
       open?.({
         type: "success",
-        message: "Settings saved",
-        description: "Theme and sidebar branding updated successfully.",
+        message: "Logo settings saved",
+        description: "Sidebar logo and text updated successfully.",
       });
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
       open?.({
         type: "error",
-        message: "Failed to save settings",
+        message: "Failed to save logo settings",
         description: err.response?.data?.message || "Please try again.",
       });
     } finally {
@@ -253,7 +295,9 @@ export const SettingsPage: React.FC = () => {
           width: "100%",
           height: "100dvh",
           overflowY: "auto",
-          px: { xs: 0.75, sm: 1.25, md: 2 },
+          boxSizing: "border-box",
+          pl: { xs: 0.75, sm: 1.25, md: "76px" },
+          pr: { xs: 0.75, sm: 1.25, md: 2 },
           py: { xs: 0.75, sm: 1.25 },
         }}
       >
@@ -262,9 +306,9 @@ export const SettingsPage: React.FC = () => {
           sx={{
             ...formStyles.container,
             m: 0,
-            ml: { xs: 0, md: "64px" },
-            width: { xs: "100%", md: "calc(100% - 64px)" },
+            width: "100%",
             maxWidth: "none",
+            boxSizing: "border-box",
             minHeight: "calc(100dvh - 20px)",
             px: { xs: 1.5, sm: 2, md: 2.5 },
             py: { xs: 1.5, sm: 2 },
@@ -273,7 +317,11 @@ export const SettingsPage: React.FC = () => {
           }}
           onSubmit={(event) => {
             event.preventDefault();
-            handleSave();
+            if (activeSection === "colors") {
+              handleSaveColors();
+            } else {
+              handleSaveBranding();
+            }
           }}
         >
           <Typography variant="h4" gutterBottom sx={formStyles.title}>
@@ -288,7 +336,9 @@ export const SettingsPage: React.FC = () => {
                 label="Target"
                 value={selectedTargetUserId}
                 disabled={loadingOrganizations}
-                onChange={(event) => setSelectedTargetUserId(String(event.target.value))}
+                onChange={(event) =>
+                  setSelectedTargetUserId(String(event.target.value))
+                }
               >
                 <MenuItem value={currentUserId}>My Account (Admin)</MenuItem>
                 {organizations.map((org) => (
@@ -306,237 +356,303 @@ export const SettingsPage: React.FC = () => {
             </Box>
           ) : (
             <Stack spacing={1.5} sx={{ mt: 1.5 }}>
-              <Box>
-                <Typography
-                  variant="subtitle2"
-                  sx={{ mb: 1, fontWeight: 700, color: "text.primary" }}
-                >
-                  Theme Presets
-                </Typography>
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      "repeat(auto-fit, minmax(min(180px, 100%), 1fr))",
-                    gap: 0.75,
-                  }}
-                >
-                  {DASHBOARD_THEME_PRESETS.map((preset) => {
-                    const isSelected = areSameTheme(
-                      normalizeDashboardTheme(themeInput),
-                      preset.colors
-                    );
-
-                    return (
-                      <Button
-                        key={preset.id}
-                        type="button"
-                        onClick={() => handleSelectPreset(preset.colors)}
-                        sx={{
-                          alignItems: "stretch",
-                          border: "1px solid",
-                          borderColor: isSelected ? "primary.main" : "divider",
-                          borderRadius: 1,
-                          color: "text.primary",
-                          justifyContent: "flex-start",
-                          minHeight: 68,
-                          p: 0.75,
-                          textAlign: "left",
-                          textTransform: "none",
-                          bgcolor: isSelected
-                            ? (theme) => alpha(theme.palette.primary.main, 0.08)
-                            : "background.paper",
-                          "&:hover": {
-                            borderColor: "primary.main",
-                            bgcolor: (theme) =>
-                              alpha(theme.palette.primary.main, 0.1),
-                          },
-                        }}
-                      >
-                        <Stack spacing={0.75} sx={{ width: "100%" }}>
-                          <Stack direction="row" spacing={0.5}>
-                            {Object.values(preset.colors).map((color) => (
-                              <Box
-                                key={`${preset.id}-${color}`}
-                                sx={{
-                                  width: 24,
-                                  height: 24,
-                                  borderRadius: 0.75,
-                                  bgcolor: color,
-                                  border: "1px solid",
-                                  borderColor: alpha("#000000", 0.16),
-                                }}
-                              />
-                            ))}
-                          </Stack>
-                          <Box>
-                            <Typography
-                              variant="body2"
-                              sx={{ fontWeight: 700, lineHeight: 1.2 }}
-                            >
-                              {preset.name}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                color: "text.secondary",
-                                display: "block",
-                                lineHeight: 1.25,
-                              }}
-                            >
-                              {preset.description}
-                            </Typography>
-                          </Box>
-                        </Stack>
-                      </Button>
-                    );
-                  })}
-                </Box>
-              </Box>
-
-              <Typography
-                variant="subtitle2"
-                sx={{ fontWeight: 700, color: "text.primary" }}
-              >
-                Custom Theme
-              </Typography>
-              <Box
+              <Tabs
+                value={activeSection}
+                onChange={(_, value: "colors" | "logo") =>
+                  setActiveSection(value)
+                }
+                variant="fullWidth"
                 sx={{
-                  display: "grid",
-                  gridTemplateColumns:
-                    "repeat(auto-fit, minmax(min(260px, 100%), 1fr))",
-                  gap: 1,
+                  minHeight: 44,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 1.5,
+                  bgcolor: "background.paper",
+                  "& .MuiTab-root": {
+                    minHeight: 44,
+                    fontWeight: 700,
+                    textTransform: "none",
+                  },
                 }}
               >
-                <Stack direction="row" spacing={0.75}>
-                <TextField
-                  fullWidth
-                  label="Primary Color"
-                  value={themeInput.primaryColor}
-                  onChange={(event) =>
-                    handleChangeThemeInput("primaryColor", event.target.value)
-                  }
-                  InputProps={{ sx: { borderRadius: 2 } }}
+                <Tab
+                  value="colors"
+                  icon={<PaletteOutlinedIcon />}
+                  iconPosition="start"
+                  label="Color Settings"
                 />
-                <TextField
-                  type="color"
-                  value={
-                    isHexColor(themeInput.primaryColor)
-                      ? themeInput.primaryColor
-                      : DEFAULT_DASHBOARD_THEME.primaryColor
-                  }
-                  onChange={(event) =>
-                    handleChangeThemeInput("primaryColor", event.target.value)
-                  }
-                  sx={{ width: { xs: "100%", sm: 72 } }}
-                  inputProps={{ "aria-label": "Pick primary color" }}
+                <Tab
+                  value="logo"
+                  icon={<ImageOutlinedIcon />}
+                  iconPosition="start"
+                  label="Logo Settings"
                 />
-                </Stack>
-                <Stack direction="row" spacing={0.75}>
-                <TextField
-                  fullWidth
-                  label="Background Color"
-                  value={themeInput.backgroundColor}
-                  onChange={(event) =>
-                    handleChangeThemeInput("backgroundColor", event.target.value)
-                  }
-                  InputProps={{ sx: { borderRadius: 2 } }}
-                />
-                <TextField
-                  type="color"
-                  value={
-                    isHexColor(themeInput.backgroundColor)
-                      ? themeInput.backgroundColor
-                      : DEFAULT_DASHBOARD_THEME.backgroundColor
-                  }
-                  onChange={(event) =>
-                    handleChangeThemeInput("backgroundColor", event.target.value)
-                  }
-                  sx={{ width: { xs: "100%", sm: 72 } }}
-                  inputProps={{ "aria-label": "Pick background color" }}
-                />
-                </Stack>
-                <Stack direction="row" spacing={0.75}>
-                <TextField
-                  fullWidth
-                  label="Text Color"
-                  value={themeInput.textColor}
-                  onChange={(event) =>
-                    handleChangeThemeInput("textColor", event.target.value)
-                  }
-                  InputProps={{ sx: { borderRadius: 2 } }}
-                />
-                <TextField
-                  type="color"
-                  value={
-                    isHexColor(themeInput.textColor)
-                      ? themeInput.textColor
-                      : DEFAULT_DASHBOARD_THEME.textColor
-                  }
-                  onChange={(event) =>
-                    handleChangeThemeInput("textColor", event.target.value)
-                  }
-                  sx={{ width: { xs: "100%", sm: 72 } }}
-                  inputProps={{ "aria-label": "Pick text color" }}
-                />
-                </Stack>
-              </Box>
+              </Tabs>
 
-              <Typography
-                variant="subtitle2"
-                sx={{ pt: 1, fontWeight: 700, color: "text.primary" }}
-              >
-                Sidebar Branding
-              </Typography>
-              <TextField
-                fullWidth
-                label="Logo Text"
-                value={brandingInput.logoText}
-                inputProps={{ maxLength: 60 }}
-                helperText="This is displayed as text beside the logo icon."
-                onChange={(event) =>
-                  setBrandingInput((prev) => ({
-                    ...prev,
-                    logoText: event.target.value,
-                  }))
-                }
-                InputProps={{ sx: { borderRadius: 2 } }}
-              />
-              <Button
-                component="label"
-                variant="outlined"
-                sx={{ textTransform: "none" }}
-              >
-                {logoIconFile ? logoIconFile.name : "Choose Logo Icon Image"}
-                <input
-                  hidden
-                  type="file"
-                  accept="image/png,image/jpeg"
-                  onChange={(event) =>
-                    setLogoIconFile(event.target.files?.[0] || null)
-                  }
-                />
-              </Button>
-              {(logoIconFile || brandingInput.logoIcon) && (
-                <Box
-                  component="img"
-                  src={
-                    logoIconFile
-                      ? URL.createObjectURL(logoIconFile)
-                      : `${import.meta.env.VITE_API_BASE_URL}${brandingInput.logoIcon}`
-                  }
-                  alt="Logo icon preview"
-                  sx={{
-                    width: 64,
-                    height: 64,
-                    objectFit: "contain",
-                    alignSelf: "center",
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 1,
-                    p: 0.5,
-                  }}
-                />
+              {activeSection === "colors" && (
+                <>
+                  <Box>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ mb: 1, fontWeight: 700, color: "text.primary" }}
+                    >
+                      Theme Presets
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns:
+                          "repeat(auto-fit, minmax(min(180px, 100%), 1fr))",
+                        gap: 0.75,
+                      }}
+                    >
+                      {DASHBOARD_THEME_PRESETS.map((preset) => {
+                        const isSelected = areSameTheme(
+                          normalizeDashboardTheme(themeInput),
+                          preset.colors
+                        );
+
+                        return (
+                          <Button
+                            key={preset.id}
+                            type="button"
+                            onClick={() => handleSelectPreset(preset.colors)}
+                            sx={{
+                              alignItems: "stretch",
+                              border: "1px solid",
+                              borderColor: isSelected
+                                ? "primary.main"
+                                : "divider",
+                              borderRadius: 1,
+                              color: "text.primary",
+                              justifyContent: "flex-start",
+                              minHeight: 68,
+                              p: 0.75,
+                              textAlign: "left",
+                              textTransform: "none",
+                              bgcolor: isSelected
+                                ? (theme) =>
+                                    alpha(theme.palette.primary.main, 0.08)
+                                : "background.paper",
+                              "&:hover": {
+                                borderColor: "primary.main",
+                                bgcolor: (theme) =>
+                                  alpha(theme.palette.primary.main, 0.1),
+                              },
+                            }}
+                          >
+                            <Stack spacing={0.75} sx={{ width: "100%" }}>
+                              <Stack direction="row" spacing={0.5}>
+                                {Object.values(preset.colors).map((color) => (
+                                  <Box
+                                    key={`${preset.id}-${color}`}
+                                    sx={{
+                                      width: 24,
+                                      height: 24,
+                                      borderRadius: 0.75,
+                                      bgcolor: color,
+                                      border: "1px solid",
+                                      borderColor: alpha("#000000", 0.16),
+                                    }}
+                                  />
+                                ))}
+                              </Stack>
+                              <Box>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontWeight: 700, lineHeight: 1.2 }}
+                                >
+                                  {preset.name}
+                                </Typography>
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: "text.secondary",
+                                    display: "block",
+                                    lineHeight: 1.25,
+                                  }}
+                                >
+                                  {preset.description}
+                                </Typography>
+                              </Box>
+                            </Stack>
+                          </Button>
+                        );
+                      })}
+                    </Box>
+                  </Box>
+
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ fontWeight: 700, color: "text.primary" }}
+                  >
+                    Custom Theme
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(min(260px, 100%), 1fr))",
+                      gap: 1,
+                    }}
+                  >
+                    <Stack direction="row" spacing={0.75}>
+                      <TextField
+                        fullWidth
+                        label="Primary Color"
+                        value={themeInput.primaryColor}
+                        onChange={(event) =>
+                          handleChangeThemeInput(
+                            "primaryColor",
+                            event.target.value
+                          )
+                        }
+                        InputProps={{ sx: { borderRadius: 2 } }}
+                      />
+                      <TextField
+                        type="color"
+                        value={
+                          isHexColor(themeInput.primaryColor)
+                            ? themeInput.primaryColor
+                            : DEFAULT_DASHBOARD_THEME.primaryColor
+                        }
+                        onChange={(event) =>
+                          handleChangeThemeInput(
+                            "primaryColor",
+                            event.target.value
+                          )
+                        }
+                        sx={{ width: { xs: "100%", sm: 72 } }}
+                        inputProps={{ "aria-label": "Pick primary color" }}
+                      />
+                    </Stack>
+                    <Stack direction="row" spacing={0.75}>
+                      <TextField
+                        fullWidth
+                        label="Background Color"
+                        value={themeInput.backgroundColor}
+                        onChange={(event) =>
+                          handleChangeThemeInput(
+                            "backgroundColor",
+                            event.target.value
+                          )
+                        }
+                        InputProps={{ sx: { borderRadius: 2 } }}
+                      />
+                      <TextField
+                        type="color"
+                        value={
+                          isHexColor(themeInput.backgroundColor)
+                            ? themeInput.backgroundColor
+                            : DEFAULT_DASHBOARD_THEME.backgroundColor
+                        }
+                        onChange={(event) =>
+                          handleChangeThemeInput(
+                            "backgroundColor",
+                            event.target.value
+                          )
+                        }
+                        sx={{ width: { xs: "100%", sm: 72 } }}
+                        inputProps={{ "aria-label": "Pick background color" }}
+                      />
+                    </Stack>
+                    <Stack direction="row" spacing={0.75}>
+                      <TextField
+                        fullWidth
+                        label="Text Color"
+                        value={themeInput.textColor}
+                        onChange={(event) =>
+                          handleChangeThemeInput(
+                            "textColor",
+                            event.target.value
+                          )
+                        }
+                        InputProps={{ sx: { borderRadius: 2 } }}
+                      />
+                      <TextField
+                        type="color"
+                        value={
+                          isHexColor(themeInput.textColor)
+                            ? themeInput.textColor
+                            : DEFAULT_DASHBOARD_THEME.textColor
+                        }
+                        onChange={(event) =>
+                          handleChangeThemeInput(
+                            "textColor",
+                            event.target.value
+                          )
+                        }
+                        sx={{ width: { xs: "100%", sm: 72 } }}
+                        inputProps={{ "aria-label": "Pick text color" }}
+                      />
+                    </Stack>
+                  </Box>
+                </>
+              )}
+
+              {activeSection === "logo" && (
+                <>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ fontWeight: 700, color: "text.primary" }}
+                  >
+                    Sidebar Logo Settings
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    label="Logo Text"
+                    value={brandingInput.logoText}
+                    inputProps={{ maxLength: 60 }}
+                    helperText="This is displayed as text beside the logo icon."
+                    onChange={(event) =>
+                      setBrandingInput((prev) => ({
+                        ...prev,
+                        logoText: event.target.value,
+                      }))
+                    }
+                    InputProps={{ sx: { borderRadius: 2 } }}
+                  />
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    sx={{ textTransform: "none" }}
+                  >
+                    {logoIconFile
+                      ? logoIconFile.name
+                      : "Choose Logo Icon Image"}
+                    <input
+                      hidden
+                      type="file"
+                      accept="image/png,image/jpeg"
+                      onChange={(event) =>
+                        setLogoIconFile(event.target.files?.[0] || null)
+                      }
+                    />
+                  </Button>
+                  {(logoIconFile || brandingInput.logoIcon) && (
+                    <Box
+                      component="img"
+                      src={
+                        logoIconFile
+                          ? URL.createObjectURL(logoIconFile)
+                          : `${import.meta.env.VITE_API_BASE_URL}${
+                              brandingInput.logoIcon
+                            }`
+                      }
+                      alt="Logo icon preview"
+                      sx={{
+                        width: 64,
+                        height: 64,
+                        objectFit: "contain",
+                        alignSelf: "center",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: 1,
+                        p: 0.5,
+                      }}
+                    />
+                  )}
+                </>
               )}
 
               <Button
@@ -552,8 +668,10 @@ export const SettingsPage: React.FC = () => {
               >
                 {isSaving ? (
                   <CircularProgress size={24} color="inherit" />
+                ) : activeSection === "colors" ? (
+                  "Save Color Settings"
                 ) : (
-                  "Save Settings"
+                  "Save Logo Settings"
                 )}
               </Button>
             </Stack>
