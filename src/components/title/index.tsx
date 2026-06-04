@@ -3,8 +3,8 @@ import Box from "@mui/material/Box";
 import MemoryIcon from "@mui/icons-material/Memory";
 import { useTheme } from "@mui/material/styles";
 import { HamburgerMenu } from "@refinedev/mui";
-import LogoTextBlack from "../../assets/images/logo_text_black.png";
-import LogoTextWhite from "../../assets/images/logo_text_white.png";
+import Typography from "@mui/material/Typography";
+import { useBrandingContext } from "../../contexts";
 
 type TitleProps = {
   collapsed: boolean;
@@ -12,9 +12,8 @@ type TitleProps = {
 
 export const Title: React.FC<TitleProps> = ({ collapsed }) => {
   const theme = useTheme();
-
-  const logoText =
-    theme.palette.mode === "light" ? LogoTextBlack : LogoTextWhite;
+  const { branding } = useBrandingContext();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   if (collapsed) {
     return (
@@ -66,34 +65,47 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
         }}
       >
         <Box display="flex" alignItems="center" gap={1.25} minWidth={0}>
-          <MemoryIcon
-            sx={{
-              flexShrink: 0,
-              fontSize: 32,
-              color: theme.palette.mode === "light" ? "#0b70c2" : "#67B7F7",
-              "&:active": {
-                color: theme.palette.mode === "light" ? "#0b70c2" : "#fff",
-                backgroundColor:
-                  theme.palette.mode === "light" ? "#f5f5f5" : "#000",
-              },
-            }}
-          />
+          {branding.logoIcon ? (
+            <Box
+              component="img"
+              src={`${apiBaseUrl}${branding.logoIcon}`}
+              alt=""
+              sx={{
+                width: 34,
+                height: 34,
+                flexShrink: 0,
+                objectFit: "contain",
+              }}
+            />
+          ) : (
+            <MemoryIcon
+              sx={{
+                flexShrink: 0,
+                fontSize: 32,
+                color: theme.palette.mode === "light" ? "#0b70c2" : "#67B7F7",
+              }}
+            />
+          )}
           <Box
             display="flex"
             flexDirection="column"
             alignItems="center"
             minWidth={0}
           >
-            <img
-              src={logoText}
-              width={120}
-              alt="PLC Logo"
-              style={{
-                display: "block",
-                maxWidth: "100%",
-                filter: `drop-shadow(0 1px 2px ${theme.palette.divider})`,
+            <Typography
+              variant="subtitle1"
+              noWrap
+              sx={{
+                maxWidth: 145,
+                fontWeight: 800,
+                lineHeight: 1.1,
+                letterSpacing: 0.2,
+                color: "text.primary",
+                textShadow: `0 1px 2px ${theme.palette.divider}`,
               }}
-            />
+            >
+              {branding.logoText}
+            </Typography>
           </Box>
         </Box>
       </Box>

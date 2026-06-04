@@ -55,13 +55,14 @@ export const useAuthProvider = (confirm: () => Promise<boolean>): AuthProvider =
           password,
         });
 
-        const { userId, role, token, dashboardTheme } = data;
+        const { userId, role, token, dashboardTheme, dashboardBranding } = data;
         localStorage.setItem("userId", userId);
         localStorage.setItem("role", role);
         if (token) {
           localStorage.setItem("authToken", token);
         }
         syncDashboardTheme(dashboardTheme);
+        window.setDashboardBranding?.(dashboardBranding);
         if (data?.mapOpeningLocation) {
           localStorage.setItem(
             "mapOpeningLocation",
@@ -203,6 +204,7 @@ export const useAuthProvider = (confirm: () => Promise<boolean>): AuthProvider =
         localStorage.removeItem(DASHBOARD_THEME_STORAGE_KEY);
         window.setDashboardTheme?.(null);
         window.setDashboardPrimaryColor?.(null);
+        window.setDashboardBranding?.(null);
       }
 
       return {
@@ -220,6 +222,7 @@ export const useAuthProvider = (confirm: () => Promise<boolean>): AuthProvider =
         localStorage.removeItem(DASHBOARD_THEME_STORAGE_KEY);
         window.setDashboardTheme?.(null);
         window.setDashboardPrimaryColor?.(null);
+        window.setDashboardBranding?.(null);
         return {
           logout: true,
           redirectTo: "/login",
@@ -285,6 +288,7 @@ export const useAuthProvider = (confirm: () => Promise<boolean>): AuthProvider =
           localStorage.removeItem("mapOpeningLocation");
         }
         syncDashboardTheme(data?.dashboardTheme);
+        window.setDashboardBranding?.(data?.dashboardBranding);
 
         const name = data.name || "N/A";
         const avatar =

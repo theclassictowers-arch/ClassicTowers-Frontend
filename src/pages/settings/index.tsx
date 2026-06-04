@@ -13,10 +13,13 @@ import {
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useNotification } from "@refinedev/core";
-import { useAuthContext, useColorModeContext } from "../../contexts";
+import {
+  useAuthContext,
+  useBrandingContext,
+  useColorModeContext,
+} from "../../contexts";
 import { axiosInstance } from "../../utils";
 import { formStyles } from "../auth/styles";
-import { MovableForm } from "../../components/movable-form";
 import { MapBackgroundPage } from "../../components/map-background-page";
 import {
   DASHBOARD_THEME_PRESETS,
@@ -29,6 +32,17 @@ type OrganizationUser = {
   _id: string;
   name: string;
   dashboardTheme?: Partial<DashboardThemeColors>;
+  dashboardBranding?: DashboardBranding;
+};
+
+type DashboardBranding = {
+  logoText: string;
+  logoIcon: string | null;
+};
+
+const DEFAULT_DASHBOARD_BRANDING: DashboardBranding = {
+  logoText: "The Classic Towers",
+  logoIcon: null,
 };
 
 const isHexColor = (value: string) => /^#([A-Fa-f0-9]{6})$/.test(value.trim());
@@ -44,6 +58,7 @@ const areSameTheme = (
 export const SettingsPage: React.FC = () => {
   const { role } = useAuthContext();
   const { dashboardTheme, setDashboardTheme } = useColorModeContext();
+  const { setBranding } = useBrandingContext();
   const { open } = useNotification();
   const currentUserId = localStorage.getItem("userId");
   const canManageSettings = role === "admin" || role === "organization";
@@ -55,6 +70,10 @@ export const SettingsPage: React.FC = () => {
   );
   const [themeInput, setThemeInput] = useState<DashboardThemeColors>(dashboardTheme);
   const [loadingTheme, setLoadingTheme] = useState(false);
+  const [brandingInput, setBrandingInput] = useState<DashboardBranding>(
+    DEFAULT_DASHBOARD_BRANDING
+  );
+  const [logoIconFile, setLogoIconFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -99,8 +118,17 @@ export const SettingsPage: React.FC = () => {
       try {
         const response = await axiosInstance.get(`/users/${targetUserId}`);
         setThemeInput(normalizeDashboardTheme(response.data?.dashboardTheme));
+        setBrandingInput({
+          logoText:
+            response.data?.dashboardBranding?.logoText ||
+            DEFAULT_DASHBOARD_BRANDING.logoText,
+          logoIcon: response.data?.dashboardBranding?.logoIcon || null,
+        });
+        setLogoIconFile(null);
       } catch {
         setThemeInput(DEFAULT_DASHBOARD_THEME);
+        setBrandingInput(DEFAULT_DASHBOARD_BRANDING);
+        setLogoIconFile(null);
       } finally {
         setLoadingTheme(false);
       }
@@ -144,6 +172,14 @@ export const SettingsPage: React.FC = () => {
   const handleSave = async () => {
     if (!validateTheme()) return;
     if (!targetUserId) return;
+    if (!brandingInput.logoText.trim()) {
+      open?.({
+        type: "error",
+        message: "Logo text is required",
+        description: "Enter the sidebar name before saving.",
+      });
+      return;
+    }
 
     const payload = normalizeDashboardTheme(themeInput);
     setIsSaving(true);
@@ -162,20 +198,41 @@ export const SettingsPage: React.FC = () => {
         });
       }
 
+      const brandingData = new FormData();
+      brandingData.append("logoText", brandingInput.logoText.trim());
+      if (logoIconFile) {
+        brandingData.append("logoIcon", logoIconFile);
+      }
+      const brandingResponse = await axiosInstance.patch(
+        `/users/${targetUserId}/dashboard-branding`,
+        brandingData
+      );
+      const savedBranding =
+        brandingResponse.data?.dashboardBranding || brandingInput;
+
       setThemeInput(payload);
       if (targetUserId === currentUserId) {
         setDashboardTheme(payload);
+        setBranding(savedBranding);
       }
+      setBrandingInput(savedBranding);
+      setLogoIconFile(null);
       setOrganizations((prev) =>
         prev.map((org) =>
-          org._id === targetUserId ? { ...org, dashboardTheme: payload } : org
+          org._id === targetUserId
+            ? {
+                ...org,
+                dashboardTheme: payload,
+                dashboardBranding: savedBranding,
+              }
+            : org
         )
       );
 
       open?.({
         type: "success",
         message: "Settings saved",
-        description: "Theme settings updated successfully.",
+        description: "Theme and sidebar branding updated successfully.",
       });
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -191,21 +248,28 @@ export const SettingsPage: React.FC = () => {
 
   return (
     <MapBackgroundPage>
-      <MovableForm
-        panelId="settings-form"
-        initialWidth={420}
-        minWidth={320}
-        maxWidth={760}
+      <Box
+        sx={{
+          width: "100%",
+          height: "100dvh",
+          overflowY: "auto",
+          px: { xs: 0.75, sm: 1.25, md: 2 },
+          py: { xs: 0.75, sm: 1.25 },
+        }}
       >
         <Box
           component="form"
           sx={{
             ...formStyles.container,
             m: 0,
-            width: "100%",
-            maxWidth: "100%",
-            maxHeight: "90vh",
-            overflowY: "auto",
+            ml: { xs: 0, md: "64px" },
+            width: { xs: "100%", md: "calc(100% - 64px)" },
+            maxWidth: "none",
+            minHeight: "calc(100dvh - 20px)",
+            px: { xs: 1.5, sm: 2, md: 2.5 },
+            py: { xs: 1.5, sm: 2 },
+            borderRadius: { xs: 1.5, sm: 2 },
+            overflow: "visible",
           }}
           onSubmit={(event) => {
             event.preventDefault();
@@ -252,11 +316,9 @@ export const SettingsPage: React.FC = () => {
                 <Box
                   sx={{
                     display: "grid",
-                    gridTemplateColumns: {
-                      xs: "1fr",
-                      sm: "repeat(2, minmax(0, 1fr))",
-                    },
-                    gap: 1,
+                    gridTemplateColumns:
+                      "repeat(auto-fit, minmax(min(180px, 100%), 1fr))",
+                    gap: 0.75,
                   }}
                 >
                   {DASHBOARD_THEME_PRESETS.map((preset) => {
@@ -277,8 +339,8 @@ export const SettingsPage: React.FC = () => {
                           borderRadius: 1,
                           color: "text.primary",
                           justifyContent: "flex-start",
-                          minHeight: 72,
-                          p: 1,
+                          minHeight: 68,
+                          p: 0.75,
                           textAlign: "left",
                           textTransform: "none",
                           bgcolor: isSelected
@@ -338,7 +400,15 @@ export const SettingsPage: React.FC = () => {
               >
                 Custom Theme
               </Typography>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(min(260px, 100%), 1fr))",
+                  gap: 1,
+                }}
+              >
+                <Stack direction="row" spacing={0.75}>
                 <TextField
                   fullWidth
                   label="Primary Color"
@@ -361,8 +431,8 @@ export const SettingsPage: React.FC = () => {
                   sx={{ width: { xs: "100%", sm: 72 } }}
                   inputProps={{ "aria-label": "Pick primary color" }}
                 />
-              </Stack>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                </Stack>
+                <Stack direction="row" spacing={0.75}>
                 <TextField
                   fullWidth
                   label="Background Color"
@@ -385,8 +455,8 @@ export const SettingsPage: React.FC = () => {
                   sx={{ width: { xs: "100%", sm: 72 } }}
                   inputProps={{ "aria-label": "Pick background color" }}
                 />
-              </Stack>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                </Stack>
+                <Stack direction="row" spacing={0.75}>
                 <TextField
                   fullWidth
                   label="Text Color"
@@ -409,7 +479,65 @@ export const SettingsPage: React.FC = () => {
                   sx={{ width: { xs: "100%", sm: 72 } }}
                   inputProps={{ "aria-label": "Pick text color" }}
                 />
-              </Stack>
+                </Stack>
+              </Box>
+
+              <Typography
+                variant="subtitle2"
+                sx={{ pt: 1, fontWeight: 700, color: "text.primary" }}
+              >
+                Sidebar Branding
+              </Typography>
+              <TextField
+                fullWidth
+                label="Logo Text"
+                value={brandingInput.logoText}
+                inputProps={{ maxLength: 60 }}
+                helperText="This is displayed as text beside the logo icon."
+                onChange={(event) =>
+                  setBrandingInput((prev) => ({
+                    ...prev,
+                    logoText: event.target.value,
+                  }))
+                }
+                InputProps={{ sx: { borderRadius: 2 } }}
+              />
+              <Button
+                component="label"
+                variant="outlined"
+                sx={{ textTransform: "none" }}
+              >
+                {logoIconFile ? logoIconFile.name : "Choose Logo Icon Image"}
+                <input
+                  hidden
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  onChange={(event) =>
+                    setLogoIconFile(event.target.files?.[0] || null)
+                  }
+                />
+              </Button>
+              {(logoIconFile || brandingInput.logoIcon) && (
+                <Box
+                  component="img"
+                  src={
+                    logoIconFile
+                      ? URL.createObjectURL(logoIconFile)
+                      : `${import.meta.env.VITE_API_BASE_URL}${brandingInput.logoIcon}`
+                  }
+                  alt="Logo icon preview"
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    objectFit: "contain",
+                    alignSelf: "center",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 1,
+                    p: 0.5,
+                  }}
+                />
+              )}
 
               <Button
                 type="submit"
@@ -431,7 +559,7 @@ export const SettingsPage: React.FC = () => {
             </Stack>
           )}
         </Box>
-      </MovableForm>
+      </Box>
     </MapBackgroundPage>
   );
 };

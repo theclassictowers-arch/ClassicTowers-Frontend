@@ -18,6 +18,7 @@ const clearSessionStorage = () => {
   localStorage.removeItem("dashboardTheme");
   window.setDashboardTheme?.(null);
   window.setDashboardPrimaryColor?.(null);
+  window.setDashboardBranding?.(null);
 };
 
 export const axiosInstance = axios.create({
