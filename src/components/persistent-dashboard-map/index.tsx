@@ -32,10 +32,6 @@ export const PersistentDashboardMap = () => {
     };
   }, [handleNewData]);
 
-  if (pathname === "/") {
-    return null;
-  }
-
   return (
     <Box
       sx={{
@@ -44,6 +40,7 @@ export const PersistentDashboardMap = () => {
         zIndex: 0,
         overflow: "hidden",
         backgroundColor: "background.default",
+        pointerEvents: pathname === "/" ? "auto" : "none",
       }}
     >
       <SitesMap siteData={siteData} isLoading={isLoading} />

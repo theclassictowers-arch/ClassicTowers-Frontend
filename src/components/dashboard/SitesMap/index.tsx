@@ -176,7 +176,6 @@ export const SitesMap = ({ siteData, isLoading }: any) => {
 
     return DEFAULT_MAP_VIEW;
   }, []);
-
   const locations = useMemo(() => {
     const sites = Array.isArray(siteData?.data) ? siteData.data : [];
 
@@ -233,11 +232,15 @@ export const SitesMap = ({ siteData, isLoading }: any) => {
               defaultZoom={initialMapView.zoom}
               onCameraChanged={(event) => {
                 const { center, zoom } = event.detail;
+                const mapView = {
+                  center: { lat: center.lat, lng: center.lng },
+                  zoom,
+                };
                 localStorage.setItem(
                   getCurrentMapViewStorageKey(),
                   JSON.stringify({
-                    lat: center.lat,
-                    lng: center.lng,
+                    lat: mapView.center.lat,
+                    lng: mapView.center.lng,
                     zoom,
                   })
                 );

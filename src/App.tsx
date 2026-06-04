@@ -246,7 +246,8 @@ const App: React.FC = () => {
               padding: "0 !important",
               margin: "0 !important",
               overflow: "hidden",
-              backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+              background: "transparent !important",
+              backgroundColor: "transparent !important",
             },
             "main.MuiBox-root .MuiPaper-root:not(.MuiDrawer-paper), main.MuiBox-root .MuiCard-root, main.MuiBox-root form":
               {

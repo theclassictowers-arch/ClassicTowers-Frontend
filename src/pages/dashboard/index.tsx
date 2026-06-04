@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useList } from "@refinedev/core";
 import { Box } from "@mui/material";
 import { io } from "socket.io-client";
-import { SitesMap, SystemAlertsTable } from "../../components/dashboard";
+import { SystemAlertsTable } from "../../components/dashboard";
 import { useAuthContext } from "../../contexts";
 
 const { VITE_API_BASE_URL } = import.meta.env;
@@ -12,11 +12,7 @@ export const DashboardPage: React.FC = () => {
   const { role } = useAuthContext();
   const isAdmin = role?.toLowerCase() === "admin";
 
-  const {
-    data: siteData,
-    isLoading: isSiteLoading,
-    refetch: refetchSiteData,
-  } = useList({
+  const { data: siteData, refetch: refetchSiteData } = useList({
     resource: "sites",
     dataProviderName: "default",
     errorNotification: (error) => ({
@@ -98,6 +94,7 @@ export const DashboardPage: React.FC = () => {
         flexDirection: "column",
         overflow: "hidden",
         position: "relative",
+        pointerEvents: "none",
       }}
     >
       <Box
@@ -121,9 +118,7 @@ export const DashboardPage: React.FC = () => {
           allowResize={isAdmin}
         />
       </Box>
-      <Box sx={{ flex: 1, minHeight: 0, position: "relative" }}>
-        <SitesMap siteData={siteData} isLoading={isSiteLoading} />
-      </Box>
+      <Box sx={{ flex: 1, minHeight: 0 }} />
     </Box>
   );
 };
