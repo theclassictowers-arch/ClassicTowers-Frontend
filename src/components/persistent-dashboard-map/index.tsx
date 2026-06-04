@@ -2,11 +2,13 @@ import { useCallback, useEffect } from "react";
 import { Box } from "@mui/material";
 import { useList } from "@refinedev/core";
 import { io } from "socket.io-client";
+import { useLocation } from "react-router-dom";
 import { SitesMap } from "../dashboard";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
 export const PersistentDashboardMap = () => {
+  const { pathname } = useLocation();
   const {
     data: siteData,
     isLoading,
@@ -29,6 +31,10 @@ export const PersistentDashboardMap = () => {
       socket.disconnect();
     };
   }, [handleNewData]);
+
+  if (pathname === "/") {
+    return null;
+  }
 
   return (
     <Box

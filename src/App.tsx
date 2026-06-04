@@ -289,8 +289,8 @@ const App: React.FC = () => {
                 overflow: "visible !important",
                 zIndex: "1300 !important",
                 borderRight: "1px solid rgba(148, 163, 184, 0.18)",
-                background: "rgba(255, 255, 255, 0.10) !important",
-                backgroundColor: "rgba(255, 255, 255, 0.10) !important",
+                background: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
+                backgroundColor: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
                 backdropFilter: "blur(6px)",
                 boxShadow: "6px 0 18px rgba(15, 23, 42, 0.06)",
                 transition:
@@ -331,8 +331,8 @@ const App: React.FC = () => {
                   minHeight: "56px !important",
                   paddingLeft: "0 !important",
                   paddingRight: "0 !important",
-                  background: "rgba(255, 255, 255, 0.10) !important",
-                  backgroundColor: "rgba(255, 255, 255, 0.10) !important",
+                  background: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
+                  backgroundColor: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
                   backdropFilter: "blur(6px)",
                   borderBottom: "1px solid rgba(148, 163, 184, 0.22)",
                 },
@@ -345,8 +345,8 @@ const App: React.FC = () => {
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)":
                 {
                   display: "flex !important",
-                  background: "rgba(255, 255, 255, 0.16) !important",
-                  backgroundColor: "rgba(255, 255, 255, 0.16) !important",
+                  background: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
+                  backgroundColor: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
                   backdropFilter: "blur(6px)",
                   borderBottom: "0 !important",
                   borderRight: "1px solid rgba(148, 163, 184, 0.18)",
@@ -375,8 +375,8 @@ const App: React.FC = () => {
                 },
               ".MuiDrawer-docked .MuiDrawer-paper > .MuiBox-root": {
                 height: "calc(100dvh - 56px) !important",
-                background: "rgba(255, 255, 255, 0.10) !important",
-                backgroundColor: "rgba(255, 255, 255, 0.10) !important",
+                background: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
+                backgroundColor: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
                 backdropFilter: "blur(6px)",
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiBox-root":
