@@ -266,25 +266,49 @@ export const SettingsPage: React.FC = () => {
 
     setIsSaving(true);
     try {
-      const brandingData = new FormData();
-      brandingData.append("logoText", brandingInput.logoText.trim());
-      brandingData.append(
-        "logoIconEnabled",
-        String(brandingInput.logoIconEnabled)
-      );
-      brandingData.append(
-        "logoTextEnabled",
-        String(brandingInput.logoTextEnabled)
-      );
-      brandingData.append("logoTextSize", String(brandingInput.logoTextSize));
-      brandingData.append("logoTextWidth", String(brandingInput.logoTextWidth));
-      if (logoIconFile) {
-        brandingData.append("logoIcon", logoIconFile);
+      const createBrandingData = (useFallback = false) => {
+        const brandingData = new FormData();
+        brandingData.append("logoText", brandingInput.logoText.trim());
+        brandingData.append(
+          "logoIconEnabled",
+          String(brandingInput.logoIconEnabled)
+        );
+        brandingData.append(
+          "logoTextEnabled",
+          String(brandingInput.logoTextEnabled)
+        );
+        brandingData.append("logoTextSize", String(brandingInput.logoTextSize));
+        brandingData.append(
+          "logoTextWidth",
+          String(brandingInput.logoTextWidth)
+        );
+        if (useFallback) {
+          brandingData.append("dashboardBrandingUpdate", "true");
+        }
+        if (logoIconFile) {
+          brandingData.append("logoIcon", logoIconFile);
+        }
+        return brandingData;
+      };
+
+      let response;
+      try {
+        response = await axiosInstance.patch(
+          `/users/${targetUserId}/dashboard-branding`,
+          createBrandingData()
+        );
+      } catch (error: unknown) {
+        const statusCode = (error as { response?: { status?: number } })
+          .response?.status;
+        if (statusCode !== 404) {
+          throw error;
+        }
+
+        response = await axiosInstance.patch(
+          `/users/${targetUserId}`,
+          createBrandingData(true)
+        );
       }
-      const response = await axiosInstance.patch(
-        `/users/${targetUserId}/dashboard-branding`,
-        brandingData
-      );
       const savedBranding = response.data?.dashboardBranding || brandingInput;
 
       setBrandingInput(savedBranding);
