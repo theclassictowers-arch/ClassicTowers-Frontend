@@ -194,6 +194,54 @@ const App: React.FC = () => {
                   "0 12px 24px rgba(25, 118, 210, 0.22), inset 3px 0 0 currentColor, inset 0 1px 0 rgba(255, 255, 255, 0.38)",
               },
             },
+            "@keyframes settingsTabEnter": {
+              "0%": {
+                opacity: 0,
+                transform:
+                  "perspective(900px) translateX(18px) translateY(5px) rotateY(-2deg)",
+                filter: "blur(2px)",
+              },
+              "100%": {
+                opacity: 1,
+                transform:
+                  "perspective(900px) translateX(0) translateY(0) rotateY(0deg)",
+                filter: "blur(0)",
+              },
+            },
+            ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.Mui-disabled)":
+              {
+                transform: "perspective(700px) translateZ(0)",
+                transformStyle: "preserve-3d",
+                transition:
+                  "transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease, filter 220ms ease",
+                willChange: "transform",
+              },
+            ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.Mui-disabled):hover":
+              {
+                transform:
+                  "perspective(700px) translateY(-2px) translateZ(8px) rotateX(2deg)",
+                boxShadow:
+                  "0 9px 16px rgba(15, 23, 42, 0.16), 0 3px 5px rgba(15, 23, 42, 0.1)",
+                filter: "brightness(1.025)",
+              },
+            ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.Mui-disabled):active":
+              {
+                transform:
+                  "perspective(700px) translateY(1px) translateZ(1px) rotateX(0deg) scale(0.98)",
+                boxShadow:
+                  "0 2px 4px rgba(15, 23, 42, 0.14), inset 0 2px 4px rgba(15, 23, 42, 0.1)",
+                transitionDuration: "90ms",
+                filter: "brightness(0.98)",
+              },
+            "@media (prefers-reduced-motion: reduce)": {
+              ".MuiButtonBase-root": {
+                transition: "none !important",
+                animation: "none !important",
+              },
+              ".MuiButtonBase-root:hover, .MuiButtonBase-root:active": {
+                transform: "none !important",
+              },
+            },
             "main.MuiBox-root": {
               padding: "0 !important",
               margin: "0 !important",

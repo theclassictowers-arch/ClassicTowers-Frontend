@@ -101,7 +101,6 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
                   maxWidth: branding.logoTextWidth,
                   px: 0.45,
                   py: 0.1,
-                  bgcolor: "#ffc107",
                   color: theme.palette.mode === "light" ? "#111111" : "#ffffff",
                   fontFamily:
                     "\"Arial Narrow\", \"Roboto Condensed\", Arial, sans-serif",

@@ -477,7 +477,17 @@ export const SettingsPage: React.FC = () => {
               </Tabs>
 
               {activeSection === "colors" && (
-                <>
+                <Box
+                  key="colors"
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1.5,
+                    transformOrigin: "center top",
+                    animation:
+                      "settingsTabEnter 420ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                  }}
+                >
                   <Box>
                     <Typography
                       variant="subtitle2"
@@ -655,11 +665,21 @@ export const SettingsPage: React.FC = () => {
                       />
                     </Stack>
                   </Box>
-                </>
+                </Box>
               )}
 
               {activeSection === "logo" && (
-                <>
+                <Box
+                  key="logo"
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1.5,
+                    transformOrigin: "center top",
+                    animation:
+                      "settingsTabEnter 420ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                  }}
+                >
                   <Typography
                     variant="subtitle2"
                     sx={{ fontWeight: 700, color: "text.primary" }}
@@ -809,7 +829,7 @@ export const SettingsPage: React.FC = () => {
                         }}
                       />
                     )}
-                </>
+                </Box>
               )}
             </Stack>
           )}
