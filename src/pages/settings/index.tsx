@@ -876,7 +876,7 @@ export const SettingsPage: React.FC = () => {
                         display: "grid",
                         gridTemplateColumns: {
                           xs: "1fr",
-                          sm: "max-content repeat(2, 165px)",
+                          sm: "max-content repeat(2, 180px)",
                         },
                         columnGap: 5,
                         rowGap: 1.5,
@@ -897,7 +897,7 @@ export const SettingsPage: React.FC = () => {
                         }
                         label="Show Logo Text"
                       />
-                      <Box sx={{ width: { xs: "100%", sm: 165 } }}>
+                      <Box sx={{ width: { xs: "100%", sm: 180 }, px: 1.5 }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Text Size: {brandingInput.logoTextSize}px
                         </Typography>
@@ -923,10 +923,16 @@ export const SettingsPage: React.FC = () => {
                               fontSize: "0.62rem",
                               whiteSpace: "nowrap",
                             },
+                            "& .MuiSlider-markLabel[data-index='0']": {
+                              transform: "translateX(0)",
+                            },
+                            "& .MuiSlider-markLabel[data-index='1']": {
+                              transform: "translateX(-100%)",
+                            },
                           }}
                         />
                       </Box>
-                      <Box sx={{ width: { xs: "100%", sm: 165 } }}>
+                      <Box sx={{ width: { xs: "100%", sm: 180 }, px: 1.5 }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Text Width: {brandingInput.logoTextWidth}px
                         </Typography>
@@ -952,6 +958,12 @@ export const SettingsPage: React.FC = () => {
                               fontSize: "0.62rem",
                               whiteSpace: "nowrap",
                             },
+                            "& .MuiSlider-markLabel[data-index='0']": {
+                              transform: "translateX(0)",
+                            },
+                            "& .MuiSlider-markLabel[data-index='1']": {
+                              transform: "translateX(-100%)",
+                            },
                           }}
                         />
                       </Box>
@@ -969,11 +981,17 @@ export const SettingsPage: React.FC = () => {
                       component="label"
                       variant="outlined"
                       disabled={!brandingInput.logoIconEnabled}
-                      sx={{ textTransform: "none" }}
+                      sx={{
+                        width: { xs: "100%", sm: 150 },
+                        minWidth: 0,
+                        justifyContent: "center",
+                        overflow: "hidden",
+                        textTransform: "none",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                      }}
                     >
-                      {logoIconFile
-                        ? logoIconFile.name
-                        : "Choose Logo Icon Image"}
+                      {logoIconFile ? logoIconFile.name : "Choose Image"}
                       <input
                         hidden
                         type="file"
@@ -996,7 +1014,7 @@ export const SettingsPage: React.FC = () => {
                             }
                           />
                         }
-                        label="Show Logo Image"
+                        label="Logo Image"
                         sx={{
                           m: 0,
                           "& .MuiFormControlLabel-label": {
