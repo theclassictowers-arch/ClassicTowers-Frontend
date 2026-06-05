@@ -408,12 +408,12 @@ const App: React.FC = () => {
               "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper > .MuiPaper-root:not(.MuiDrawer-paper)":
                 {
                   display: "flex !important",
-                  background: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
-                  backgroundColor: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 34%, transparent) !important`,
-                  backdropFilter: "blur(6px)",
+                  background: "transparent !important",
+                  backgroundColor: "transparent !important",
+                  backdropFilter: "none !important",
                   borderBottom: "0 !important",
-                  borderRight: "1px solid rgba(148, 163, 184, 0.18)",
-                  boxShadow: "6px 0 18px rgba(15, 23, 42, 0.06)",
+                  borderRight: "0 !important",
+                  boxShadow: "none !important",
                 },
               ".MuiDrawer-docked .MuiPaper-root .MuiIconButton-root": {
                 width: "34px",
@@ -429,7 +429,16 @@ const App: React.FC = () => {
               },
               "nav:has([data-sidebar-collapsed='true']) .MuiPaper-root .MuiIconButton-root":
                 {
+                  background: "transparent !important",
+                  backgroundColor: "transparent !important",
+                  boxShadow: "none !important",
                   color: "primary.main",
+                },
+              "nav:has([data-sidebar-collapsed='true']) .MuiPaper-root .MuiIconButton-root:hover, nav:has([data-sidebar-collapsed='true']) .MuiPaper-root .MuiIconButton-root:focus-visible":
+                {
+                  background: "transparent !important",
+                  backgroundColor: "transparent !important",
+                  boxShadow: "none !important",
                 },
               "nav:has([data-sidebar-collapsed='false']) .MuiPaper-root .MuiIconButton-root":
                 {

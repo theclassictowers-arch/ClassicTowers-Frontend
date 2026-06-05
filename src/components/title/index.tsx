@@ -14,6 +14,21 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
   const theme = useTheme();
   const { branding } = useBrandingContext();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const logoTextLength = branding.logoText.length;
+  let logoTextSize = branding.logoTextSize;
+
+  if (logoTextLength >= 15) {
+    logoTextSize = 8;
+  } else if (logoTextLength >= 13) {
+    logoTextSize = 9;
+  } else if (logoTextLength >= 11) {
+    logoTextSize = 10;
+  }
+
+  const logoTextBoxWidth =
+    logoTextLength >= 15
+      ? Math.max(branding.logoTextWidth, 156)
+      : branding.logoTextWidth;
 
   if (collapsed) {
     return (
@@ -46,10 +61,10 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
       <Box
         display="flex"
         alignItems="center"
-        justifyContent="center"
+        justifyContent="flex-start"
         gap="8px"
         sx={{
-          padding: "8px",
+          padding: "8px 8px 8px 2px",
           width: "100%",
           minWidth: 0,
           overflow: "hidden",
@@ -88,9 +103,9 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
             justifyContent="center"
             minWidth={0}
             sx={{
-              width: branding.logoTextWidth,
-              maxWidth: branding.logoTextWidth,
-              px: 0.75,
+              width: logoTextBoxWidth,
+              maxWidth: "calc(100% - 42px)",
+              px: 0.5,
               py: 0.45,
               borderRadius: "8px",
               border: `1px solid ${theme.palette.divider}`,
@@ -108,14 +123,14 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
                 color: theme.palette.mode === "light" ? "#111111" : "#ffffff",
                 fontFamily:
                   "\"Arial Narrow\", \"Roboto Condensed\", Arial, sans-serif",
-                fontSize: `${branding.logoTextSize}px`,
+                fontSize: `${logoTextSize}px`,
                 fontStretch: "condensed",
                 fontWeight: 400,
                 lineHeight: 1.05,
                 letterSpacing: 0,
                 textAlign: "center",
-                textTransform: "uppercase",
-                textOverflow: "ellipsis",
+                textTransform: "none",
+                textOverflow: "clip",
                 textShadow:
                   theme.palette.mode === "light"
                     ? "0.35px 0 #ffffff"
