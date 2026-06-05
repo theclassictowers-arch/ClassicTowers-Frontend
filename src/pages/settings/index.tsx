@@ -178,12 +178,24 @@ export const SettingsPage: React.FC = () => {
             LOGO_TEXT_MAX_SIZE,
             DEFAULT_DASHBOARD_BRANDING.logoTextSize
           ),
-          logoTextWidth:
-            Number(response.data?.dashboardBranding?.logoTextWidth) || 165,
-          sidebarWidth:
-            Number(response.data?.dashboardBranding?.sidebarWidth) || 240,
-          sidebarHeight:
-            Number(response.data?.dashboardBranding?.sidebarHeight) || 100,
+          logoTextWidth: clampNumber(
+            response.data?.dashboardBranding?.logoTextWidth,
+            60,
+            220,
+            DEFAULT_DASHBOARD_BRANDING.logoTextWidth
+          ),
+          sidebarWidth: clampNumber(
+            response.data?.dashboardBranding?.sidebarWidth,
+            150,
+            360,
+            DEFAULT_DASHBOARD_BRANDING.sidebarWidth
+          ),
+          sidebarHeight: clampNumber(
+            response.data?.dashboardBranding?.sidebarHeight,
+            40,
+            100,
+            DEFAULT_DASHBOARD_BRANDING.sidebarHeight
+          ),
         });
         setLogoIconFile(null);
       } catch {
@@ -295,6 +307,24 @@ export const SettingsPage: React.FC = () => {
       LOGO_TEXT_MAX_SIZE,
       DEFAULT_DASHBOARD_BRANDING.logoTextSize
     );
+    const logoTextWidth = clampNumber(
+      brandingInput.logoTextWidth,
+      60,
+      220,
+      DEFAULT_DASHBOARD_BRANDING.logoTextWidth
+    );
+    const sidebarWidth = clampNumber(
+      brandingInput.sidebarWidth,
+      150,
+      360,
+      DEFAULT_DASHBOARD_BRANDING.sidebarWidth
+    );
+    const sidebarHeight = clampNumber(
+      brandingInput.sidebarHeight,
+      40,
+      100,
+      DEFAULT_DASHBOARD_BRANDING.sidebarHeight
+    );
 
     if (brandingInput.logoTextEnabled && !logoText) {
       open?.({
@@ -321,13 +351,10 @@ export const SettingsPage: React.FC = () => {
         brandingData.append("logoTextSize", String(logoTextSize));
         brandingData.append(
           "logoTextWidth",
-          String(brandingInput.logoTextWidth)
+          String(logoTextWidth)
         );
-        brandingData.append("sidebarWidth", String(brandingInput.sidebarWidth));
-        brandingData.append(
-          "sidebarHeight",
-          String(brandingInput.sidebarHeight)
-        );
+        brandingData.append("sidebarWidth", String(sidebarWidth));
+        brandingData.append("sidebarHeight", String(sidebarHeight));
         if (useFallback) {
           brandingData.append("dashboardBrandingUpdate", "true");
         }
@@ -359,6 +386,9 @@ export const SettingsPage: React.FC = () => {
         ...brandingInput,
         logoText,
         logoTextSize,
+        logoTextWidth,
+        sidebarWidth,
+        sidebarHeight,
       };
 
       const normalizedSavedBranding = {
@@ -370,6 +400,9 @@ export const SettingsPage: React.FC = () => {
           LOGO_TEXT_MAX_SIZE,
           DEFAULT_DASHBOARD_BRANDING.logoTextSize
         ),
+        logoTextWidth,
+        sidebarWidth,
+        sidebarHeight,
       };
 
       setBrandingInput(normalizedSavedBranding);
