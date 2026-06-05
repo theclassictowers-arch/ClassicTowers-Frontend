@@ -9,7 +9,9 @@
   useTheme,
   Box,
   Paper,
+  Button,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useShow } from "@refinedev/core";
 import { Show } from "@refinedev/mui";
 import { useNavigate } from "react-router-dom";
@@ -183,8 +185,6 @@ export const LimitsShow = () => {
         initialWidth={760}
         minWidth={460}
         maxWidth={1250}
-        onClose={() => navigate("/limits")}
-        showFullPageButton
         sx={{
           "& .MuiPaper-root, & .MuiCard-root": {
             background: "rgba(164, 198, 236, 0.03) !important",
@@ -209,16 +209,26 @@ export const LimitsShow = () => {
             }}
           >
             <CardContent sx={{ p: 3 }}>
-              <Typography
-                variant="h5"
-                gutterBottom
-                sx={{
-                  ...formStyles.title,
-                  mb: 2,
-                }}
-              >
-                Sensor Limits Configuration
-              </Typography>
+              <Box sx={{ position: "relative", mb: 2 }}>
+                <Button
+                  size="small"
+                  startIcon={<ArrowBackIcon fontSize="small" />}
+                  onClick={() => navigate("/limits")}
+                  sx={{ position: "absolute", left: 0, top: 0 }}
+                >
+                  Back
+                </Button>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{
+                    ...formStyles.title,
+                    mb: 2,
+                  }}
+                >
+                  Sensor Limits Configuration
+                </Typography>
+              </Box>
               <Divider sx={{ mb: 4 }} />
 
           <Grid container spacing={6}>

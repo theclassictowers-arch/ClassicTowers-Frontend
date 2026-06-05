@@ -9,6 +9,7 @@
   CircularProgress,
   Box,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useShow } from "@refinedev/core";
 import { Show } from "@refinedev/mui";
 import { useState } from "react";
@@ -102,8 +103,6 @@ export const UserShow = () => {
         initialWidth={620}
         minWidth={360}
         maxWidth={980}
-        onClose={() => navigate("/users")}
-        showFullPageButton
         sx={{
           "& .MuiPaper-root, & .MuiCard-root": {
             background: "rgba(164, 198, 236, 0.03) !important",
@@ -126,9 +125,19 @@ export const UserShow = () => {
             }}
           >
             <CardContent>
-              <Typography variant="h5" gutterBottom sx={formStyles.title}>
-                User Details
-              </Typography>
+              <Box sx={{ position: "relative", mb: 2 }}>
+                <Button
+                  size="small"
+                  startIcon={<ArrowBackIcon fontSize="small" />}
+                  onClick={() => navigate("/users")}
+                  sx={{ position: "absolute", left: 0, top: 0 }}
+                >
+                  Back
+                </Button>
+                <Typography variant="h5" gutterBottom sx={formStyles.title}>
+                  User Details
+                </Typography>
+              </Box>
               <Grid container spacing={3} alignItems="center">
                 <Grid item xs={12} sm={4} textAlign="center">
                   <Avatar
