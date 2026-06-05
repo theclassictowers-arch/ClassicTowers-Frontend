@@ -683,15 +683,26 @@ export const SettingsPage: React.FC = () => {
 
                   <Box
                     sx={{
+                      alignItems: "start",
                       display: "grid",
-                      gap: 1.5,
+                      gap: 2,
                       gridTemplateColumns: {
-                        xs: "repeat(2, minmax(0, 1fr))",
-                        sm: "repeat(4, 108px)",
-                        md: "repeat(4, 108px)",
+                        xs: "1fr",
+                        md: "max-content minmax(220px, 280px)",
                       },
                     }}
                   >
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gap: 1.5,
+                        gridTemplateColumns: {
+                          xs: "repeat(2, minmax(0, 1fr))",
+                          sm: "repeat(4, 108px)",
+                          md: "repeat(4, 108px)",
+                        },
+                      }}
+                    >
                     {appearanceThemePresets.map((preset) => {
                       const isSelected = areSameTheme(
                         normalizeDashboardTheme(themeInput),
@@ -791,24 +802,21 @@ export const SettingsPage: React.FC = () => {
                         }
                       />
                     </Button>
-                  </Box>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ fontWeight: 700, color: "text.primary" }}
-                  >
-                    Custom Theme
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: {
-                        xs: "1fr",
-                        sm: "repeat(3, minmax(0, 1fr))",
-                      },
-                      gap: 1,
-                    }}
-                  >
-                    <Stack spacing={0.5}>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gap: 1,
+                        gridTemplateColumns: "1fr",
+                      }}
+                    >
+                      <Typography
+                        variant="subtitle2"
+                        sx={{ fontWeight: 700, color: "text.primary" }}
+                      >
+                        Custom Theme
+                      </Typography>
+                      <Stack spacing={0.5}>
                       <Typography variant="caption" sx={{ fontWeight: 700 }}>
                         Primary Color
                       </Typography>
@@ -829,8 +837,8 @@ export const SettingsPage: React.FC = () => {
                         sx={{ "& input": { height: 48, cursor: "pointer" } }}
                         inputProps={{ "aria-label": "Pick primary color" }}
                       />
-                    </Stack>
-                    <Stack spacing={0.5}>
+                      </Stack>
+                      <Stack spacing={0.5}>
                       <Typography variant="caption" sx={{ fontWeight: 700 }}>
                         Background Color
                       </Typography>
@@ -851,8 +859,8 @@ export const SettingsPage: React.FC = () => {
                         sx={{ "& input": { height: 48, cursor: "pointer" } }}
                         inputProps={{ "aria-label": "Pick background color" }}
                       />
-                    </Stack>
-                    <Stack spacing={0.5}>
+                      </Stack>
+                      <Stack spacing={0.5}>
                       <Typography variant="caption" sx={{ fontWeight: 700 }}>
                         Text Color
                       </Typography>
@@ -873,7 +881,8 @@ export const SettingsPage: React.FC = () => {
                         sx={{ "& input": { height: 48, cursor: "pointer" } }}
                         inputProps={{ "aria-label": "Pick text color" }}
                       />
-                    </Stack>
+                      </Stack>
+                    </Box>
                   </Box>
                 </Box>
               )}
