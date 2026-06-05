@@ -52,76 +52,80 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
           padding: "8px",
           width: "100%",
           minWidth: 0,
-          borderRadius: "8px",
-          border: `1px solid ${theme.palette.divider}`,
-          boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-          position: "relative",
           overflow: "hidden",
-          transition: "box-shadow 180ms ease, transform 180ms ease",
-          "&:hover": {
+          "&:hover .sidebar-logo-text-box": {
             boxShadow: "0 8px 18px rgba(15, 23, 42, 0.12)",
             transform: "translateY(-1px)",
           },
         }}
       >
-        <Box display="flex" alignItems="center" gap={1.25} minWidth={0}>
-          {branding.logoIconEnabled && branding.logoIcon ? (
-            <Box
-              component="img"
-              src={`${apiBaseUrl}${branding.logoIcon}`}
-              alt=""
+        {branding.logoIconEnabled && branding.logoIcon ? (
+          <Box
+            component="img"
+            src={`${apiBaseUrl}${branding.logoIcon}`}
+            alt=""
+            sx={{
+              width: 34,
+              height: 34,
+              flexShrink: 0,
+              objectFit: "contain",
+            }}
+          />
+        ) : branding.logoIconEnabled ? (
+          <MemoryIcon
+            sx={{
+              flexShrink: 0,
+              fontSize: 32,
+              color: theme.palette.mode === "light" ? "#0b70c2" : "#67B7F7",
+            }}
+          />
+        ) : null}
+        {branding.logoTextEnabled && (
+          <Box
+            className="sidebar-logo-text-box"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            minWidth={0}
+            sx={{
+              width: branding.logoTextWidth,
+              maxWidth: branding.logoTextWidth,
+              px: 0.75,
+              py: 0.45,
+              borderRadius: "8px",
+              border: `1px solid ${theme.palette.divider}`,
+              boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+              overflow: "hidden",
+              transition: "box-shadow 180ms ease, transform 180ms ease",
+            }}
+          >
+            <Typography
+              variant="subtitle1"
+              noWrap
               sx={{
-                width: 34,
-                height: 34,
-                flexShrink: 0,
-                objectFit: "contain",
+                width: "100%",
+                minWidth: 0,
+                color: theme.palette.mode === "light" ? "#111111" : "#ffffff",
+                fontFamily:
+                  "\"Arial Narrow\", \"Roboto Condensed\", Arial, sans-serif",
+                fontSize: `${branding.logoTextSize}px`,
+                fontStretch: "condensed",
+                fontWeight: 400,
+                lineHeight: 1.05,
+                letterSpacing: 0,
+                textAlign: "center",
+                textTransform: "uppercase",
+                textOverflow: "ellipsis",
+                textShadow:
+                  theme.palette.mode === "light"
+                    ? "0.35px 0 #ffffff"
+                    : "0.35px 0 #111111",
               }}
-            />
-          ) : branding.logoIconEnabled ? (
-            <MemoryIcon
-              sx={{
-                flexShrink: 0,
-                fontSize: 32,
-                color: theme.palette.mode === "light" ? "#0b70c2" : "#67B7F7",
-              }}
-            />
-          ) : null}
-          {branding.logoTextEnabled && (
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              minWidth={0}
             >
-              <Typography
-                variant="subtitle1"
-                noWrap
-                sx={{
-                  width: branding.logoTextWidth,
-                  maxWidth: branding.logoTextWidth,
-                  px: 0.45,
-                  py: 0.1,
-                  color: theme.palette.mode === "light" ? "#111111" : "#ffffff",
-                  fontFamily:
-                    "\"Arial Narrow\", \"Roboto Condensed\", Arial, sans-serif",
-                  fontSize: `${branding.logoTextSize}px`,
-                  fontStretch: "condensed",
-                  fontWeight: 400,
-                  lineHeight: 1.05,
-                  letterSpacing: 0.45,
-                  textAlign: "center",
-                  textTransform: "uppercase",
-                  textShadow:
-                    theme.palette.mode === "light"
-                      ? "0.35px 0 #ffffff"
-                      : "0.35px 0 #111111",
-                }}
-              >
-                {branding.logoText}
-              </Typography>
-            </Box>
-          )}
-        </Box>
+              {branding.logoText}
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Link>
   );

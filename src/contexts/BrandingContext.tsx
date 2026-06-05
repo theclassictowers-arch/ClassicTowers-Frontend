@@ -8,7 +8,22 @@ import React, {
 } from "react";
 import { axiosInstance } from "../utils";
 
-const DEFAULT_LOGO_TEXT = "The Classic Towers";
+const DEFAULT_LOGO_TEXT = "Classic Towers";
+const LOGO_TEXT_MAX_LENGTH = 15;
+const LOGO_TEXT_MIN_SIZE = 8;
+const LOGO_TEXT_MAX_SIZE = 12;
+
+const clampNumber = (value: unknown, min: number, max: number, fallback: number) => {
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) && numberValue >= min && numberValue <= max
+    ? numberValue
+    : fallback;
+};
+
+const normalizeLogoText = (value?: string) =>
+  String(value || DEFAULT_LOGO_TEXT)
+    .trim()
+    .slice(0, LOGO_TEXT_MAX_LENGTH);
 
 export type DashboardBranding = {
   logoText: string;
@@ -33,16 +48,16 @@ const BrandingContext = createContext<BrandingContextType | undefined>(
 const normalizeBranding = (
   branding?: Partial<DashboardBranding> | null
 ): DashboardBranding => ({
-  logoText: String(branding?.logoText || DEFAULT_LOGO_TEXT).trim(),
+  logoText: normalizeLogoText(branding?.logoText),
   logoIcon: branding?.logoIcon || null,
   logoIconEnabled: branding?.logoIconEnabled !== false,
   logoTextEnabled: branding?.logoTextEnabled !== false,
-  logoTextSize:
-    Number.isFinite(Number(branding?.logoTextSize)) &&
-    Number(branding?.logoTextSize) >= 10 &&
-    Number(branding?.logoTextSize) <= 32
-      ? Number(branding?.logoTextSize)
-      : 16,
+  logoTextSize: clampNumber(
+    branding?.logoTextSize,
+    LOGO_TEXT_MIN_SIZE,
+    LOGO_TEXT_MAX_SIZE,
+    12
+  ),
   logoTextWidth:
     Number.isFinite(Number(branding?.logoTextWidth)) &&
     Number(branding?.logoTextWidth) >= 60 &&

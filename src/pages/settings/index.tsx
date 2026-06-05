@@ -53,16 +53,39 @@ type DashboardBranding = {
   sidebarHeight: number;
 };
 
+const LOGO_TEXT_MAX_LENGTH = 15;
+const LOGO_TEXT_MIN_SIZE = 8;
+const LOGO_TEXT_MAX_SIZE = 12;
+
+const clampNumber = (
+  value: unknown,
+  min: number,
+  max: number,
+  fallback: number
+) => {
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) &&
+    numberValue >= min &&
+    numberValue <= max
+    ? numberValue
+    : fallback;
+};
+
 const DEFAULT_DASHBOARD_BRANDING: DashboardBranding = {
-  logoText: "The Classic Towers",
+  logoText: "Classic Towers",
   logoIcon: null,
   logoIconEnabled: true,
   logoTextEnabled: true,
-  logoTextSize: 16,
+  logoTextSize: 12,
   logoTextWidth: 145,
   sidebarWidth: 240,
   sidebarHeight: 100,
 };
+
+const normalizeLogoText = (value?: string) =>
+  String(value || DEFAULT_DASHBOARD_BRANDING.logoText)
+    .trim()
+    .slice(0, LOGO_TEXT_MAX_LENGTH);
 
 const isHexColor = (value: string) => /^#([A-Fa-f0-9]{6})$/.test(value.trim());
 
@@ -143,16 +166,18 @@ export const SettingsPage: React.FC = () => {
         const response = await axiosInstance.get(`/users/${targetUserId}`);
         setThemeInput(normalizeDashboardTheme(response.data?.dashboardTheme));
         setBrandingInput({
-          logoText:
-            response.data?.dashboardBranding?.logoText ||
-            DEFAULT_DASHBOARD_BRANDING.logoText,
+          logoText: normalizeLogoText(response.data?.dashboardBranding?.logoText),
           logoIcon: response.data?.dashboardBranding?.logoIcon || null,
           logoIconEnabled:
             response.data?.dashboardBranding?.logoIconEnabled !== false,
           logoTextEnabled:
             response.data?.dashboardBranding?.logoTextEnabled !== false,
-          logoTextSize:
-            Number(response.data?.dashboardBranding?.logoTextSize) || 16,
+          logoTextSize: clampNumber(
+            response.data?.dashboardBranding?.logoTextSize,
+            LOGO_TEXT_MIN_SIZE,
+            LOGO_TEXT_MAX_SIZE,
+            DEFAULT_DASHBOARD_BRANDING.logoTextSize
+          ),
           logoTextWidth:
             Number(response.data?.dashboardBranding?.logoTextWidth) || 145,
           sidebarWidth:
@@ -263,7 +288,15 @@ export const SettingsPage: React.FC = () => {
 
   const handleSaveBranding = async () => {
     if (!targetUserId) return;
-    if (brandingInput.logoTextEnabled && !brandingInput.logoText.trim()) {
+    const logoText = normalizeLogoText(brandingInput.logoText);
+    const logoTextSize = clampNumber(
+      brandingInput.logoTextSize,
+      LOGO_TEXT_MIN_SIZE,
+      LOGO_TEXT_MAX_SIZE,
+      DEFAULT_DASHBOARD_BRANDING.logoTextSize
+    );
+
+    if (brandingInput.logoTextEnabled && !logoText) {
       open?.({
         type: "error",
         message: "Logo text is required",
@@ -276,7 +309,7 @@ export const SettingsPage: React.FC = () => {
     try {
       const createBrandingData = (useFallback = false) => {
         const brandingData = new FormData();
-        brandingData.append("logoText", brandingInput.logoText.trim());
+        brandingData.append("logoText", logoText);
         brandingData.append(
           "logoIconEnabled",
           String(brandingInput.logoIconEnabled)
@@ -285,7 +318,7 @@ export const SettingsPage: React.FC = () => {
           "logoTextEnabled",
           String(brandingInput.logoTextEnabled)
         );
-        brandingData.append("logoTextSize", String(brandingInput.logoTextSize));
+        brandingData.append("logoTextSize", String(logoTextSize));
         brandingData.append(
           "logoTextWidth",
           String(brandingInput.logoTextWidth)
@@ -322,17 +355,32 @@ export const SettingsPage: React.FC = () => {
           createBrandingData(true)
         );
       }
-      const savedBranding = response.data?.dashboardBranding || brandingInput;
+      const savedBranding = response.data?.dashboardBranding || {
+        ...brandingInput,
+        logoText,
+        logoTextSize,
+      };
 
-      setBrandingInput(savedBranding);
+      const normalizedSavedBranding = {
+        ...savedBranding,
+        logoText: normalizeLogoText(savedBranding.logoText),
+        logoTextSize: clampNumber(
+          savedBranding.logoTextSize,
+          LOGO_TEXT_MIN_SIZE,
+          LOGO_TEXT_MAX_SIZE,
+          DEFAULT_DASHBOARD_BRANDING.logoTextSize
+        ),
+      };
+
+      setBrandingInput(normalizedSavedBranding);
       setLogoIconFile(null);
       if (targetUserId === currentUserId) {
-        setBranding(savedBranding);
+        setBranding(normalizedSavedBranding);
       }
       setOrganizations((prev) =>
         prev.map((org) =>
           org._id === targetUserId
-            ? { ...org, dashboardBranding: savedBranding }
+            ? { ...org, dashboardBranding: normalizedSavedBranding }
             : org
         )
       );
@@ -761,12 +809,15 @@ export const SettingsPage: React.FC = () => {
                     label="Logo Text"
                     value={brandingInput.logoText}
                     disabled={!brandingInput.logoTextEnabled}
-                    inputProps={{ maxLength: 60 }}
-                    helperText="This is displayed as text beside the logo icon."
+                    inputProps={{ maxLength: LOGO_TEXT_MAX_LENGTH }}
+                    helperText={`${brandingInput.logoText.length}/${LOGO_TEXT_MAX_LENGTH} characters`}
                     onChange={(event) =>
                       setBrandingInput((prev) => ({
                         ...prev,
-                        logoText: event.target.value,
+                        logoText: event.target.value.slice(
+                          0,
+                          LOGO_TEXT_MAX_LENGTH
+                        ),
                       }))
                     }
                     InputProps={{ sx: { borderRadius: 2 } }}
@@ -803,9 +854,13 @@ export const SettingsPage: React.FC = () => {
                         </Typography>
                         <Slider
                           value={brandingInput.logoTextSize}
-                          min={10}
-                          max={32}
+                          min={LOGO_TEXT_MIN_SIZE}
+                          max={LOGO_TEXT_MAX_SIZE}
                           step={1}
+                          marks={[
+                            { value: LOGO_TEXT_MIN_SIZE, label: "8px" },
+                            { value: LOGO_TEXT_MAX_SIZE, label: "12px" },
+                          ]}
                           disabled={!brandingInput.logoTextEnabled}
                           onChange={(_, value) =>
                             setBrandingInput((prev) => ({
