@@ -157,6 +157,7 @@ export const SettingsPage: React.FC = () => {
   );
   const [logoIconFile, setLogoIconFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [showCustomTheme, setShowCustomTheme] = useState(false);
   const [activeSection, setActiveSection] = useState<"colors" | "logo">(
     "colors"
   );
@@ -260,10 +261,12 @@ export const SettingsPage: React.FC = () => {
     key: keyof DashboardThemeColors,
     value: string
   ) => {
+    setShowCustomTheme(true);
     setThemeInput((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSelectPreset = (colors: DashboardThemeColors) => {
+    setShowCustomTheme(false);
     setThemeInput(normalizeDashboardTheme(colors));
   };
 
@@ -278,6 +281,7 @@ export const SettingsPage: React.FC = () => {
 
     if (!currentThemeExistsInMode && nextPresets[0]) {
       setThemeInput(normalizeDashboardTheme(nextPresets[0].colors));
+      setShowCustomTheme(false);
     }
   };
 
@@ -799,17 +803,25 @@ export const SettingsPage: React.FC = () => {
                       );
                     })}
                     <Button
-                      component="label"
                       aria-label="Pick custom color"
+                      type="button"
+                      onClick={() => setShowCustomTheme(true)}
                       sx={{
                         aspectRatio: "1 / 1",
-                        bgcolor: "action.hover",
+                        bgcolor: showCustomTheme
+                          ? (theme) => alpha(theme.palette.primary.main, 0.08)
+                          : "action.hover",
                         border: "1px solid",
-                        borderColor: "divider",
+                        borderColor: showCustomTheme
+                          ? "primary.main"
+                          : "divider",
                         borderRadius: 2,
-                        color: "text.secondary",
+                        color: showCustomTheme
+                          ? "primary.main"
+                          : "text.secondary",
                         minWidth: 0,
                         p: 0,
+                        position: "relative",
                         "&:hover": {
                           bgcolor: "action.selected",
                           borderColor: "primary.main",
@@ -818,28 +830,35 @@ export const SettingsPage: React.FC = () => {
                       }}
                     >
                       <ColorizeOutlinedIcon />
-                      <input
-                        hidden
-                        type="color"
-                        value={
-                          isHexColor(themeInput.primaryColor)
-                            ? themeInput.primaryColor
-                            : DEFAULT_DASHBOARD_THEME.primaryColor
-                        }
-                        onChange={(event) =>
-                          handleChangeThemeInput(
-                            "primaryColor",
-                            event.target.value
-                          )
-                        }
-                      />
+                      {showCustomTheme && (
+                        <Box
+                          sx={{
+                            alignItems: "center",
+                            bgcolor: "primary.main",
+                            border: "2px solid",
+                            borderColor: "background.paper",
+                            borderRadius: "50%",
+                            color: "primary.contrastText",
+                            display: "flex",
+                            height: 30,
+                            justifyContent: "center",
+                            position: "absolute",
+                            right: 12,
+                            top: 12,
+                            width: 30,
+                          }}
+                        >
+                          <CheckIcon fontSize="small" />
+                        </Box>
+                      )}
                     </Button>
                     </Box>
                     <Box
                       sx={{
-                        display: "grid",
+                        display: showCustomTheme ? "grid" : "none",
                         gap: 1,
                         gridTemplateColumns: "1fr",
+                        minWidth: 0,
                       }}
                     >
                       <Typography
@@ -848,6 +867,34 @@ export const SettingsPage: React.FC = () => {
                       >
                         Custom Theme
                       </Typography>
+                      <Box
+                        sx={{
+                          alignItems: "center",
+                          display: "flex",
+                          gap: 0.75,
+                          mb: 0.25,
+                        }}
+                      >
+                        {[
+                          themeInput.primaryColor,
+                          themeInput.backgroundColor,
+                          themeInput.textColor,
+                        ].map((color, index) => (
+                          <Box
+                            key={`${color}-${index}`}
+                            sx={{
+                              bgcolor: isHexColor(color)
+                                ? color
+                                : DEFAULT_DASHBOARD_THEME.primaryColor,
+                              border: "1px solid",
+                              borderColor: alpha("#000000", 0.18),
+                              borderRadius: "50%",
+                              height: 28,
+                              width: 28,
+                            }}
+                          />
+                        ))}
+                      </Box>
                       <Stack spacing={0.5}>
                       <Typography variant="caption" sx={{ fontWeight: 700 }}>
                         Primary Color
