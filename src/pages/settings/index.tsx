@@ -876,9 +876,9 @@ export const SettingsPage: React.FC = () => {
                         display: "grid",
                         gridTemplateColumns: {
                           xs: "1fr",
-                          sm: "max-content repeat(2, 150px)",
+                          sm: "max-content repeat(2, 165px)",
                         },
-                        columnGap: 2,
+                        columnGap: 5,
                         rowGap: 1.5,
                         alignItems: "start",
                       }}
@@ -897,7 +897,7 @@ export const SettingsPage: React.FC = () => {
                         }
                         label="Show Logo Text"
                       />
-                      <Box sx={{ width: { xs: "100%", sm: 150 } }}>
+                      <Box sx={{ width: { xs: "100%", sm: 165 } }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Text Size: {brandingInput.logoTextSize}px
                         </Typography>
@@ -926,7 +926,7 @@ export const SettingsPage: React.FC = () => {
                           }}
                         />
                       </Box>
-                      <Box sx={{ width: { xs: "100%", sm: 150 } }}>
+                      <Box sx={{ width: { xs: "100%", sm: 165 } }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Text Width: {brandingInput.logoTextWidth}px
                         </Typography>
