@@ -111,18 +111,24 @@ const APPEARANCE_MODE_OPTIONS = [
   { value: "device", label: "Device", icon: DevicesOutlinedIcon },
 ] as const;
 
+type AppearanceMode = (typeof APPEARANCE_MODE_OPTIONS)[number]["value"];
+
 const getPresetGradient = (colors: DashboardThemeColors) =>
   `conic-gradient(${colors.primaryColor} 0 25%, ${colors.textColor} 25% 50%, ${colors.backgroundColor} 50% 75%, ${alpha(
     colors.primaryColor,
     0.34
   )} 75% 100%)`;
 
-const getAppearanceThemePresets = (
-  modePreference: "light" | "dark" | "device"
-) => {
+const getAppearanceThemePresets = (modePreference: AppearanceMode) => {
   if (modePreference === "dark") return DARK_DASHBOARD_THEME_PRESETS;
   if (modePreference === "device") return DEVICE_DASHBOARD_THEME_PRESETS;
   return LIGHT_DASHBOARD_THEME_PRESETS;
+};
+
+const getAppearanceThemeLabel = (modePreference: AppearanceMode) => {
+  if (modePreference === "dark") return "Dark Themes";
+  if (modePreference === "device") return "System Themes";
+  return "Light Themes";
 };
 
 export const SettingsPage: React.FC = () => {
@@ -259,6 +265,20 @@ export const SettingsPage: React.FC = () => {
 
   const handleSelectPreset = (colors: DashboardThemeColors) => {
     setThemeInput(normalizeDashboardTheme(colors));
+  };
+
+  const handleSelectAppearanceMode = (nextMode: AppearanceMode) => {
+    const nextPresets = getAppearanceThemePresets(nextMode);
+    const selectedTheme = normalizeDashboardTheme(themeInput);
+    const currentThemeExistsInMode = nextPresets.some((preset) =>
+      areSameTheme(selectedTheme, preset.colors)
+    );
+
+    setModePreference(nextMode);
+
+    if (!currentThemeExistsInMode && nextPresets[0]) {
+      setThemeInput(normalizeDashboardTheme(nextPresets[0].colors));
+    }
   };
 
   const validateTheme = () => {
@@ -646,7 +666,9 @@ export const SettingsPage: React.FC = () => {
                           <Button
                             key={option.value}
                             type="button"
-                            onClick={() => setModePreference(option.value)}
+                            onClick={() =>
+                              handleSelectAppearanceMode(option.value)
+                            }
                             startIcon={<Icon />}
                             sx={{
                               borderRadius: 999,
@@ -692,6 +714,16 @@ export const SettingsPage: React.FC = () => {
                       },
                     }}
                   >
+                    <Typography
+                      variant="subtitle2"
+                      sx={{
+                        gridColumn: "1 / -1",
+                        fontWeight: 700,
+                        color: "text.primary",
+                      }}
+                    >
+                      {getAppearanceThemeLabel(modePreference)}
+                    </Typography>
                     <Box
                       sx={{
                         display: "grid",
