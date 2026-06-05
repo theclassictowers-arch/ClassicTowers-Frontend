@@ -979,13 +979,17 @@ export const SettingsPage: React.FC = () => {
                       },
                     }}
                   >
-                    <DialogTitle sx={{ fontWeight: 800, pb: 1 }}>
+                    <DialogTitle
+                      sx={{ fontWeight: 800, pb: 1, textAlign: "center" }}
+                    >
                       Custom Theme
                     </DialogTitle>
                     <DialogContent
                       sx={{
+                        alignItems: "center",
                         display: "grid",
                         gap: 1.25,
+                        justifyItems: "center",
                         pt: 1,
                       }}
                     >
@@ -994,6 +998,7 @@ export const SettingsPage: React.FC = () => {
                           alignItems: "center",
                           display: "flex",
                           gap: 0.75,
+                          justifyContent: "center",
                         }}
                       >
                         {[
@@ -1016,7 +1021,7 @@ export const SettingsPage: React.FC = () => {
                           />
                         ))}
                       </Box>
-                      <Stack spacing={0.5}>
+                      <Stack spacing={0.5} sx={{ width: "100%", maxWidth: 260 }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Primary Color
                         </Typography>
@@ -1038,7 +1043,7 @@ export const SettingsPage: React.FC = () => {
                           inputProps={{ "aria-label": "Pick primary color" }}
                         />
                       </Stack>
-                      <Stack spacing={0.5}>
+                      <Stack spacing={0.5} sx={{ width: "100%", maxWidth: 260 }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Background Color
                         </Typography>
@@ -1060,7 +1065,7 @@ export const SettingsPage: React.FC = () => {
                           inputProps={{ "aria-label": "Pick background color" }}
                         />
                       </Stack>
-                      <Stack spacing={0.5}>
+                      <Stack spacing={0.5} sx={{ width: "100%", maxWidth: 260 }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Text Color
                         </Typography>
@@ -1083,7 +1088,7 @@ export const SettingsPage: React.FC = () => {
                         />
                       </Stack>
                     </DialogContent>
-                    <DialogActions sx={{ px: 3, pb: 2 }}>
+                    <DialogActions sx={{ justifyContent: "center", px: 3, pb: 2 }}>
                       <Button
                         type="button"
                         variant="outlined"
