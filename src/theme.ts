@@ -85,16 +85,6 @@ export const LIGHT_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     },
   },
   {
-    id: "teal-slate",
-    name: "Teal Slate",
-    description: "Modern and balanced",
-    colors: {
-      primaryColor: "#0f766e",
-      backgroundColor: "#f8fafc",
-      textColor: "#0f172a",
-    },
-  },
-  {
     id: "violet-cloud",
     name: "Violet Cloud",
     description: "Soft violet with clear contrast",
