@@ -4,7 +4,6 @@ import {
   Button,
   CircularProgress,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
@@ -22,6 +21,7 @@ import {
 } from "@mui/material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckIcon from "@mui/icons-material/Check";
 import ColorizeOutlinedIcon from "@mui/icons-material/ColorizeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -980,9 +980,43 @@ export const SettingsPage: React.FC = () => {
                     }}
                   >
                     <DialogTitle
-                      sx={{ fontWeight: 800, pb: 1, textAlign: "center" }}
+                      sx={{
+                        alignItems: "center",
+                        display: "grid",
+                        gridTemplateColumns: "40px 1fr auto",
+                        gap: 1,
+                        pb: 1,
+                      }}
                     >
-                      Custom Theme
+                      <Button
+                        type="button"
+                        variant="text"
+                        onClick={() => setShowCustomTheme(false)}
+                        sx={{
+                          borderRadius: "50%",
+                          minWidth: 40,
+                          p: 0,
+                          width: 40,
+                          height: 40,
+                        }}
+                      >
+                        <ArrowBackIcon />
+                      </Button>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: 800, textAlign: "center" }}
+                      >
+                        Custom Theme
+                      </Typography>
+                      <Button
+                        type="button"
+                        variant="contained"
+                        disabled={isSaving}
+                        onClick={handleSaveColors}
+                        sx={{ textTransform: "none", fontWeight: 700 }}
+                      >
+                        Save
+                      </Button>
                     </DialogTitle>
                     <DialogContent
                       sx={{
@@ -1088,25 +1122,6 @@ export const SettingsPage: React.FC = () => {
                         />
                       </Stack>
                     </DialogContent>
-                    <DialogActions sx={{ justifyContent: "center", px: 3, pb: 2 }}>
-                      <Button
-                        type="button"
-                        variant="outlined"
-                        onClick={() => setShowCustomTheme(false)}
-                        sx={{ textTransform: "none", fontWeight: 700 }}
-                      >
-                        Back
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="contained"
-                        disabled={isSaving}
-                        onClick={handleSaveColors}
-                        sx={{ textTransform: "none", fontWeight: 700 }}
-                      >
-                        Save
-                      </Button>
-                    </DialogActions>
                   </Dialog>
                 </Box>
               )}
