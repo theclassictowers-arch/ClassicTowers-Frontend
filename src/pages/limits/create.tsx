@@ -7,12 +7,17 @@ import {
   Paper,
   TextField,
   Divider,
+  Button,
+  CircularProgress,
 } from "@mui/material";
-import { Create } from "@refinedev/mui";
-import { useForm } from "@refinedev/react-hook-form";
+import { useState } from "react";
+import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
+import { useNotification } from "@refinedev/core";
 import { useNavigate } from "react-router-dom";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
+import { MapBackgroundPage } from "../../components/map-background-page";
+import { axiosInstance } from "../../utils";
 
 const SectionHeading = ({ title }: { title: string }) => (
   <Typography
@@ -113,19 +118,42 @@ const AxisSection = ({
 
 export const LimitsCreate = () => {
   const navigate = useNavigate();
+  const { open } = useNotification();
+  const [isLoading, setIsLoading] = useState(false);
   const {
-    saveButtonProps,
     register,
+    handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm({
-    refineCoreProps: {
-      resource: "limits",
-      redirect: "list",
-    },
-  });
+  } = useForm<FieldValues>({ mode: "onChange" });
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    setIsLoading(true);
+    try {
+      await axiosInstance.post("/limits", data);
+
+      open?.({
+        type: "success",
+        message: "Sensor limits created successfully!",
+        description: "The sensor configuration has been added.",
+      });
+
+      reset();
+      navigate("/limits");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      open?.({
+        type: "error",
+        message: "Failed to create sensor limits",
+        description: err.response?.data?.message || "An error occurred",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <Create saveButtonProps={saveButtonProps}>
+    <MapBackgroundPage>
       <MovableForm
         panelId="limits-create-form"
         initialWidth={760}
@@ -134,6 +162,8 @@ export const LimitsCreate = () => {
         onClose={() => navigate("/limits")}
       >
         <Card
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
           sx={{
             ...formStyles.container,
             m: 0,
@@ -328,11 +358,30 @@ export const LimitsCreate = () => {
                   </Box>
                 </Grid>
               </Grid>
+
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{
+                  ...formStyles.submitButton,
+                  mt: 1,
+                  opacity: isLoading ? 0.6 : 1,
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Create Sensor"
+                )}
+              </Button>
             </Box>
           </CardContent>
         </Card>
       </MovableForm>
-    </Create>
+    </MapBackgroundPage>
   );
 };
 

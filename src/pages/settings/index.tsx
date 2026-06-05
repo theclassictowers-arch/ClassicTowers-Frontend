@@ -77,7 +77,7 @@ const DEFAULT_DASHBOARD_BRANDING: DashboardBranding = {
   logoIconEnabled: true,
   logoTextEnabled: true,
   logoTextSize: 12,
-  logoTextWidth: 145,
+  logoTextWidth: 165,
   sidebarWidth: 240,
   sidebarHeight: 100,
 };
@@ -179,7 +179,7 @@ export const SettingsPage: React.FC = () => {
             DEFAULT_DASHBOARD_BRANDING.logoTextSize
           ),
           logoTextWidth:
-            Number(response.data?.dashboardBranding?.logoTextWidth) || 145,
+            Number(response.data?.dashboardBranding?.logoTextWidth) || 165,
           sidebarWidth:
             Number(response.data?.dashboardBranding?.sidebarWidth) || 240,
           sidebarHeight:
@@ -877,8 +877,12 @@ export const SettingsPage: React.FC = () => {
                         <Slider
                           value={brandingInput.logoTextWidth}
                           min={60}
-                          max={180}
+                          max={220}
                           step={5}
+                          marks={[
+                            { value: 60, label: "60px" },
+                            { value: 220, label: "220px" },
+                          ]}
                           disabled={!brandingInput.logoTextEnabled}
                           onChange={(_, value) =>
                             setBrandingInput((prev) => ({

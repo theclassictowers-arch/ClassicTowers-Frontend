@@ -61,9 +61,9 @@ const normalizeBranding = (
   logoTextWidth:
     Number.isFinite(Number(branding?.logoTextWidth)) &&
     Number(branding?.logoTextWidth) >= 60 &&
-    Number(branding?.logoTextWidth) <= 180
+    Number(branding?.logoTextWidth) <= 220
       ? Number(branding?.logoTextWidth)
-      : 145,
+      : 165,
   sidebarWidth:
     Number.isFinite(Number(branding?.sidebarWidth)) &&
     Number(branding?.sidebarWidth) >= 200 &&

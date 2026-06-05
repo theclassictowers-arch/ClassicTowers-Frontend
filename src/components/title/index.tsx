@@ -27,7 +27,7 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
 
   const logoTextBoxWidth =
     logoTextLength >= 15
-      ? Math.max(branding.logoTextWidth, 156)
+      ? Math.max(branding.logoTextWidth, 172)
       : branding.logoTextWidth;
 
   if (collapsed) {
@@ -105,8 +105,9 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
             sx={{
               width: logoTextBoxWidth,
               maxWidth: "calc(100% - 42px)",
-              px: 0.5,
-              py: 0.45,
+              minHeight: 28,
+              px: 0.85,
+              py: 0.7,
               borderRadius: "8px",
               border: `1px solid ${theme.palette.divider}`,
               boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
@@ -126,7 +127,7 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
                 fontSize: `${logoTextSize}px`,
                 fontStretch: "condensed",
                 fontWeight: 400,
-                lineHeight: 1.05,
+                lineHeight: 1.15,
                 letterSpacing: 0,
                 textAlign: "center",
                 textTransform: "none",
