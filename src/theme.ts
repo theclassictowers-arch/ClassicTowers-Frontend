@@ -41,7 +41,7 @@ export const LIGHT_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     colors: {
       primaryColor: "#059669",
       backgroundColor: "#f0fdf4",
-      textColor: "#052e16",
+      textColor: "#064e3b",
     },
   },
   {
@@ -71,7 +71,7 @@ export const LIGHT_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     colors: {
       primaryColor: "#4f46e5",
       backgroundColor: "#eef2ff",
-      textColor: "#111827",
+      textColor: "#1f2937",
     },
   },
   {
@@ -114,7 +114,7 @@ export const DARK_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     colors: {
       primaryColor: "#06b6d4",
       backgroundColor: "#111827",
-      textColor: "#f8fafc",
+      textColor: "#e2e8f0",
     },
   },
   {
@@ -122,9 +122,9 @@ export const DARK_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     name: "Ruby Night",
     description: "Bold monitoring contrast",
     colors: {
-      primaryColor: "#e11d48",
+      primaryColor: "#fb7185",
       backgroundColor: "#18181b",
-      textColor: "#fafafa",
+      textColor: "#ffe4e6",
     },
   },
   {
@@ -134,7 +134,7 @@ export const DARK_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     colors: {
       primaryColor: "#38bdf8",
       backgroundColor: "#020617",
-      textColor: "#e0f2fe",
+      textColor: "#dbeafe",
     },
   },
   {
@@ -144,7 +144,7 @@ export const DARK_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     colors: {
       primaryColor: "#34d399",
       backgroundColor: "#052e16",
-      textColor: "#dcfce7",
+      textColor: "#bbf7d0",
     },
   },
   {
@@ -154,7 +154,7 @@ export const DARK_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     colors: {
       primaryColor: "#f59e0b",
       backgroundColor: "#1c1917",
-      textColor: "#fff7ed",
+      textColor: "#fed7aa",
     },
   },
   {
@@ -164,7 +164,7 @@ export const DARK_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     colors: {
       primaryColor: "#a78bfa",
       backgroundColor: "#1e1b4b",
-      textColor: "#f5f3ff",
+      textColor: "#ede9fe",
     },
   },
 ];
@@ -175,9 +175,9 @@ export const DEVICE_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     name: "Adaptive Blue",
     description: "Balanced system blue",
     colors: {
-      primaryColor: "#0b70c2",
-      backgroundColor: "#eef4fb",
-      textColor: "#0f172a",
+      primaryColor: "#3b82f6",
+      backgroundColor: "#eaf2ff",
+      textColor: "#1e3a8a",
     },
   },
   {
@@ -185,9 +185,9 @@ export const DEVICE_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     name: "Adaptive Teal",
     description: "System-friendly teal",
     colors: {
-      primaryColor: "#0f766e",
-      backgroundColor: "#ecfeff",
-      textColor: "#134e4a",
+      primaryColor: "#14b8a6",
+      backgroundColor: "#e6fffb",
+      textColor: "#115e59",
     },
   },
   {
@@ -195,9 +195,9 @@ export const DEVICE_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     name: "Adaptive Slate",
     description: "Neutral across modes",
     colors: {
-      primaryColor: "#475569",
-      backgroundColor: "#f8fafc",
-      textColor: "#0f172a",
+      primaryColor: "#64748b",
+      backgroundColor: "#f1f5f9",
+      textColor: "#334155",
     },
   },
   {
@@ -206,8 +206,8 @@ export const DEVICE_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     description: "Soft system indigo",
     colors: {
       primaryColor: "#6366f1",
-      backgroundColor: "#eef2ff",
-      textColor: "#1e1b4b",
+      backgroundColor: "#e0e7ff",
+      textColor: "#3730a3",
     },
   },
 ];
