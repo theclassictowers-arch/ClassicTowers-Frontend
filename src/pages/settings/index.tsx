@@ -957,26 +957,33 @@ export const SettingsPage: React.FC = () => {
                       </Box>
                     </Box>
                   )}
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    disabled={!brandingInput.logoIconEnabled}
-                    sx={{ textTransform: "none" }}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                      gap: 2,
+                    }}
                   >
-                    {logoIconFile
-                      ? logoIconFile.name
-                      : "Choose Logo Icon Image"}
-                    <input
-                      hidden
-                      type="file"
-                      accept="image/png,image/jpeg"
-                      onChange={(event) =>
-                        setLogoIconFile(event.target.files?.[0] || null)
-                      }
-                    />
-                  </Button>
-                  {role === "admin" && (
-                    <>
+                    <Button
+                      component="label"
+                      variant="outlined"
+                      disabled={!brandingInput.logoIconEnabled}
+                      sx={{ textTransform: "none" }}
+                    >
+                      {logoIconFile
+                        ? logoIconFile.name
+                        : "Choose Logo Icon Image"}
+                      <input
+                        hidden
+                        type="file"
+                        accept="image/png,image/jpeg"
+                        onChange={(event) =>
+                          setLogoIconFile(event.target.files?.[0] || null)
+                        }
+                      />
+                    </Button>
+                    {role === "admin" && (
                       <FormControlLabel
                         control={
                           <Switch
@@ -989,8 +996,18 @@ export const SettingsPage: React.FC = () => {
                             }
                           />
                         }
-                        label="Show Logo Icon"
+                        label="Show Logo Image"
+                        sx={{
+                          m: 0,
+                          "& .MuiFormControlLabel-label": {
+                            whiteSpace: "nowrap",
+                          },
+                        }}
                       />
+                    )}
+                  </Box>
+                  {role === "admin" && (
+                    <>
                       <Typography variant="caption" color="text.secondary">
                         Recommended logo icon: 128 × 128px square PNG or JPG
                         (displayed at 34 × 34px). Maximum file size: 5MB.
