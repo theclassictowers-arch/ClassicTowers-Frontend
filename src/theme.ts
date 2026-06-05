@@ -27,7 +27,7 @@ export type DashboardThemePreset = {
   colors: DashboardThemeColors;
 };
 
-export const DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
+export const LIGHT_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
   {
     id: "tower-blue",
     name: "Tower Blue",
@@ -45,13 +45,13 @@ export const DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     },
   },
   {
-    id: "graphite-cyan",
-    name: "Graphite Cyan",
-    description: "Sharp dark dashboard feel",
+    id: "sky-command",
+    name: "Sky Command",
+    description: "Bright blue operational palette",
     colors: {
-      primaryColor: "#06b6d4",
-      backgroundColor: "#111827",
-      textColor: "#f8fafc",
+      primaryColor: "#2563eb",
+      backgroundColor: "#eff6ff",
+      textColor: "#172554",
     },
   },
   {
@@ -75,13 +75,13 @@ export const DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     },
   },
   {
-    id: "ruby-night",
-    name: "Ruby Night",
-    description: "Bold monitoring contrast",
+    id: "rose-day",
+    name: "Rose Day",
+    description: "Soft alerts with clean contrast",
     colors: {
       primaryColor: "#e11d48",
-      backgroundColor: "#18181b",
-      textColor: "#fafafa",
+      backgroundColor: "#fff1f2",
+      textColor: "#4c0519",
     },
   },
   {
@@ -105,6 +105,114 @@ export const DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
     },
   },
 ];
+
+export const DARK_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
+  {
+    id: "graphite-cyan",
+    name: "Graphite Cyan",
+    description: "Sharp dark dashboard feel",
+    colors: {
+      primaryColor: "#06b6d4",
+      backgroundColor: "#111827",
+      textColor: "#f8fafc",
+    },
+  },
+  {
+    id: "ruby-night",
+    name: "Ruby Night",
+    description: "Bold monitoring contrast",
+    colors: {
+      primaryColor: "#e11d48",
+      backgroundColor: "#18181b",
+      textColor: "#fafafa",
+    },
+  },
+  {
+    id: "midnight-blue",
+    name: "Midnight Blue",
+    description: "Deep blue command room",
+    colors: {
+      primaryColor: "#38bdf8",
+      backgroundColor: "#020617",
+      textColor: "#e0f2fe",
+    },
+  },
+  {
+    id: "dark-emerald",
+    name: "Dark Emerald",
+    description: "Low-light green monitoring",
+    colors: {
+      primaryColor: "#34d399",
+      backgroundColor: "#052e16",
+      textColor: "#dcfce7",
+    },
+  },
+  {
+    id: "amber-night",
+    name: "Amber Night",
+    description: "Warm dark visibility",
+    colors: {
+      primaryColor: "#f59e0b",
+      backgroundColor: "#1c1917",
+      textColor: "#fff7ed",
+    },
+  },
+  {
+    id: "violet-night",
+    name: "Violet Night",
+    description: "Dark premium contrast",
+    colors: {
+      primaryColor: "#a78bfa",
+      backgroundColor: "#1e1b4b",
+      textColor: "#f5f3ff",
+    },
+  },
+];
+
+export const DEVICE_DASHBOARD_THEME_PRESETS: DashboardThemePreset[] = [
+  {
+    id: "adaptive-blue",
+    name: "Adaptive Blue",
+    description: "Balanced system blue",
+    colors: {
+      primaryColor: "#0b70c2",
+      backgroundColor: "#eef4fb",
+      textColor: "#0f172a",
+    },
+  },
+  {
+    id: "adaptive-teal",
+    name: "Adaptive Teal",
+    description: "System-friendly teal",
+    colors: {
+      primaryColor: "#0f766e",
+      backgroundColor: "#ecfeff",
+      textColor: "#134e4a",
+    },
+  },
+  {
+    id: "adaptive-slate",
+    name: "Adaptive Slate",
+    description: "Neutral across modes",
+    colors: {
+      primaryColor: "#475569",
+      backgroundColor: "#f8fafc",
+      textColor: "#0f172a",
+    },
+  },
+  {
+    id: "adaptive-indigo",
+    name: "Adaptive Indigo",
+    description: "Soft system indigo",
+    colors: {
+      primaryColor: "#6366f1",
+      backgroundColor: "#eef2ff",
+      textColor: "#1e1b4b",
+    },
+  },
+];
+
+export const DASHBOARD_THEME_PRESETS = LIGHT_DASHBOARD_THEME_PRESETS;
 
 const HEX_COLOR_REGEX = /^#([A-Fa-f0-9]{6})$/;
 

@@ -34,8 +34,10 @@ import { axiosInstance } from "../../utils";
 import { formStyles } from "../auth/styles";
 import { MapBackgroundPage } from "../../components/map-background-page";
 import {
-  DASHBOARD_THEME_PRESETS,
+  DARK_DASHBOARD_THEME_PRESETS,
   DEFAULT_DASHBOARD_THEME,
+  DEVICE_DASHBOARD_THEME_PRESETS,
+  LIGHT_DASHBOARD_THEME_PRESETS,
   normalizeDashboardTheme,
   type DashboardThemeColors,
 } from "../../theme";
@@ -115,6 +117,14 @@ const getPresetGradient = (colors: DashboardThemeColors) =>
     0.34
   )} 75% 100%)`;
 
+const getAppearanceThemePresets = (
+  modePreference: "light" | "dark" | "device"
+) => {
+  if (modePreference === "dark") return DARK_DASHBOARD_THEME_PRESETS;
+  if (modePreference === "device") return DEVICE_DASHBOARD_THEME_PRESETS;
+  return LIGHT_DASHBOARD_THEME_PRESETS;
+};
+
 export const SettingsPage: React.FC = () => {
   const { role } = useAuthContext();
   const {
@@ -143,6 +153,10 @@ export const SettingsPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [activeSection, setActiveSection] = useState<"colors" | "logo">(
     "colors"
+  );
+  const appearanceThemePresets = useMemo(
+    () => getAppearanceThemePresets(modePreference),
+    [modePreference]
   );
 
   useEffect(() => {
@@ -678,7 +692,7 @@ export const SettingsPage: React.FC = () => {
                       },
                     }}
                   >
-                    {DASHBOARD_THEME_PRESETS.map((preset) => {
+                    {appearanceThemePresets.map((preset) => {
                       const isSelected = areSameTheme(
                         normalizeDashboardTheme(themeInput),
                         preset.colors
@@ -777,6 +791,89 @@ export const SettingsPage: React.FC = () => {
                         }
                       />
                     </Button>
+                  </Box>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ fontWeight: 700, color: "text.primary" }}
+                  >
+                    Custom Theme
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "repeat(3, minmax(0, 1fr))",
+                      },
+                      gap: 1,
+                    }}
+                  >
+                    <Stack spacing={0.5}>
+                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                        Primary Color
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        type="color"
+                        value={
+                          isHexColor(themeInput.primaryColor)
+                            ? themeInput.primaryColor
+                            : DEFAULT_DASHBOARD_THEME.primaryColor
+                        }
+                        onChange={(event) =>
+                          handleChangeThemeInput(
+                            "primaryColor",
+                            event.target.value
+                          )
+                        }
+                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                        inputProps={{ "aria-label": "Pick primary color" }}
+                      />
+                    </Stack>
+                    <Stack spacing={0.5}>
+                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                        Background Color
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        type="color"
+                        value={
+                          isHexColor(themeInput.backgroundColor)
+                            ? themeInput.backgroundColor
+                            : DEFAULT_DASHBOARD_THEME.backgroundColor
+                        }
+                        onChange={(event) =>
+                          handleChangeThemeInput(
+                            "backgroundColor",
+                            event.target.value
+                          )
+                        }
+                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                        inputProps={{ "aria-label": "Pick background color" }}
+                      />
+                    </Stack>
+                    <Stack spacing={0.5}>
+                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                        Text Color
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        type="color"
+                        value={
+                          isHexColor(themeInput.textColor)
+                            ? themeInput.textColor
+                            : DEFAULT_DASHBOARD_THEME.textColor
+                        }
+                        onChange={(event) =>
+                          handleChangeThemeInput(
+                            "textColor",
+                            event.target.value
+                          )
+                        }
+                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                        inputProps={{ "aria-label": "Pick text color" }}
+                      />
+                    </Stack>
                   </Box>
                 </Box>
               )}
