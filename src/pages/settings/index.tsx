@@ -876,10 +876,11 @@ export const SettingsPage: React.FC = () => {
                         display: "grid",
                         gridTemplateColumns: {
                           xs: "1fr",
-                          sm: "repeat(3, minmax(0, 1fr))",
+                          sm: "max-content repeat(2, 150px)",
                         },
-                        gap: 2,
-                        alignItems: "center",
+                        columnGap: 2,
+                        rowGap: 1.5,
+                        alignItems: "start",
                       }}
                     >
                       <FormControlLabel
@@ -896,7 +897,7 @@ export const SettingsPage: React.FC = () => {
                         }
                         label="Show Logo Text"
                       />
-                      <Box>
+                      <Box sx={{ width: { xs: "100%", sm: 150 } }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Text Size: {brandingInput.logoTextSize}px
                         </Typography>
@@ -916,9 +917,16 @@ export const SettingsPage: React.FC = () => {
                               logoTextSize: value as number,
                             }))
                           }
+                          sx={{
+                            width: "100%",
+                            "& .MuiSlider-markLabel": {
+                              fontSize: "0.62rem",
+                              whiteSpace: "nowrap",
+                            },
+                          }}
                         />
                       </Box>
-                      <Box>
+                      <Box sx={{ width: { xs: "100%", sm: 150 } }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Text Width: {brandingInput.logoTextWidth}px
                         </Typography>
@@ -938,6 +946,13 @@ export const SettingsPage: React.FC = () => {
                               logoTextWidth: value as number,
                             }))
                           }
+                          sx={{
+                            width: "100%",
+                            "& .MuiSlider-markLabel": {
+                              fontSize: "0.62rem",
+                              whiteSpace: "nowrap",
+                            },
+                          }}
                         />
                       </Box>
                     </Box>
