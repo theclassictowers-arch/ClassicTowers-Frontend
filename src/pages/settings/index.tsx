@@ -18,6 +18,11 @@ import {
 } from "@mui/material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
+import CheckIcon from "@mui/icons-material/Check";
+import ColorizeOutlinedIcon from "@mui/icons-material/ColorizeOutlined";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import DevicesOutlinedIcon from "@mui/icons-material/DevicesOutlined";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import { alpha } from "@mui/material/styles";
 import { useNotification } from "@refinedev/core";
 import {
@@ -98,9 +103,26 @@ const areSameTheme = (
     second.backgroundColor.toLowerCase() &&
   first.textColor.toLowerCase() === second.textColor.toLowerCase();
 
+const APPEARANCE_MODE_OPTIONS = [
+  { value: "light", label: "Light", icon: LightModeOutlinedIcon },
+  { value: "dark", label: "Dark", icon: DarkModeOutlinedIcon },
+  { value: "device", label: "Device", icon: DevicesOutlinedIcon },
+] as const;
+
+const getPresetGradient = (colors: DashboardThemeColors) =>
+  `conic-gradient(${colors.primaryColor} 0 25%, ${colors.textColor} 25% 50%, ${colors.backgroundColor} 50% 75%, ${alpha(
+    colors.primaryColor,
+    0.34
+  )} 75% 100%)`;
+
 export const SettingsPage: React.FC = () => {
   const { role } = useAuthContext();
-  const { dashboardTheme, setDashboardTheme } = useColorModeContext();
+  const {
+    dashboardTheme,
+    modePreference,
+    setDashboardTheme,
+    setModePreference,
+  } = useColorModeContext();
   const { setBranding } = useBrandingContext();
   const { open } = useNotification();
   const currentUserId = localStorage.getItem("userId");
@@ -587,117 +609,160 @@ export const SettingsPage: React.FC = () => {
                       variant="subtitle2"
                       sx={{ mb: 1, fontWeight: 700, color: "text.primary" }}
                     >
-                      Theme Presets
+                      Appearance
                     </Typography>
                     <Box
                       sx={{
+                        alignItems: "center",
+                        bgcolor: "background.paper",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: 999,
                         display: "grid",
-                        gridTemplateColumns: {
-                          xs: "1fr",
-                          sm: "repeat(2, minmax(0, 1fr))",
-                          md: "repeat(4, minmax(0, 1fr))",
-                        },
-                        gap: 0.75,
+                        gap: 0.5,
+                        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                        maxWidth: 470,
+                        p: 0.5,
                       }}
                     >
-                      {DASHBOARD_THEME_PRESETS.map((preset) => {
-                        const isSelected = areSameTheme(
-                          normalizeDashboardTheme(themeInput),
-                          preset.colors
-                        );
-
+                      {APPEARANCE_MODE_OPTIONS.map((option) => {
+                        const Icon = option.icon;
+                        const isSelected = modePreference === option.value;
                         return (
                           <Button
-                            key={preset.id}
+                            key={option.value}
                             type="button"
-                            onClick={() => handleSelectPreset(preset.colors)}
+                            onClick={() => setModePreference(option.value)}
+                            startIcon={<Icon />}
                             sx={{
-                              alignItems: "stretch",
-                              border: "1px solid",
-                              borderColor: isSelected
-                                ? "primary.main"
-                                : "divider",
-                              borderRadius: 1,
-                              color: "text.primary",
-                              justifyContent: "flex-start",
-                              minHeight: 68,
-                              p: 0.75,
-                              textAlign: "left",
+                              borderRadius: 999,
+                              boxShadow: isSelected
+                                ? (theme) =>
+                                    `0 0 0 2px ${alpha(
+                                      theme.palette.primary.main,
+                                      0.24
+                                    )}`
+                                : "none",
+                              color: isSelected
+                                ? "primary.contrastText"
+                                : "text.primary",
+                              fontWeight: 800,
+                              minHeight: 44,
+                              px: { xs: 1, sm: 2 },
                               textTransform: "none",
                               bgcolor: isSelected
-                                ? (theme) =>
-                                    alpha(theme.palette.primary.main, 0.08)
-                                : "background.paper",
+                                ? "primary.main"
+                                : "transparent",
                               "&:hover": {
-                                borderColor: "primary.main",
-                                bgcolor: (theme) =>
-                                  alpha(theme.palette.primary.main, 0.1),
+                                bgcolor: isSelected
+                                  ? "primary.dark"
+                                  : "action.hover",
                               },
                             }}
                           >
-                            <Stack spacing={0.75} sx={{ width: "100%" }}>
-                              <Stack direction="row" spacing={0.5}>
-                                {Object.values(preset.colors).map((color) => (
-                                  <Box
-                                    key={`${preset.id}-${color}`}
-                                    sx={{
-                                      width: 24,
-                                      height: 24,
-                                      borderRadius: 0.75,
-                                      bgcolor: color,
-                                      border: "1px solid",
-                                      borderColor: alpha("#000000", 0.16),
-                                    }}
-                                  />
-                                ))}
-                              </Stack>
-                              <Box>
-                                <Typography
-                                  variant="body2"
-                                  sx={{ fontWeight: 700, lineHeight: 1.2 }}
-                                >
-                                  {preset.name}
-                                </Typography>
-                                <Typography
-                                  variant="caption"
-                                  sx={{
-                                    color: "text.secondary",
-                                    display: "block",
-                                    lineHeight: 1.25,
-                                  }}
-                                >
-                                  {preset.description}
-                                </Typography>
-                              </Box>
-                            </Stack>
+                            {option.label}
                           </Button>
                         );
                       })}
                     </Box>
                   </Box>
 
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ fontWeight: 700, color: "text.primary" }}
-                  >
-                    Custom Theme
-                  </Typography>
                   <Box
                     sx={{
                       display: "grid",
+                      gap: 1.5,
                       gridTemplateColumns: {
-                        xs: "1fr",
-                        sm: "repeat(3, minmax(0, 1fr))",
+                        xs: "repeat(2, minmax(0, 1fr))",
+                        sm: "repeat(4, 108px)",
+                        md: "repeat(4, 108px)",
                       },
-                      gap: 1,
                     }}
                   >
-                    <Stack spacing={0.5}>
-                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                        Primary Color
-                      </Typography>
-                      <TextField
-                        fullWidth
+                    {DASHBOARD_THEME_PRESETS.map((preset) => {
+                      const isSelected = areSameTheme(
+                        normalizeDashboardTheme(themeInput),
+                        preset.colors
+                      );
+
+                      return (
+                        <Button
+                          key={preset.id}
+                          aria-label={preset.name}
+                          type="button"
+                          onClick={() => handleSelectPreset(preset.colors)}
+                          sx={{
+                            aspectRatio: "1 / 1",
+                            bgcolor: "action.hover",
+                            border: "1px solid",
+                            borderColor: isSelected
+                              ? "primary.main"
+                              : "divider",
+                            borderRadius: 2,
+                            minWidth: 0,
+                            p: 0,
+                            position: "relative",
+                            "&:hover": {
+                              bgcolor: "action.selected",
+                              borderColor: "primary.main",
+                            },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              background: getPresetGradient(preset.colors),
+                              border: "1px solid",
+                              borderColor: alpha("#000000", 0.14),
+                              borderRadius: "50%",
+                              height: 64,
+                              width: 64,
+                            }}
+                          />
+                          {isSelected && (
+                            <Box
+                              sx={{
+                                alignItems: "center",
+                                bgcolor: "primary.main",
+                                border: "2px solid",
+                                borderColor: "background.paper",
+                                borderRadius: "50%",
+                                color: "primary.contrastText",
+                                display: "flex",
+                                height: 30,
+                                justifyContent: "center",
+                                position: "absolute",
+                                right: 12,
+                                top: 12,
+                                width: 30,
+                              }}
+                            >
+                              <CheckIcon fontSize="small" />
+                            </Box>
+                          )}
+                        </Button>
+                      );
+                    })}
+                    <Button
+                      component="label"
+                      aria-label="Pick custom color"
+                      sx={{
+                        aspectRatio: "1 / 1",
+                        bgcolor: "action.hover",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: 2,
+                        color: "text.secondary",
+                        minWidth: 0,
+                        p: 0,
+                        "&:hover": {
+                          bgcolor: "action.selected",
+                          borderColor: "primary.main",
+                          color: "primary.main",
+                        },
+                      }}
+                    >
+                      <ColorizeOutlinedIcon />
+                      <input
+                        hidden
                         type="color"
                         value={
                           isHexColor(themeInput.primaryColor)
@@ -710,54 +775,8 @@ export const SettingsPage: React.FC = () => {
                             event.target.value
                           )
                         }
-                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
-                        inputProps={{ "aria-label": "Pick primary color" }}
                       />
-                    </Stack>
-                    <Stack spacing={0.5}>
-                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                        Background Color
-                      </Typography>
-                      <TextField
-                        fullWidth
-                        type="color"
-                        value={
-                          isHexColor(themeInput.backgroundColor)
-                            ? themeInput.backgroundColor
-                            : DEFAULT_DASHBOARD_THEME.backgroundColor
-                        }
-                        onChange={(event) =>
-                          handleChangeThemeInput(
-                            "backgroundColor",
-                            event.target.value
-                          )
-                        }
-                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
-                        inputProps={{ "aria-label": "Pick background color" }}
-                      />
-                    </Stack>
-                    <Stack spacing={0.5}>
-                      <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                        Text Color
-                      </Typography>
-                      <TextField
-                        fullWidth
-                        type="color"
-                        value={
-                          isHexColor(themeInput.textColor)
-                            ? themeInput.textColor
-                            : DEFAULT_DASHBOARD_THEME.textColor
-                        }
-                        onChange={(event) =>
-                          handleChangeThemeInput(
-                            "textColor",
-                            event.target.value
-                          )
-                        }
-                        sx={{ "& input": { height: 48, cursor: "pointer" } }}
-                        inputProps={{ "aria-label": "Pick text color" }}
-                      />
-                    </Stack>
+                    </Button>
                   </Box>
                 </Box>
               )}

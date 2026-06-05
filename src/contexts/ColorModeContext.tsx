@@ -17,6 +17,7 @@ import {
 } from "../theme";
 
 const DASHBOARD_THEME_STORAGE_KEY = "dashboardTheme";
+type ColorModePreference = "light" | "dark" | "device";
 
 declare global {
   interface Window {
@@ -27,6 +28,8 @@ declare global {
 
 interface ColorModeContextType {
   mode: "light" | "dark";
+  modePreference: ColorModePreference;
+  setModePreference: React.Dispatch<ColorModePreference>;
   toggleMode: () => void;
   dashboardTheme: DashboardThemeColors;
   setDashboardTheme: any;
@@ -61,16 +64,23 @@ const getStoredDashboardTheme = (): DashboardThemeColors | null => {
 export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [mode, setMode] = useState<"light" | "dark">(() => {
-    const localMode = localStorage.getItem("colorMode") as
-      | "light"
-      | "dark"
-      | null;
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    return localMode ?? (prefersDark ? "dark" : "light");
+  const getSystemMode = () =>
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  const [systemMode, setSystemMode] = useState<"light" | "dark">(
+    getSystemMode
+  );
+  const [modePreference, setModePreferenceState] =
+    useState<ColorModePreference>(() => {
+      const localMode = localStorage.getItem("colorMode") as
+        | ColorModePreference
+        | null;
+      return localMode === "light" || localMode === "dark" || localMode === "device"
+        ? localMode
+        : "device";
   });
+  const mode = modePreference === "device" ? systemMode : modePreference;
   const [dashboardTheme, setDashboardThemeState] = useState<DashboardThemeColors | null>(
     () => getStoredDashboardTheme()
   );
@@ -89,7 +99,14 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const toggleMode = useCallback(() => {
-    setMode((prev) => (prev === "light" ? "dark" : "light"));
+    setModePreferenceState((prev) => {
+      const resolvedMode = prev === "device" ? getSystemMode() : prev;
+      return resolvedMode === "light" ? "dark" : "light";
+    });
+  }, []);
+
+  const setModePreference = useCallback((preference: ColorModePreference) => {
+    setModePreferenceState(preference);
   }, []);
 
   const setPrimaryColor = useCallback(
@@ -102,8 +119,16 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   useEffect(() => {
-    localStorage.setItem("colorMode", mode);
-  }, [mode]);
+    localStorage.setItem("colorMode", modePreference);
+  }, [modePreference]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = () => setSystemMode(mediaQuery.matches ? "dark" : "light");
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   useEffect(() => {
     if (!dashboardTheme) {
@@ -152,6 +177,8 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
   const value = useMemo(
     () => ({
       mode,
+      modePreference,
+      setModePreference,
       toggleMode,
       dashboardTheme: resolvedDashboardTheme,
       setDashboardTheme,
@@ -160,6 +187,8 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
     }),
     [
       mode,
+      modePreference,
+      setModePreference,
       toggleMode,
       resolvedDashboardTheme,
       setDashboardTheme,
