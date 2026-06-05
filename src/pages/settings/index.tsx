@@ -498,15 +498,16 @@ export const SettingsPage: React.FC = () => {
   return (
     <MapBackgroundPage>
       <Box
-        className="map-table-page-shell"
+        className="settings-page-shell"
         sx={{
-          width: "100%",
-          minHeight: "100dvh",
           boxSizing: "border-box",
+          display: "flex",
+          justifyContent: "center",
+          minHeight: "100dvh",
           overflowY: "auto",
           px: { xs: 0.75, sm: 1.25, md: 1.5 },
-          pl: { xs: 0.75, sm: 1.25, md: "76px" },
           py: { xs: 0.75, sm: 1.25 },
+          width: "100%",
         }}
       >
         <Box
