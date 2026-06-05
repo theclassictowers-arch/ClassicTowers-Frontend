@@ -47,8 +47,18 @@ export const limitsProvider: DataProvider = {
     }
   },
 
-  create: function () {
-    throw new Error("Function not implemented.");
+  create: async ({ resource, variables }) => {
+    try {
+      const { data } = await axiosInstance.post(`/${resource}`, variables);
+
+      return {
+        data,
+      };
+    } catch (error) {
+      throw new Error(
+        (error as any).response?.data?.message || "Unknown error occurred"
+      );
+    }
   },
 
   update: async ({ resource, id, variables }) => {

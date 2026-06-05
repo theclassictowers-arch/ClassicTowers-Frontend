@@ -18,8 +18,8 @@ const SectionHeading = ({ title }: { title: string }) => (
   <Typography
     variant="h6"
     sx={{
-      mt: 2.5,
-      mb: 2,
+      mt: 1.5,
+      mb: 1,
       fontSize: "1rem",
       fontWeight: 600,
       color: (theme) => theme.palette.text.primary,
@@ -34,7 +34,7 @@ const SubSectionHeading = ({ title }: { title: string }) => (
     variant="caption"
     sx={{
       display: "block",
-      mb: 1,
+      mb: 0.5,
       color: (theme) => theme.palette.text.secondary,
       fontWeight: 500,
     }}
@@ -87,13 +87,11 @@ const generateAxisFields = (
 };
 
 const AxisSection = ({
-  title,
   prefix,
   axis,
   register,
   errors,
 }: {
-  title: string;
   prefix: string;
   axis: string;
   register: any;
@@ -103,7 +101,7 @@ const AxisSection = ({
     elevation={0}
     sx={{
       p: 2,
-      mb: 2,
+      mb: 1,
       backgroundColor: "#333",
       borderRadius: 2,
     }}
@@ -117,7 +115,6 @@ export const LimitsEdit = () => {
   const navigate = useNavigate();
   const {
     saveButtonProps,
-    refineCore: { queryResult },
     register,
     formState: { errors },
   } = useForm();
@@ -155,20 +152,46 @@ export const LimitsEdit = () => {
             >
               Edit Sensor Limits Configuration
             </Typography>
-            <Divider sx={{ mb: 4 }} />
+            <Divider sx={{ mb: 2 }} />
 
             <Box component="form" autoComplete="off">
-              <Grid container spacing={6}>
+              <Grid container spacing={1.5} sx={{ mb: 2 }}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    {...register("vibrationSensor.sensorId")}
+                    fullWidth
+                    size="small"
+                    InputLabelProps={{ shrink: true }}
+                    label="Vibration Sensor ID"
+                    error={!!(errors as any)?.vibrationSensor?.sensorId}
+                    helperText={
+                      (errors as any)?.vibrationSensor?.sensorId?.message?.toString()
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    {...register("windSensor.sensorId")}
+                    fullWidth
+                    size="small"
+                    InputLabelProps={{ shrink: true }}
+                    label="Wind Sensor ID"
+                    error={!!(errors as any)?.windSensor?.sensorId}
+                    helperText={(errors as any)?.windSensor?.sensorId?.message?.toString()}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={2.5}>
                   {/* Vibration Parameters */}
                   <Grid item xs={12} md={6}>
                     <SectionHeading title="Vibration Parameters" />
 
-                    <Box sx={{ mb: 4 }}>
+                    <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Angle" />
                       {["x", "y", "z"].map((axis) => (
                         <AxisSection
                           key={`angle-${axis}`}
-                          title="Angle"
                           prefix="vibrationAngle"
                           axis={axis}
                           register={register}
@@ -177,12 +200,11 @@ export const LimitsEdit = () => {
                       ))}
                     </Box>
 
-                    <Box sx={{ mb: 4 }}>
+                    <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Displacement" />
                       {["x", "y", "z"].map((axis) => (
                         <AxisSection
                           key={`displacement-${axis}`}
-                          title="Displacement"
                           prefix="vibrationDisplacement"
                           axis={axis}
                           register={register}
@@ -191,12 +213,11 @@ export const LimitsEdit = () => {
                       ))}
                     </Box>
 
-                    <Box sx={{ mb: 4 }}>
+                    <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Speed" />
                       {["x", "y", "z"].map((axis) => (
                         <AxisSection
                           key={`speed-${axis}`}
-                          title="Speed"
                           prefix="vibrationSpeed"
                           axis={axis}
                           register={register}
@@ -205,12 +226,11 @@ export const LimitsEdit = () => {
                       ))}
                     </Box>
 
-                    <Box sx={{ mb: 4 }}>
+                    <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Frequency" />
                       {["x", "y", "z"].map((axis) => (
                         <AxisSection
                           key={`frequency-${axis}`}
-                          title="Frequency"
                           prefix="vibrationFrequency"
                           axis={axis}
                           register={register}
@@ -224,7 +244,7 @@ export const LimitsEdit = () => {
                   <Grid item xs={12} md={6}>
                     <SectionHeading title="Environmental Parameters" />
 
-                    <Box sx={{ mb: 4 }}>
+                    <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Wind" />
                       <Paper
                         elevation={0}
@@ -252,7 +272,7 @@ export const LimitsEdit = () => {
                       </Paper>
                     </Box>
 
-                    <Box sx={{ mb: 4 }}>
+                    <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Temperature" />
                       <Paper
                         elevation={0}
@@ -266,7 +286,7 @@ export const LimitsEdit = () => {
                       </Paper>
                     </Box>
 
-                    <Box sx={{ mb: 4 }}>
+                    <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Humidity" />
                       <Paper
                         elevation={0}
@@ -280,7 +300,7 @@ export const LimitsEdit = () => {
                       </Paper>
                     </Box>
 
-                    <Box sx={{ mb: 4 }}>
+                    <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Orientation" />
                       <Paper
                         elevation={0}

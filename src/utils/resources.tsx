@@ -51,6 +51,7 @@ export const getResources = (role: string) => {
         {
           name: "limits",
           list: "/limits",
+          create: "/limits/create",
           edit: "/limits/edit/:id",
           show: "/limits/show/:id",
           meta: {

@@ -2,15 +2,18 @@ import React from "react";
 import { useDataGrid, EditButton, ShowButton, List } from "@refinedev/mui";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { MapTablePage } from "../../components/map-table-page";
+import { useAuthContext } from "../../contexts";
 
-const ActionsCell = ({ row }: { row: any }) => (
+const ActionsCell = ({ row, canEdit }: { row: any; canEdit: boolean }) => (
   <>
-    <EditButton hideText recordItemId={row._id} />
+    {canEdit && <EditButton hideText recordItemId={row._id} />}
     <ShowButton hideText recordItemId={row._id} />
   </>
 );
 
 export const LimitsList = () => {
+  const { role } = useAuthContext();
+  const canEdit = role === "admin";
   const { dataGridProps } = useDataGrid({
     syncWithLocation: true,
     pagination: {
@@ -66,10 +69,12 @@ export const LimitsList = () => {
         align: "center",
         headerAlign: "center",
         minWidth: 100,
-        renderCell: (params) => <ActionsCell row={params.row} />,
+        renderCell: (params) => (
+          <ActionsCell row={params.row} canEdit={canEdit} />
+        ),
       },
     ],
-    []
+    [canEdit]
   );
 
   return (

@@ -13,6 +13,7 @@ import {
   UserShow,
   UserCreate,
   LimitsList,
+  LimitsCreate,
   LimitsEdit,
   LimitsShow,
   SettingsPage,
@@ -96,15 +97,18 @@ const AppRoutes: React.FC = () => {
               }
             />
             {isAdmin && (
-              <Route
-                path="edit/:id"
-                element={
-                  <>
-                    <LimitsList />
-                    <LimitsEdit />
-                  </>
-                }
-              />
+              <>
+                <Route path="create" element={<LimitsCreate />} />
+                <Route
+                  path="edit/:id"
+                  element={
+                    <>
+                      <LimitsList />
+                      <LimitsEdit />
+                    </>
+                  }
+                />
+              </>
             )}
           </Route>
         ) : null}
