@@ -753,22 +753,23 @@ export const SettingsPage: React.FC = () => {
                         display: "grid",
                         gridTemplateColumns: {
                           xs: "1fr",
-                          sm: "repeat(2, minmax(0, 1fr))",
+                          sm: "repeat(2, max-content)",
                         },
-                        gap: 3,
+                        gap: 2,
+                        alignItems: "start",
                       }}
                     >
-                      <Box>
+                      <Box sx={{ width: { xs: "100%", sm: 170 } }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Sidebar Width: {brandingInput.sidebarWidth}px
                         </Typography>
                         <Slider
                           value={brandingInput.sidebarWidth}
-                          min={200}
+                          min={150}
                           max={360}
                           step={10}
                           marks={[
-                            { value: 200, label: "Small" },
+                            { value: 150, label: "Small" },
                             { value: 280, label: "Medium" },
                             { value: 360, label: "Large" },
                           ]}
@@ -778,9 +779,16 @@ export const SettingsPage: React.FC = () => {
                               sidebarWidth: value as number,
                             }))
                           }
+                          sx={{
+                            width: "100%",
+                            "& .MuiSlider-markLabel": {
+                              fontSize: "0.62rem",
+                              whiteSpace: "nowrap",
+                            },
+                          }}
                         />
                       </Box>
-                      <Box>
+                      <Box sx={{ width: { xs: "100%", sm: 170 } }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
                           Sidebar Height: {brandingInput.sidebarHeight}%
                         </Typography>
@@ -800,12 +808,18 @@ export const SettingsPage: React.FC = () => {
                               sidebarHeight: value as number,
                             }))
                           }
+                          sx={{
+                            width: "100%",
+                            "& .MuiSlider-markLabel": {
+                              fontSize: "0.62rem",
+                              whiteSpace: "nowrap",
+                            },
+                          }}
                         />
                       </Box>
                     </Box>
                   )}
                   <TextField
-                    fullWidth
                     label="Logo Text"
                     value={brandingInput.logoText}
                     disabled={!brandingInput.logoTextEnabled}
@@ -821,6 +835,7 @@ export const SettingsPage: React.FC = () => {
                       }))
                     }
                     InputProps={{ sx: { borderRadius: 2 } }}
+                    sx={{ width: { xs: "100%", sm: 220 }, maxWidth: "100%" }}
                   />
                   {role === "admin" && (
                     <Box
