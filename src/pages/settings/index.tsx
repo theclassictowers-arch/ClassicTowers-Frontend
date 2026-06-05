@@ -3,6 +3,10 @@ import {
   Box,
   Button,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   InputLabel,
@@ -715,7 +719,7 @@ export const SettingsPage: React.FC = () => {
                       gap: 2,
                       gridTemplateColumns: {
                         xs: "1fr",
-                        md: "max-content minmax(220px, 280px)",
+                        md: "max-content",
                       },
                     }}
                   >
@@ -856,7 +860,7 @@ export const SettingsPage: React.FC = () => {
                     </Box>
                     <Box
                       sx={{
-                        display: showCustomTheme ? "grid" : "none",
+                        display: "none",
                         gap: 1,
                         gridTemplateColumns: "1fr",
                         minWidth: 0,
@@ -964,6 +968,142 @@ export const SettingsPage: React.FC = () => {
                       </Stack>
                     </Box>
                   </Box>
+                  <Dialog
+                    open={showCustomTheme}
+                    onClose={() => setShowCustomTheme(false)}
+                    maxWidth="xs"
+                    fullWidth
+                    PaperProps={{
+                      sx: {
+                        borderRadius: 2,
+                        overflow: "hidden",
+                      },
+                    }}
+                  >
+                    <DialogTitle sx={{ fontWeight: 800, pb: 1 }}>
+                      Custom Theme
+                    </DialogTitle>
+                    <DialogContent
+                      sx={{
+                        display: "grid",
+                        gap: 1.25,
+                        pt: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          alignItems: "center",
+                          display: "flex",
+                          gap: 0.75,
+                        }}
+                      >
+                        {[
+                          themeInput.primaryColor,
+                          themeInput.backgroundColor,
+                          themeInput.textColor,
+                        ].map((color, index) => (
+                          <Box
+                            key={`${color}-${index}`}
+                            sx={{
+                              bgcolor: isHexColor(color)
+                                ? color
+                                : DEFAULT_DASHBOARD_THEME.primaryColor,
+                              border: "1px solid",
+                              borderColor: alpha("#000000", 0.18),
+                              borderRadius: "50%",
+                              height: 30,
+                              width: 30,
+                            }}
+                          />
+                        ))}
+                      </Box>
+                      <Stack spacing={0.5}>
+                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                          Primary Color
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          type="color"
+                          value={
+                            isHexColor(themeInput.primaryColor)
+                              ? themeInput.primaryColor
+                              : DEFAULT_DASHBOARD_THEME.primaryColor
+                          }
+                          onChange={(event) =>
+                            handleChangeThemeInput(
+                              "primaryColor",
+                              event.target.value
+                            )
+                          }
+                          sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                          inputProps={{ "aria-label": "Pick primary color" }}
+                        />
+                      </Stack>
+                      <Stack spacing={0.5}>
+                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                          Background Color
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          type="color"
+                          value={
+                            isHexColor(themeInput.backgroundColor)
+                              ? themeInput.backgroundColor
+                              : DEFAULT_DASHBOARD_THEME.backgroundColor
+                          }
+                          onChange={(event) =>
+                            handleChangeThemeInput(
+                              "backgroundColor",
+                              event.target.value
+                            )
+                          }
+                          sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                          inputProps={{ "aria-label": "Pick background color" }}
+                        />
+                      </Stack>
+                      <Stack spacing={0.5}>
+                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                          Text Color
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          type="color"
+                          value={
+                            isHexColor(themeInput.textColor)
+                              ? themeInput.textColor
+                              : DEFAULT_DASHBOARD_THEME.textColor
+                          }
+                          onChange={(event) =>
+                            handleChangeThemeInput(
+                              "textColor",
+                              event.target.value
+                            )
+                          }
+                          sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                          inputProps={{ "aria-label": "Pick text color" }}
+                        />
+                      </Stack>
+                    </DialogContent>
+                    <DialogActions sx={{ px: 3, pb: 2 }}>
+                      <Button
+                        type="button"
+                        variant="outlined"
+                        onClick={() => setShowCustomTheme(false)}
+                        sx={{ textTransform: "none", fontWeight: 700 }}
+                      >
+                        Back
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="contained"
+                        disabled={isSaving}
+                        onClick={handleSaveColors}
+                        sx={{ textTransform: "none", fontWeight: 700 }}
+                      >
+                        Save
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                 </Box>
               )}
 
