@@ -9,14 +9,17 @@ import React, {
 import { ThemeProvider } from "@mui/material/styles";
 import {
   createAppTheme,
+  DEFAULT_APP_FONT,
   DEFAULT_DASHBOARD_THEME,
   isDefaultDashboardTheme,
+  normalizeAppFont,
   normalizeDashboardTheme,
   normalizePrimaryColor,
   type DashboardThemeColors,
 } from "../theme";
 
 const DASHBOARD_THEME_STORAGE_KEY = "dashboardTheme";
+const APP_FONT_STORAGE_KEY = "appFontFamily";
 type ColorModePreference = "light" | "dark" | "device";
 
 declare global {
@@ -35,6 +38,8 @@ interface ColorModeContextType {
   setDashboardTheme: any;
   primaryColor: string;
   setPrimaryColor: any;
+  fontFamily: string;
+  setFontFamily: React.Dispatch<string>;
 }
 
 export const ColorModeContext = createContext<ColorModeContextType | undefined>(
@@ -84,6 +89,9 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
   const [dashboardTheme, setDashboardThemeState] = useState<DashboardThemeColors | null>(
     () => getStoredDashboardTheme()
   );
+  const [fontFamily, setFontFamilyState] = useState<string>(() =>
+    normalizeAppFont(localStorage.getItem(APP_FONT_STORAGE_KEY) || DEFAULT_APP_FONT)
+  );
   const resolvedDashboardTheme = dashboardTheme || DEFAULT_DASHBOARD_THEME;
   const primaryColor = resolvedDashboardTheme.primaryColor;
 
@@ -118,9 +126,17 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
     [setDashboardTheme]
   );
 
+  const setFontFamily = useCallback((value: string) => {
+    setFontFamilyState(normalizeAppFont(value));
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("colorMode", modePreference);
   }, [modePreference]);
+
+  useEffect(() => {
+    localStorage.setItem(APP_FONT_STORAGE_KEY, fontFamily);
+  }, [fontFamily]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -184,6 +200,8 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
       setDashboardTheme,
       primaryColor,
       setPrimaryColor,
+      fontFamily,
+      setFontFamily,
     }),
     [
       mode,
@@ -194,11 +212,13 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
       setDashboardTheme,
       primaryColor,
       setPrimaryColor,
+      fontFamily,
+      setFontFamily,
     ]
   );
   const theme = useMemo(
-    () => createAppTheme(mode, dashboardTheme),
-    [mode, dashboardTheme]
+    () => createAppTheme(mode, dashboardTheme, fontFamily),
+    [mode, dashboardTheme, fontFamily]
   );
 
   return (

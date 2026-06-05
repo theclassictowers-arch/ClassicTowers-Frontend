@@ -14,6 +14,36 @@ export type DashboardThemeColors = {
   textColor: string;
 };
 
+export const APP_FONT_OPTIONS = [
+  {
+    label: "Roboto",
+    value: "\"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+  },
+  {
+    label: "Inter",
+    value: "\"Inter\", \"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+  },
+  {
+    label: "Poppins",
+    value: "\"Poppins\", \"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+  },
+  {
+    label: "Open Sans",
+    value: "\"Open Sans\", \"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+  },
+  {
+    label: "Lato",
+    value: "\"Lato\", \"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+  },
+] as const;
+
+export const DEFAULT_APP_FONT = APP_FONT_OPTIONS[0].value;
+
+export const normalizeAppFont = (value?: string | null): string =>
+  APP_FONT_OPTIONS.some((font) => font.value === value)
+    ? String(value)
+    : DEFAULT_APP_FONT;
+
 export const DEFAULT_DASHBOARD_THEME: DashboardThemeColors = {
   primaryColor: "#0b70c2",
   backgroundColor: "#f5f7fb",
@@ -315,7 +345,8 @@ const LightThemeWithResponsiveFontSizes = responsiveFontSizes(LightTheme);
 
 export const createAppTheme = (
   mode: "light" | "dark",
-  dashboardThemeInput?: Partial<DashboardThemeColors> | null
+  dashboardThemeInput?: Partial<DashboardThemeColors> | null,
+  fontFamilyInput?: string | null
 ) => {
   const dashboardTheme = normalizeDashboardTheme(
     dashboardThemeInput || DEFAULT_DASHBOARD_THEME
@@ -323,6 +354,7 @@ export const createAppTheme = (
   const primaryColor = dashboardTheme.primaryColor;
   const backgroundColor = dashboardTheme.backgroundColor;
   const textColor = dashboardTheme.textColor;
+  const fontFamily = normalizeAppFont(fontFamilyInput);
   const paperBackground =
     mode === "dark"
       ? darken(backgroundColor, 0.12)
@@ -348,6 +380,10 @@ export const createAppTheme = (
         primary: textColor,
         secondary: alpha(textColor, 0.74),
       },
+    },
+    typography: {
+      ...RefineThemes.Blue.typography,
+      fontFamily,
     },
     components: {
       ...RefineThemes.Blue.components,

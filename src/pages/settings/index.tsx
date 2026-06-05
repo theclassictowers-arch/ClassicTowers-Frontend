@@ -22,6 +22,7 @@ import {
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import FontDownloadOutlinedIcon from "@mui/icons-material/FontDownloadOutlined";
 import CheckIcon from "@mui/icons-material/Check";
 import ColorizeOutlinedIcon from "@mui/icons-material/ColorizeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -38,10 +39,12 @@ import { axiosInstance } from "../../utils";
 import { formStyles } from "../auth/styles";
 import { MapBackgroundPage } from "../../components/map-background-page";
 import {
+  APP_FONT_OPTIONS,
   DARK_DASHBOARD_THEME_PRESETS,
   DEFAULT_DASHBOARD_THEME,
   DEVICE_DASHBOARD_THEME_PRESETS,
   LIGHT_DASHBOARD_THEME_PRESETS,
+  normalizeAppFont,
   normalizeDashboardTheme,
   type DashboardThemeColors,
 } from "../../theme";
@@ -139,8 +142,10 @@ export const SettingsPage: React.FC = () => {
   const { role } = useAuthContext();
   const {
     dashboardTheme,
+    fontFamily,
     modePreference,
     setDashboardTheme,
+    setFontFamily,
     setModePreference,
   } = useColorModeContext();
   const { setBranding } = useBrandingContext();
@@ -162,9 +167,12 @@ export const SettingsPage: React.FC = () => {
   const [logoIconFile, setLogoIconFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showCustomTheme, setShowCustomTheme] = useState(false);
-  const [activeSection, setActiveSection] = useState<"colors" | "logo">(
+  const [activeSection, setActiveSection] = useState<
+    "colors" | "fonts" | "logo"
+  >(
     "colors"
   );
+  const [fontInput, setFontInput] = useState(fontFamily);
   const appearanceThemePresets = useMemo(
     () => getAppearanceThemePresets(modePreference),
     [modePreference]
@@ -173,6 +181,10 @@ export const SettingsPage: React.FC = () => {
   useEffect(() => {
     setThemeInput(dashboardTheme);
   }, [dashboardTheme]);
+
+  useEffect(() => {
+    setFontInput(fontFamily);
+  }, [fontFamily]);
 
   useEffect(() => {
     if (!canManageSettings || role !== "admin") return;
@@ -362,6 +374,17 @@ export const SettingsPage: React.FC = () => {
     }
   };
 
+  const handleSaveFontSettings = () => {
+    const normalizedFont = normalizeAppFont(fontInput);
+    setFontInput(normalizedFont);
+    setFontFamily(normalizedFont);
+    open?.({
+      type: "success",
+      message: "Font settings saved",
+      description: "Dashboard font updated successfully.",
+    });
+  };
+
   const handleSaveBranding = async () => {
     if (!targetUserId) return;
     const logoText = normalizeLogoText(brandingInput.logoText);
@@ -531,6 +554,8 @@ export const SettingsPage: React.FC = () => {
             event.preventDefault();
             if (activeSection === "colors") {
               handleSaveColors();
+            } else if (activeSection === "fonts") {
+              handleSaveFontSettings();
             } else {
               handleSaveBranding();
             }
@@ -603,7 +628,7 @@ export const SettingsPage: React.FC = () => {
             <Stack spacing={1.5} sx={{ mt: 1.5 }}>
               <Tabs
                 value={activeSection}
-                onChange={(_, value: "colors" | "logo") =>
+                onChange={(_, value: "colors" | "fonts" | "logo") =>
                   setActiveSection(value)
                 }
                 variant="fullWidth"
@@ -624,7 +649,13 @@ export const SettingsPage: React.FC = () => {
                   value="colors"
                   icon={<PaletteOutlinedIcon />}
                   iconPosition="start"
-                  label="Color Settings"
+                  label="Appearance"
+                />
+                <Tab
+                  value="fonts"
+                  icon={<FontDownloadOutlinedIcon />}
+                  iconPosition="start"
+                  label="Font Settings"
                 />
                 <Tab
                   value="logo"
@@ -1123,6 +1154,83 @@ export const SettingsPage: React.FC = () => {
                       </Stack>
                     </DialogContent>
                   </Dialog>
+                </Box>
+              )}
+
+              {activeSection === "fonts" && (
+                <Box
+                  key="fonts"
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1.5,
+                    transformOrigin: "center top",
+                    animation:
+                      "settingsTabEnter 420ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ fontWeight: 700, color: "text.primary" }}
+                  >
+                    Font Settings
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gap: 1.25,
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "minmax(240px, 360px) minmax(0, 1fr)",
+                      },
+                      alignItems: "start",
+                    }}
+                  >
+                    <FormControl fullWidth size="small">
+                      <InputLabel id="settings-font-label">Font</InputLabel>
+                      <Select
+                        labelId="settings-font-label"
+                        label="Font"
+                        value={fontInput}
+                        onChange={(event) =>
+                          setFontInput(normalizeAppFont(event.target.value))
+                        }
+                      >
+                        {APP_FONT_OPTIONS.map((font) => (
+                          <MenuItem
+                            key={font.value}
+                            value={font.value}
+                            sx={{ fontFamily: font.value }}
+                          >
+                            {font.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <Box
+                      sx={{
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: 1,
+                        p: 1.5,
+                        bgcolor: "background.paper",
+                        fontFamily: fontInput,
+                      }}
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ fontFamily: "inherit", fontWeight: 800 }}
+                      >
+                        Classic Towers
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontFamily: "inherit", color: "text.secondary" }}
+                      >
+                        Monitoring dashboard font preview
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Box>
               )}
 
