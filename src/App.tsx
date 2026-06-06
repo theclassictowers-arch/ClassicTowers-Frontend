@@ -908,14 +908,14 @@ const App: React.FC = () => {
             <div
               aria-label="Product of Classic Electronics"
               style={{
-                alignItems: "flex-start",
+                alignItems: "flex-end",
                 background: "transparent",
                 border: 0,
                 bottom: 10,
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
-                left: 10,
+                right: 10,
                 pointerEvents: "none",
                 position: "fixed",
                 zIndex: 1400,
@@ -929,13 +929,14 @@ const App: React.FC = () => {
                   fontWeight: 700,
                   lineHeight: 1,
                   textShadow: "0 1px 2px rgba(255, 255, 255, 0.75)",
+                  textAlign: "right",
                   textTransform: "uppercase",
                 }}
               >
                 Product of
               </span>
               <img
-                src="/images/classic-electronics-brand.jpeg"
+                src="/images/classic-electronics-brand-transparent.png"
                 alt="Classic Electronics"
                 style={{
                   background: "transparent",
