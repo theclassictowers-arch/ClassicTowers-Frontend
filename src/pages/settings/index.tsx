@@ -1458,12 +1458,53 @@ export const SettingsPage: React.FC = () => {
                   )}
                   <Box
                     sx={{
-                      display: "flex",
-                      flexWrap: "wrap",
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "72px 150px max-content",
+                      },
                       alignItems: "center",
-                      gap: 2,
+                      columnGap: 2,
+                      rowGap: 1,
                     }}
                   >
+                    <Box
+                      sx={{
+                        width: 64,
+                        height: 64,
+                        justifySelf: { xs: "center", sm: "start" },
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: 1,
+                        bgcolor: "background.paper",
+                        opacity: brandingInput.logoIconEnabled ? 1 : 0.45,
+                        p: 0.5,
+                      }}
+                    >
+                      {logoIconFile || brandingInput.logoIcon ? (
+                        <Box
+                          component="img"
+                          src={
+                            logoIconFile
+                              ? URL.createObjectURL(logoIconFile)
+                              : `${import.meta.env.VITE_API_BASE_URL}${
+                                  brandingInput.logoIcon
+                                }`
+                          }
+                          alt="Logo icon preview"
+                          sx={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain",
+                          }}
+                        />
+                      ) : (
+                        <ImageOutlinedIcon color="disabled" />
+                      )}
+                    </Box>
                     <Button
                       component="label"
                       variant="outlined"
@@ -1471,6 +1512,7 @@ export const SettingsPage: React.FC = () => {
                       sx={{
                         width: { xs: "100%", sm: 150 },
                         minWidth: 0,
+                        justifySelf: "center",
                         justifyContent: "center",
                         overflow: "hidden",
                         textTransform: "none",
@@ -1504,6 +1546,7 @@ export const SettingsPage: React.FC = () => {
                         label="Logo Image"
                         sx={{
                           m: 0,
+                          justifySelf: { xs: "center", sm: "start" },
                           "& .MuiFormControlLabel-label": {
                             whiteSpace: "nowrap",
                           },
@@ -1519,30 +1562,6 @@ export const SettingsPage: React.FC = () => {
                       </Typography>
                     </>
                   )}
-                  {brandingInput.logoIconEnabled &&
-                    (logoIconFile || brandingInput.logoIcon) && (
-                      <Box
-                        component="img"
-                        src={
-                          logoIconFile
-                            ? URL.createObjectURL(logoIconFile)
-                            : `${import.meta.env.VITE_API_BASE_URL}${
-                                brandingInput.logoIcon
-                              }`
-                        }
-                        alt="Logo icon preview"
-                        sx={{
-                          width: 64,
-                          height: 64,
-                          objectFit: "contain",
-                          alignSelf: "center",
-                          border: "1px solid",
-                          borderColor: "divider",
-                          borderRadius: 1,
-                          p: 0.5,
-                        }}
-                      />
-                    )}
                 </Box>
               )}
             </Stack>
