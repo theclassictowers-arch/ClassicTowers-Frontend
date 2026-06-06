@@ -56,15 +56,7 @@ export const LimitInputGroup = ({
   register,
   title,
 }: LimitInputGroupProps) => (
-  <Paper
-    elevation={0}
-    sx={{
-      p: 2,
-      mb: 1,
-      backgroundColor: "#333",
-      borderRadius: 2,
-    }}
-  >
+  <>
     {title && <SubSectionHeading title={title} />}
     {LIMIT_DOMAINS.flatMap((domain) =>
       (["max", "min"] as const).map((bound) => {
@@ -92,7 +84,7 @@ export const LimitInputGroup = ({
         );
       })
     )}
-  </Paper>
+  </>
 );
 
 type AxisLimitInputGroupProps = Omit<LimitInputGroupProps, "title"> & {
@@ -100,5 +92,15 @@ type AxisLimitInputGroupProps = Omit<LimitInputGroupProps, "title"> & {
 };
 
 export const AxisLimitInputGroup = (props: AxisLimitInputGroupProps) => (
-  <LimitInputGroup {...props} title={`${props.axis.toUpperCase()} Axis`} />
+  <Paper
+    elevation={0}
+    sx={{
+      p: 2,
+      mb: 1,
+      backgroundColor: "#333",
+      borderRadius: 2,
+    }}
+  >
+    <LimitInputGroup {...props} title={`${props.axis.toUpperCase()} Axis`} />
+  </Paper>
 );
