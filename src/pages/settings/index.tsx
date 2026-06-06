@@ -1468,7 +1468,7 @@ export const SettingsPage: React.FC = () => {
                       />
                       <Box sx={{ width: { xs: "100%", sm: 180 }, px: 1.5 }}>
                         <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                          Text Size: {brandingInput.logoTextSize}px
+                          Font Size: {brandingInput.logoTextSize}px
                         </Typography>
                         <Slider
                           value={brandingInput.logoTextSize}

@@ -15,15 +15,7 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
   const { branding } = useBrandingContext();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const logoTextLength = branding.logoText.length;
-  let logoTextSize = Math.min(16, Math.max(8, branding.logoTextSize));
-
-  if (logoTextLength >= 15) {
-    logoTextSize = 8;
-  } else if (logoTextLength >= 13) {
-    logoTextSize = 9;
-  } else if (logoTextLength >= 11) {
-    logoTextSize = 10;
-  }
+  const logoTextSize = Math.min(16, Math.max(8, branding.logoTextSize));
 
   const logoTextBoxWidth =
     logoTextLength >= 15
