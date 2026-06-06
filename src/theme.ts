@@ -16,24 +16,24 @@ export type DashboardThemeColors = {
 
 export const APP_FONT_OPTIONS = [
   {
-    label: "Roboto",
-    value: "\"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+    label: "Arial",
+    value: "\"Arial\", \"Helvetica\", sans-serif",
   },
   {
-    label: "Inter",
-    value: "\"Inter\", \"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+    label: "Courier New",
+    value: "\"Courier New\", Courier, monospace",
   },
   {
-    label: "Poppins",
-    value: "\"Poppins\", \"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+    label: "Times New Roman",
+    value: "\"Times New Roman\", Times, serif",
   },
   {
-    label: "Open Sans",
-    value: "\"Open Sans\", \"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+    label: "Calibri",
+    value: "\"Calibri\", \"Arial\", sans-serif",
   },
   {
-    label: "Lato",
-    value: "\"Lato\", \"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+    label: "Verdana",
+    value: "\"Verdana\", \"Arial\", sans-serif",
   },
 ] as const;
 
