@@ -609,7 +609,7 @@ export const SettingsPage: React.FC = () => {
             mx: "auto",
             my: 0,
             width: "100%",
-            maxWidth: 860,
+            maxWidth: 660,
             boxSizing: "border-box",
             px: { xs: 1.5, sm: 2, md: 2.5 },
             py: { xs: 1.5, sm: 2 },
@@ -836,8 +836,8 @@ export const SettingsPage: React.FC = () => {
                         gap: 1.5,
                         gridTemplateColumns: {
                           xs: "repeat(2, minmax(0, 1fr))",
-                          sm: "repeat(4, 108px)",
-                          md: "repeat(4, 108px)",
+                          sm: "repeat(3, 108px)",
+                          md: "repeat(3, 108px)",
                         },
                       }}
                     >
@@ -1248,7 +1248,7 @@ export const SettingsPage: React.FC = () => {
                       gap: 1.25,
                       gridTemplateColumns: {
                         xs: "1fr",
-                        sm: "minmax(240px, 360px) minmax(0, 1fr)",
+                        sm: "1fr",
                       },
                       alignItems: "start",
                     }}
@@ -1528,7 +1528,7 @@ export const SettingsPage: React.FC = () => {
                       display: "grid",
                       gridTemplateColumns: {
                         xs: "1fr",
-                        sm: "72px 150px max-content",
+                        sm: "64px 140px max-content",
                       },
                       alignItems: "center",
                       columnGap: 2,
@@ -1577,7 +1577,7 @@ export const SettingsPage: React.FC = () => {
                       variant="outlined"
                       disabled={!brandingInput.logoIconEnabled}
                       sx={{
-                        width: { xs: "100%", sm: 150 },
+                        width: { xs: "100%", sm: 140 },
                         minWidth: 0,
                         justifySelf: "center",
                         justifyContent: "center",
