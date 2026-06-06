@@ -1,4 +1,5 @@
 import { useState, memo, FC, useEffect, useCallback, useMemo, useRef } from "react";
+import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { InfoWindow, useMap } from "@vis.gl/react-google-maps";
 import { useSiteContext } from "../../../contexts";
 import { Point } from "../../../interfaces";
@@ -8,6 +9,23 @@ import PointInfoWindow from "./PointInfoWindow";
 interface MarkerProps {
   points?: Point[];
 }
+
+const getPointStatuses = (point: Point) =>
+  Object.values(point.status).map((status) => status.status);
+
+const getMarkerColor = (statuses: string[]) => {
+  if (statuses.includes("danger")) return "#F44336";
+  if (statuses.includes("warning")) return "#FF9800";
+  if (statuses.includes("normal")) return "#4CAF50";
+  return "#607D8B";
+};
+
+const getStatusGlyph = (statuses: string[]): string => {
+  if (statuses.includes("danger")) return "!";
+  if (statuses.includes("warning")) return "W";
+  if (statuses.includes("normal")) return "";
+  return "";
+};
 
 const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   const { selectedSite, setSelectedSite } = useSiteContext();
@@ -31,6 +49,14 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   const initialInfoPositionRef = useRef<google.maps.LatLngLiteral | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const previousPointsHashRef = useRef<string>("");
+  const clustererRef = useRef<MarkerClusterer | null>(null);
+  const markerListenersRef = useRef<google.maps.MapsEventListener[]>([]);
+
+  const canUseClusteredMarkers =
+    !!map &&
+    typeof google !== "undefined" &&
+    !!google.maps.marker?.AdvancedMarkerElement &&
+    !!google.maps.marker?.PinElement;
 
   // Update info window position when a point is selected
   useEffect(() => {
@@ -81,6 +107,45 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
     },
     [setSelectedSite]
   );
+
+  useEffect(() => {
+    if (!map || !canUseClusteredMarkers) return;
+
+    markerListenersRef.current.forEach((listener) => listener.remove());
+    markerListenersRef.current = [];
+    clustererRef.current?.clearMarkers();
+
+    if (!points.length) return;
+
+    const markers = points.map((point) => {
+      const statuses = getPointStatuses(point);
+      const pin = new google.maps.marker.PinElement({
+        background: getMarkerColor(statuses),
+        borderColor: "#000",
+        glyph: getStatusGlyph(statuses),
+        glyphColor: "#000",
+      });
+      const marker = new google.maps.marker.AdvancedMarkerElement({
+        content: pin.element,
+        position: point.location,
+        title: point.display_name || point.key,
+      });
+      const listener = marker.addListener("click", () => {
+        handleMarkerClick(point);
+      });
+      markerListenersRef.current.push(listener);
+      return marker;
+    });
+
+    clustererRef.current = new MarkerClusterer({ map, markers });
+
+    return () => {
+      markerListenersRef.current.forEach((listener) => listener.remove());
+      markerListenersRef.current = [];
+      clustererRef.current?.clearMarkers();
+      clustererRef.current = null;
+    };
+  }, [canUseClusteredMarkers, handleMarkerClick, map, points, pointsHash]);
 
   // Position update calculation
   const updatePosition = useCallback(
@@ -207,13 +272,14 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
 
   return (
     <>
-      {points.map((point) => (
-        <PinMarker
-          key={point.key}
-          point={point}
-          onClick={() => handleMarkerClick(point)}
-        />
-      ))}
+      {!canUseClusteredMarkers &&
+        points.map((point) => (
+          <PinMarker
+            key={point.key}
+            point={point}
+            onClick={() => handleMarkerClick(point)}
+          />
+        ))}
 
       {selectedPoint && infoWindowPosition && (
         <InfoWindow

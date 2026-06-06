@@ -9,6 +9,7 @@ import {
 } from "@refinedev/mui";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { MapTablePage } from "../../components/map-table-page";
+import { TableSkeleton } from "../../components/table-skeleton";
 
 const ActionsCell = ({ row }: any) => (
   <>
@@ -114,7 +115,10 @@ export const SiteList = () => {
           role === "admin" || role === "organization" ? <CreateButton /> : null
         }
       >
-        <DataGrid
+        {dataGridProps.loading ? (
+          <TableSkeleton columns={columns.length} />
+        ) : (
+          <DataGrid
           {...dataGridProps}
           rows={rows}
           rowCount={rows.length}
@@ -149,7 +153,8 @@ export const SiteList = () => {
             },
           }}
           getRowId={(row) => row._id}
-        />
+          />
+        )}
       </List>
     </MapTablePage>
   );

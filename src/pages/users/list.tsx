@@ -11,6 +11,7 @@ import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { Typography } from "@mui/material";
 import { useAuthContext } from "../../contexts";
 import { MapTablePage } from "../../components/map-table-page";
+import { TableSkeleton } from "../../components/table-skeleton";
 
 const ActionsCell = ({ row }: any) => (
   <>
@@ -130,7 +131,10 @@ export const UserList = () => {
   return (
     <MapTablePage>
       <List headerButtons={canAddUsers ? <CreateButton /> : undefined}>
-        <DataGrid
+        {dataGridProps.loading ? (
+          <TableSkeleton columns={columns.length} />
+        ) : (
+          <DataGrid
           {...dataGridProps}
           rows={rows}
           rowCount={rows.length}
@@ -165,7 +169,8 @@ export const UserList = () => {
             },
           }}
           getRowId={(row) => row._id}
-        />
+          />
+        )}
       </List>
     </MapTablePage>
   );

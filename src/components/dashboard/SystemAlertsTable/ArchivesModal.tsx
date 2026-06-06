@@ -16,6 +16,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import { useDataGrid } from "@refinedev/mui";
 import { io } from "socket.io-client";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import { TableSkeleton } from "../../table-skeleton";
 
 export interface ArchivesModalProps {
   open: boolean;
@@ -236,7 +237,10 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
           backgroundColor: theme.palette.background.default,
         }}
       >
-        <DataGrid
+        {isArchivesLoading ? (
+          <TableSkeleton columns={columns.length} rows={9} />
+        ) : (
+          <DataGrid
           {...dataGridProps}
           rows={processedRows}
           rowCount={processedRows.length}
@@ -278,7 +282,8 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
             },
           }}
           getRowId={(row) => row.id}
-        />
+          />
+        )}
       </DialogContent>
       <DialogActions
         sx={{

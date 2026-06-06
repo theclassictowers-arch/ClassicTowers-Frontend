@@ -1,4 +1,7 @@
 import { Authenticated, ErrorComponent } from "@refinedev/core";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import { lazy, Suspense } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { useAuthContext } from "../contexts";
 import {
@@ -16,7 +19,6 @@ import {
   LimitsCreate,
   LimitsEdit,
   LimitsShow,
-  SettingsPage,
 } from "../pages";
 import { ThemedLayoutV2 } from "@refinedev/mui";
 import {
@@ -25,6 +27,26 @@ import {
 } from "@refinedev/react-router-v6";
 import { Title } from "../components";
 import { PersistentDashboardMap } from "../components";
+
+const SettingsPage = lazy(() =>
+  import("../pages/settings").then((module) => ({
+    default: module.SettingsPage,
+  }))
+);
+
+const RouteFallback = () => (
+  <Box
+    sx={{
+      alignItems: "center",
+      display: "flex",
+      justifyContent: "center",
+      minHeight: "100dvh",
+      width: "100%",
+    }}
+  >
+    <CircularProgress />
+  </Box>
+);
 
 const AppRoutes: React.FC = () => {
   const { role } = useAuthContext();
@@ -54,7 +76,14 @@ const AppRoutes: React.FC = () => {
       >
         <Route index element={<DashboardPage />} />
         {(isAdmin || isOrganization) && (
-          <Route path="/settings" element={<SettingsPage />} />
+          <Route
+            path="/settings"
+            element={
+              <Suspense fallback={<RouteFallback />}>
+                <SettingsPage />
+              </Suspense>
+            }
+          />
         )}
 
         <Route path="/sites">

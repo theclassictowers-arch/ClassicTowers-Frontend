@@ -3,6 +3,7 @@ import { useDataGrid, EditButton, ShowButton, List } from "@refinedev/mui";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { MapTablePage } from "../../components/map-table-page";
 import { useAuthContext } from "../../contexts";
+import { TableSkeleton } from "../../components/table-skeleton";
 
 const ActionsCell = ({ row, canEdit }: { row: any; canEdit: boolean }) => (
   <>
@@ -84,7 +85,10 @@ export const LimitsList = () => {
   return (
     <MapTablePage>
       <List>
-        <DataGrid
+        {dataGridProps.loading ? (
+          <TableSkeleton columns={columns.length} />
+        ) : (
+          <DataGrid
           {...dataGridProps}
           rows={rows}
           rowCount={rows.length}
@@ -116,7 +120,8 @@ export const LimitsList = () => {
             },
           }}
           getRowId={(row) => row._id}
-        />
+          />
+        )}
       </List>
     </MapTablePage>
   );
