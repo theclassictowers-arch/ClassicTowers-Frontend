@@ -10,10 +10,19 @@ export const archivesProvider: DataProvider = {
           page: filters?.[1]?.value,
         },
       });
+      const archives = Array.isArray(response.data?.archives)
+        ? response.data.archives
+        : Array.isArray(response.data?.data)
+          ? response.data.data
+          : Array.isArray(response.data)
+            ? response.data
+            : [];
+      const total =
+        Number(response.data?.total ?? response.data?.count) || archives.length;
 
       return {
-        data: response.data || [],
-        total: response.data.length || 0,
+        data: archives,
+        total,
         successNotification: {
           message: "Successfully fetched archives",
           description: "Here are the archives",

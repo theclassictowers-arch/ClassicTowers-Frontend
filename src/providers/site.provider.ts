@@ -77,18 +77,24 @@ export const siteProvider: DataProvider = {
   getList: async function ({ resource }) {
     try {
       const response = await axiosInstance.get(`/${resource}`);
+      const sites = Array.isArray(response.data?.data)
+        ? response.data.data
+        : Array.isArray(response.data)
+          ? response.data
+          : [];
+      const total = Number(response.data?.total ?? response.data?.count) || sites.length;
+
       return {
-        data: response.data || [],
-        total: response.data.length || 0,
+        data: sites,
+        total,
         successNotification: {
           message: "Successfully fetched sites",
           description: "Here are the sites",
           type: "success",
         },
       };
-    } catch (error) {
+    } catch {
       // MOCK DATA FOR TESTING - اگر API fail ہو تو mock sites دیتے ہیں
-      console.log("🧪 [MOCK DATA] Using test sites data");
       return {
         data: mockSites,
         total: mockSites.length,

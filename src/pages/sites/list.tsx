@@ -102,6 +102,10 @@ export const SiteList = () => {
     ],
     [role]
   );
+  const rows = React.useMemo(
+    () => (Array.isArray(dataGridProps.rows) ? dataGridProps.rows : []),
+    [dataGridProps.rows]
+  );
 
   return (
     <MapTablePage>
@@ -112,6 +116,8 @@ export const SiteList = () => {
       >
         <DataGrid
           {...dataGridProps}
+          rows={rows}
+          rowCount={rows.length}
           columns={columns}
           autoHeight
           rowHeight={34}

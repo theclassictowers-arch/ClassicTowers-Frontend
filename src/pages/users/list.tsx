@@ -122,12 +122,18 @@ export const UserList = () => {
     ],
     [role]
   );
+  const rows = React.useMemo(
+    () => (Array.isArray(dataGridProps.rows) ? dataGridProps.rows : []),
+    [dataGridProps.rows]
+  );
 
   return (
     <MapTablePage>
       <List headerButtons={canAddUsers ? <CreateButton /> : undefined}>
         <DataGrid
           {...dataGridProps}
+          rows={rows}
+          rowCount={rows.length}
           columns={columns}
           autoHeight
           rowHeight={34}

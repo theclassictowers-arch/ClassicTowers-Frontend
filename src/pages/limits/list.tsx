@@ -76,12 +76,18 @@ export const LimitsList = () => {
     ],
     [canEdit]
   );
+  const rows = React.useMemo(
+    () => (Array.isArray(dataGridProps.rows) ? dataGridProps.rows : []),
+    [dataGridProps.rows]
+  );
 
   return (
     <MapTablePage>
       <List>
         <DataGrid
           {...dataGridProps}
+          rows={rows}
+          rowCount={rows.length}
           columns={columns}
           autoHeight
           rowHeight={34}

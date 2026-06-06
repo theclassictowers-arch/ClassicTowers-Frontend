@@ -53,7 +53,7 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
     dataProviderName: "archives",
     pagination: {
       mode: "client", // Instant global search like Sites List
-      pageSize: 50,
+      pageSize: PAGE_SIZE,
     },
     errorNotification: (error) => ({
       message: "Error fetching archives",
@@ -239,6 +239,7 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
         <DataGrid
           {...dataGridProps}
           rows={processedRows}
+          rowCount={processedRows.length}
           columns={columns}
           loading={isArchivesLoading}
           autoHeight={false}
@@ -258,7 +259,7 @@ export const ArchivesModal: React.FC<ArchivesModalProps> = ({
           sortingMode="client"
           paginationMode="client"
           initialState={{
-            pagination: { paginationModel: { pageSize: 10, page: 0 } },
+            pagination: { paginationModel: { pageSize: PAGE_SIZE, page: 0 } },
           }}
           slots={{ toolbar: GridToolbar }}
           slotProps={{

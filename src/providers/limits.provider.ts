@@ -10,10 +10,16 @@ export const limitsProvider: DataProvider = {
   getList: async ({ resource }) => {
     try {
       const response = await axiosInstance.get(`/${resource}`);
+      const limits = Array.isArray(response.data?.data)
+        ? response.data.data
+        : Array.isArray(response.data)
+          ? response.data
+          : [];
+      const total = Number(response.data?.total ?? response.data?.count) || limits.length;
 
       return {
-        data: response.data || [],
-        total: response.data.length || 0,
+        data: limits,
+        total,
         successNotification: {
           message: "Successfully fetched limits",
           description: "Here are the limits",
