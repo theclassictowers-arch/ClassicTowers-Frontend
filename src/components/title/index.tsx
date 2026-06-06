@@ -4,7 +4,7 @@ import MemoryIcon from "@mui/icons-material/Memory";
 import { useTheme } from "@mui/material/styles";
 import { HamburgerMenu } from "@refinedev/mui";
 import Typography from "@mui/material/Typography";
-import { useBrandingContext } from "../../contexts";
+import { useBrandingContext, useColorModeContext } from "../../contexts";
 
 type TitleProps = {
   collapsed: boolean;
@@ -13,6 +13,7 @@ type TitleProps = {
 export const Title: React.FC<TitleProps> = ({ collapsed }) => {
   const theme = useTheme();
   const { branding } = useBrandingContext();
+  const { dashboardTheme } = useColorModeContext();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const logoTextLength = branding.logoText.length;
   const logoTextSize = Math.min(16, Math.max(8, branding.logoTextSize));
@@ -113,7 +114,7 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
               sx={{
                 width: "100%",
                 minWidth: 0,
-                color: theme.palette.mode === "light" ? "#111111" : "#ffffff",
+                color: dashboardTheme.textColor,
                 fontFamily:
                   "\"Arial Narrow\", \"Roboto Condensed\", Arial, sans-serif",
                 fontSize: `${logoTextSize}px`,
