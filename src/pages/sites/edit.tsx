@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Grid,
   TextField,
   Typography,
 } from "@mui/material";
@@ -12,8 +13,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { axiosInstance } from "../../utils";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
+import { MapBackgroundPage } from "../../components/map-background-page";
 
 const defaultAxisData = { x: [0], y: [0], z: [0] };
+const imeiPattern = /^\d{15}$/;
 
 export const SiteEdit: React.FC = () => {
   const { id } = useParams();
@@ -35,6 +38,7 @@ export const SiteEdit: React.FC = () => {
     mode: "onChange",
     defaultValues: {
       imei: "",
+      sim_number: "",
       lat: "",
       lon: "",
       vibrationSensorId: "",
@@ -59,15 +63,23 @@ export const SiteEdit: React.FC = () => {
           : [];
 
         setSiteSnapshot(record);
-        setValue("imei", Array.isArray(record.imei) ? record.imei.join(", ") : record.imei || "");
-        setValue("lat", record.lat ?? coordinates[1] ?? "");
-        setValue("lon", record.lon ?? coordinates[0] ?? "");
-        setValue("vibrationSensorId", record.vibrationSensor?.sensorId || "");
-        setValue("windSensorId", record.windSensor?.sensorId || "");
-        setValue("region", record.region || "");
-        setValue("infrastructure_id", record.infrastructure_id || "");
-        setValue("name", record.name || "");
-        setValue("display_name", record.display_name || "");
+        const setLoadedValue = (name: string, value: unknown) => {
+          setValue(name, value, { shouldValidate: true });
+        };
+
+        setLoadedValue(
+          "imei",
+          Array.isArray(record.imei) ? record.imei.join(", ") : record.imei || ""
+        );
+        setLoadedValue("sim_number", record.sim_number || "");
+        setLoadedValue("lat", record.lat ?? coordinates[1] ?? "");
+        setLoadedValue("lon", record.lon ?? coordinates[0] ?? "");
+        setLoadedValue("vibrationSensorId", record.vibrationSensor?.sensorId || "");
+        setLoadedValue("windSensorId", record.windSensor?.sensorId || "");
+        setLoadedValue("region", record.region || "");
+        setLoadedValue("infrastructure_id", record.infrastructure_id || "");
+        setLoadedValue("name", record.name || "");
+        setLoadedValue("display_name", record.display_name || "");
       } catch (error: unknown) {
         const err = error as { response?: { data?: { message?: string } } };
         open?.({
@@ -92,6 +104,7 @@ export const SiteEdit: React.FC = () => {
       const payload = {
         name: data.name || "",
         display_name: data.display_name || "",
+        sim_number: data.sim_number || "",
         region: data.region || "",
         infrastructure_id: data.infrastructure_id || "",
         coordinates: [Number(data.lon), Number(data.lat)],
@@ -147,7 +160,7 @@ export const SiteEdit: React.FC = () => {
   if (!id) return null;
 
   return (
-    <>
+    <MapBackgroundPage>
       {isInitialLoading ? (
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
           <CircularProgress />
@@ -155,7 +168,7 @@ export const SiteEdit: React.FC = () => {
       ) : (
         <MovableForm
           panelId="site-edit-form"
-          initialWidth={400}
+          initialWidth={460}
           minWidth={320}
           maxWidth={760}
           onClose={() => navigate("/sites")}
@@ -178,40 +191,112 @@ export const SiteEdit: React.FC = () => {
 
             <TextField
               fullWidth
-              label="IMEI(s) - comma separated"
-              {...register("imei", { required: "IMEI is required" })}
-              error={!!errors.imei}
-              helperText={errors.imei?.message?.toString()}
-              margin="normal"
+              label="SIM Number"
+              {...register("sim_number", { required: "SIM number is required" })}
+              error={!!errors.sim_number}
+              helperText={errors.sim_number?.message?.toString()}
+              margin="dense"
               InputProps={{ sx: { borderRadius: 2 } }}
             />
 
             <TextField
               fullWidth
-              label="Latitude"
-              type="number"
-              {...register("lat", {
-                required: "Latitude is required",
-                valueAsNumber: true,
+              label="IMEI"
+              {...register("imei", {
+                required: "IMEI is required",
+                validate: (value) =>
+                  String(value || "")
+                    .split(",")
+                    .map((v) => v.trim())
+                    .every((v) => imeiPattern.test(v)) ||
+                  "IMEI must be 15 digits",
               })}
-              error={!!errors.lat}
-              helperText={errors.lat?.message?.toString()}
-              margin="normal"
-              InputProps={{ sx: { borderRadius: 2 }, inputProps: { step: "any" } }}
+              error={!!errors.imei}
+              helperText={errors.imei?.message?.toString()}
+              margin="dense"
+              inputProps={{ inputMode: "numeric", maxLength: 15 }}
+              InputProps={{ sx: { borderRadius: 2 } }}
             />
 
             <TextField
               fullWidth
-              label="Longitude"
-              type="number"
-              {...register("lon", {
-                required: "Longitude is required",
-                valueAsNumber: true,
+              label="Name"
+              {...register("name", { required: "Name is required" })}
+              error={!!errors.name}
+              helperText={errors.name?.message?.toString()}
+              margin="dense"
+              InputProps={{ sx: { borderRadius: 2 } }}
+            />
+
+            <TextField
+              fullWidth
+              label="Display Name"
+              {...register("display_name", {
+                required: "Display name is required",
               })}
-              error={!!errors.lon}
-              helperText={errors.lon?.message?.toString()}
-              margin="normal"
-              InputProps={{ sx: { borderRadius: 2 }, inputProps: { step: "any" } }}
+              error={!!errors.display_name}
+              helperText={errors.display_name?.message?.toString()}
+              margin="dense"
+              InputProps={{ sx: { borderRadius: 2 } }}
+            />
+
+            <TextField
+              fullWidth
+              label="Region"
+              {...register("region")}
+              error={!!errors.region}
+              helperText={errors.region?.message?.toString()}
+              margin="dense"
+              InputProps={{ sx: { borderRadius: 2 } }}
+            />
+
+            <Grid container spacing={1.5}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Latitude"
+                  type="number"
+                  {...register("lat", {
+                    required: "Latitude is required",
+                    valueAsNumber: true,
+                  })}
+                  error={!!errors.lat}
+                  helperText={errors.lat?.message?.toString()}
+                  margin="dense"
+                  InputProps={{
+                    sx: { borderRadius: 2 },
+                    inputProps: { step: "any" },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Longitude"
+                  type="number"
+                  {...register("lon", {
+                    required: "Longitude is required",
+                    valueAsNumber: true,
+                  })}
+                  error={!!errors.lon}
+                  helperText={errors.lon?.message?.toString()}
+                  margin="dense"
+                  InputProps={{
+                    sx: { borderRadius: 2 },
+                    inputProps: { step: "any" },
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            <TextField
+              fullWidth
+              label="Infrastructure ID"
+              {...register("infrastructure_id")}
+              error={!!errors.infrastructure_id}
+              helperText={errors.infrastructure_id?.message?.toString()}
+              margin="dense"
+              InputProps={{ sx: { borderRadius: 2 } }}
             />
 
             <TextField
@@ -222,7 +307,7 @@ export const SiteEdit: React.FC = () => {
               })}
               error={!!errors.vibrationSensorId}
               helperText={errors.vibrationSensorId?.message?.toString()}
-              margin="normal"
+              margin="dense"
               InputProps={{ sx: { borderRadius: 2 } }}
             />
 
@@ -234,47 +319,7 @@ export const SiteEdit: React.FC = () => {
               })}
               error={!!errors.windSensorId}
               helperText={errors.windSensorId?.message?.toString()}
-              margin="normal"
-              InputProps={{ sx: { borderRadius: 2 } }}
-            />
-
-            <TextField
-              fullWidth
-              label="Name"
-              {...register("name", { required: "Name is required" })}
-              error={!!errors.name}
-              helperText={errors.name?.message?.toString()}
-              margin="normal"
-              InputProps={{ sx: { borderRadius: 2 } }}
-            />
-
-            <TextField
-              fullWidth
-              label="Display Name"
-              {...register("display_name", { required: "Display name is required" })}
-              error={!!errors.display_name}
-              helperText={errors.display_name?.message?.toString()}
-              margin="normal"
-              InputProps={{ sx: { borderRadius: 2 } }}
-            />
-
-            <TextField
-              fullWidth
-              label="Region"
-              {...register("region")}
-              error={!!errors.region}
-              helperText={errors.region?.message?.toString()}
-              margin="normal"
-              InputProps={{ sx: { borderRadius: 2 } }}
-            />
-
-            <TextField
-              fullWidth
-              label="Infrastructure ID"
-              {...register("infrastructure_id")}
-              error={!!errors.infrastructure_id}
-              helperText={errors.infrastructure_id?.message?.toString()}
-              margin="normal"
+              margin="dense"
               InputProps={{ sx: { borderRadius: 2 } }}
             />
 
@@ -299,6 +344,6 @@ export const SiteEdit: React.FC = () => {
           </Box>
         </MovableForm>
       )}
-    </>
+    </MapBackgroundPage>
   );
 };
