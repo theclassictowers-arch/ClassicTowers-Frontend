@@ -87,22 +87,26 @@ const App: React.FC = () => {
             html: {
               WebkitFontSmoothing: "auto",
               backgroundColor: dashboardTheme.backgroundColor,
-              fontFamily,
+              "--app-font-family": fontFamily,
+              fontFamily: "var(--app-font-family) !important",
             },
             body: {
               margin: 0,
               padding: 0,
               backgroundColor: `${dashboardTheme.backgroundColor} !important`,
-              fontFamily,
+              fontFamily: "var(--app-font-family) !important",
             },
             "#root": {
               minHeight: "100dvh",
               backgroundColor: dashboardTheme.backgroundColor,
-              fontFamily,
+              fontFamily: "var(--app-font-family) !important",
             },
-            "button, input, textarea, select, table, .MuiTypography-root, .MuiDataGrid-root":
+            "body *, body *::before, body *::after": {
+              fontFamily: "var(--app-font-family) !important",
+            },
+            ".MuiTypography-root, .MuiButtonBase-root, .MuiInputBase-root, .MuiInputBase-input, .MuiFormLabel-root, .MuiMenuItem-root, .MuiDataGrid-root, .MuiDataGrid-root *, .MuiTable-root, .MuiTable-root *, .MuiSnackbarContent-root, .MuiAlert-root, .MuiTooltip-tooltip, .MuiDialog-root, .MuiDrawer-root, .MuiDrawer-root *":
               {
-                fontFamily,
+                fontFamily: "var(--app-font-family) !important",
             },
             "@keyframes sidebarIconTwist": {
               "0%": {
