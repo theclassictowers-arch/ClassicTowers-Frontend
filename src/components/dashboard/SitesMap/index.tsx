@@ -1,15 +1,24 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { Map } from "@vis.gl/react-google-maps";
 import { styles } from "./styles";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
+import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import SatelliteAltOutlinedIcon from "@mui/icons-material/SatelliteAltOutlined";
 import Markers from "./Markers";
 
 const { VITE_MAP_ID, VITE_MAP_API_KEY } = import.meta.env;
 const getCurrentMapViewStorageKey = () =>
   `currentDashboardMapView:${localStorage.getItem("userId") || "guest"}`;
+const getCurrentMapTypeStorageKey = () =>
+  `currentDashboardMapType:${localStorage.getItem("userId") || "guest"}`;
 const ADMIN_WORLD_VIEW = {
   center: { lat: 20, lng: 0 },
   zoom: 2,
@@ -126,8 +135,48 @@ const buildMapsErrorMessage = (error: unknown): string => {
   return "Google Map failed to load. Check API key restrictions, billing, and Maps JavaScript API enablement.";
 };
 
+type DashboardMapType = "roadmap" | "satellite";
+
 export const SitesMap = ({ siteData, isLoading }: any) => {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const [mapLoadError, setMapLoadError] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [mapTypeId, setMapTypeId] = useState<DashboardMapType>(() => {
+    const storedMapType = localStorage.getItem(getCurrentMapTypeStorageKey());
+    return storedMapType === "satellite" ? "satellite" : "roadmap";
+  });
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(document.fullscreenElement === mapContainerRef.current);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
+  const handleToggleFullscreen = useCallback(async () => {
+    const container = mapContainerRef.current;
+    if (!container) return;
+
+    if (document.fullscreenElement === container) {
+      await document.exitFullscreen();
+      return;
+    }
+
+    await container.requestFullscreen();
+  }, []);
+
+  const handleToggleMapType = useCallback(() => {
+    setMapTypeId((currentType) => {
+      const nextType = currentType === "satellite" ? "roadmap" : "satellite";
+      localStorage.setItem(getCurrentMapTypeStorageKey(), nextType);
+      return nextType;
+    });
+  }, []);
 
   const initialMapView = useMemo(() => {
     const currentMapViewStorageKey = getCurrentMapViewStorageKey();
@@ -203,7 +252,17 @@ export const SitesMap = ({ siteData, isLoading }: any) => {
 
   return (
     <>
-      <Box sx={styles.container}>
+      <Box
+        ref={mapContainerRef}
+        sx={{
+          ...styles.container,
+          "&:fullscreen": {
+            bgcolor: "background.default",
+            height: "100vh",
+            width: "100vw",
+          },
+        }}
+      >
         {isLoading ? (
           <Box sx={styles.progressLoader}>
             <CircularProgress />
@@ -248,10 +307,68 @@ export const SitesMap = ({ siteData, isLoading }: any) => {
               style={{ width: "100%", height: "100%" }}
               gestureHandling="greedy"
               disableDefaultUI
+              mapTypeId={mapTypeId}
               {...(VITE_MAP_ID ? { mapId: VITE_MAP_ID } : {})}
             >
               <Markers points={locations} />
             </Map>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                position: "absolute",
+                right: 16,
+                top: 16,
+                zIndex: 5,
+              }}
+            >
+              <Tooltip
+                title={
+                  mapTypeId === "satellite" ? "Map View" : "Satellite View"
+                }
+              >
+                <IconButton
+                  aria-label={
+                    mapTypeId === "satellite" ? "Map View" : "Satellite View"
+                  }
+                  onClick={handleToggleMapType}
+                  sx={{
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    boxShadow: "0 8px 18px rgba(15, 23, 42, 0.16)",
+                    color: "text.primary",
+                    "&:hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                >
+                  {mapTypeId === "satellite" ? (
+                    <MapOutlinedIcon />
+                  ) : (
+                    <SatelliteAltOutlinedIcon />
+                  )}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={isFullscreen ? "Exit Full View" : "Full View"}>
+                <IconButton
+                  aria-label={isFullscreen ? "Exit Full View" : "Full View"}
+                  onClick={handleToggleFullscreen}
+                  sx={{
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    boxShadow: "0 8px 18px rgba(15, 23, 42, 0.16)",
+                    color: "text.primary",
+                    "&:hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                >
+                  {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+                </IconButton>
+              </Tooltip>
+            </Stack>
           </APIProvider>
         )}
       </Box>
