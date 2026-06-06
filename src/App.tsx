@@ -1,4 +1,4 @@
-﻿import React from "react";
+﻿import React, { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
@@ -39,6 +39,40 @@ const App: React.FC = () => {
   const authProvider = useAuthProvider(confirm);
   const resources = role ? getResources(role) : [];
 
+  useEffect(() => {
+    const splitSidebarLabels = () => {
+      document
+        .querySelectorAll<HTMLElement>(
+          ".MuiDrawer-docked .MuiListItemText-primary"
+        )
+        .forEach((label) => {
+          if (label.dataset.sidebarCharacters === "true") return;
+
+          const text = label.textContent ?? "";
+          label.textContent = "";
+          label.dataset.sidebarCharacters = "true";
+
+          Array.from(text).forEach((character, index) => {
+            const characterNode = document.createElement("span");
+            characterNode.className =
+              character === " "
+                ? "sidebar-menu-char sidebar-menu-space"
+                : "sidebar-menu-char";
+            characterNode.style.setProperty("--char-index", String(index));
+            characterNode.textContent = character === " " ? "\u00a0" : character;
+            label.appendChild(characterNode);
+          });
+        });
+    };
+
+    splitSidebarLabels();
+
+    const observer = new MutationObserver(splitSidebarLabels);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [role]);
+
 
   return (
     <BrowserRouter>
@@ -69,6 +103,45 @@ const App: React.FC = () => {
             ".MuiTypography-root, .MuiButtonBase-root, .MuiInputBase-root, .MuiInputBase-input, .MuiFormLabel-root, .MuiMenuItem-root, .MuiDataGrid-root, .MuiDataGrid-root *, .MuiTable-root, .MuiTable-root *, .MuiSnackbarContent-root, .MuiAlert-root, .MuiTooltip-tooltip, .MuiDialog-root, .MuiDrawer-root, .MuiDrawer-root *":
               {
                 fontFamily: "var(--app-font-family) !important",
+            },
+            "@keyframes sidebarIconDrop": {
+              "0%": {
+                transform:
+                  "translateY(-10px) translateZ(0) rotateX(-55deg) rotateZ(-8deg) scale(0.96)",
+              },
+              "48%": {
+                transform:
+                  "translateY(6px) translateZ(15px) rotateX(18deg) rotateZ(8deg) scale(1.16)",
+              },
+              "76%": {
+                transform:
+                  "translateY(-2px) translateZ(8px) rotateX(-8deg) rotateZ(-3deg) scale(1.1)",
+              },
+              "100%": {
+                transform:
+                  "translateY(0) translateZ(3px) rotateX(0deg) rotateZ(0deg) scale(1.08)",
+              },
+            },
+            "@keyframes sidebarCharacterDrop": {
+              "0%": {
+                transform:
+                  "translateY(-14px) translateZ(8px) rotateX(-82deg) scale(0.94)",
+                opacity: 0.25,
+              },
+              "48%": {
+                transform:
+                  "translateY(5px) translateZ(14px) rotateX(18deg) scale(1.08)",
+                opacity: 1,
+              },
+              "76%": {
+                transform:
+                  "translateY(-2px) translateZ(5px) rotateX(-7deg) scale(1.02)",
+                opacity: 1,
+              },
+              "100%": {
+                transform: "translateY(0) translateZ(0) rotateX(0deg) scale(1)",
+                opacity: 1,
+              },
             },
             "@keyframes sidebarItemReveal": {
               "0%": {
@@ -511,9 +584,10 @@ const App: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "8px",
+                transformOrigin: "center",
+                transformStyle: "preserve-3d",
                 transition:
-                  "background-color 180ms ease, color 180ms ease",
-                transform: "none !important",
+                  "background-color 180ms ease, transform 320ms cubic-bezier(0.16, 1, 0.3, 1), color 180ms ease",
               },
               ".MuiDrawer-docked .MuiListItemIcon-root .MuiSvgIcon-root": {
                 fontSize: "20px",
@@ -572,14 +646,17 @@ const App: React.FC = () => {
                 fontSize: "0.95rem !important",
                 fontWeight: 700,
                 letterSpacing: "0 !important",
-                transition: "color 180ms ease",
-                transform: "none !important",
+                transition:
+                  "transform 260ms cubic-bezier(0.16, 1, 0.3, 1), color 180ms ease",
+                transformOrigin: "left center",
+                transformStyle: "preserve-3d",
               },
               ".MuiDrawer-docked .sidebar-menu-char": {
                 display: "inline-block",
-                animation: "none !important",
-                transform: "none !important",
-                willChange: "auto",
+                transformOrigin: "left center",
+                transformStyle: "preserve-3d",
+                backfaceVisibility: "hidden",
+                willChange: "transform",
               },
               ".MuiDrawer-docked .sidebar-menu-space": {
                 width: "0.28em",
@@ -612,8 +689,8 @@ const App: React.FC = () => {
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemIcon-root":
                 {
-                  animation: "none !important",
-                  transform: "none !important",
+                  animation:
+                    "sidebarIconDrop 620ms cubic-bezier(0.16, 1, 0.3, 1) both",
                 },
               "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root:hover .MuiListItemText-root":
                 {
@@ -625,13 +702,12 @@ const App: React.FC = () => {
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemText-primary":
                 {
                   animation: "none",
-                  transform: "none !important",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .sidebar-menu-char":
                 {
-                  animation: "none !important",
-                  animationDelay: "0ms",
-                  transform: "none !important",
+                  animation:
+                    "sidebarCharacterDrop 560ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                  animationDelay: "calc(var(--char-index) * 30ms)",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected": {
                 backgroundColor: "rgba(25, 118, 210, 0.10) !important",
@@ -648,11 +724,11 @@ const App: React.FC = () => {
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root":
                 {
                   color: "primary.main",
-                  transform: "none !important",
+                  transform: "scale(1.08)",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected:hover .MuiListItemIcon-root":
                 {
-                  transform: "none !important",
+                  transform: "translateX(2px) scale(1.14)",
                 },
               "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root.Mui-selected .MuiListItemText-root":
                 {
@@ -855,3 +931,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
