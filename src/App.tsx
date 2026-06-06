@@ -905,6 +905,48 @@ const App: React.FC = () => {
             }}
           >
             <Routes />
+            <div
+              aria-label="Product of Classic Electronics"
+              style={{
+                alignItems: "flex-start",
+                background: "transparent",
+                border: 0,
+                bottom: 10,
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                left: 10,
+                pointerEvents: "none",
+                position: "fixed",
+                zIndex: 1400,
+              }}
+            >
+              <span
+                style={{
+                  color: dashboardTheme.textColor,
+                  fontFamily,
+                  fontSize: 9,
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  textShadow: "0 1px 2px rgba(255, 255, 255, 0.75)",
+                  textTransform: "uppercase",
+                }}
+              >
+                Product of
+              </span>
+              <img
+                src="/images/classic-electronics-brand.jpeg"
+                alt="Classic Electronics"
+                style={{
+                  background: "transparent",
+                  display: "block",
+                  height: "auto",
+                  maxWidth: "36vw",
+                  mixBlendMode: "multiply",
+                  width: 142,
+                }}
+              />
+            </div>
             <RefineKbar />
             <UnsavedChangesNotifier />
           </Refine>
