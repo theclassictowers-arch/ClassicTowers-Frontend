@@ -746,7 +746,12 @@ export const SettingsPage: React.FC = () => {
                   <Box>
                     <Typography
                       variant="subtitle2"
-                      sx={{ mb: 1, fontWeight: 700, color: "text.primary" }}
+                      sx={{
+                        mb: 1,
+                        fontWeight: 700,
+                        color: "text.primary",
+                        textAlign: "center",
+                      }}
                     >
                       Appearance
                     </Typography>
@@ -761,7 +766,9 @@ export const SettingsPage: React.FC = () => {
                         gap: 0.5,
                         gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
                         maxWidth: 470,
+                        mx: "auto",
                         p: 0.5,
+                        width: "100%",
                       }}
                     >
                       {APPEARANCE_MODE_OPTIONS.map((option) => {
@@ -818,6 +825,10 @@ export const SettingsPage: React.FC = () => {
                         xs: "1fr",
                         md: "max-content",
                       },
+                      justifyContent: "center",
+                      justifyItems: "center",
+                      mx: "auto",
+                      width: "100%",
                     }}
                   >
                     <Typography
@@ -826,6 +837,7 @@ export const SettingsPage: React.FC = () => {
                         gridColumn: "1 / -1",
                         fontWeight: 700,
                         color: "text.primary",
+                        textAlign: "center",
                       }}
                     >
                       {getAppearanceThemeLabel(appearanceModeInput)}
@@ -835,10 +847,13 @@ export const SettingsPage: React.FC = () => {
                         display: "grid",
                         gap: 1.5,
                         gridTemplateColumns: {
-                          xs: "repeat(2, minmax(0, 1fr))",
+                          xs: "repeat(2, 108px)",
                           sm: "repeat(3, 108px)",
                           md: "repeat(3, 108px)",
                         },
+                        justifyContent: "center",
+                        mx: "auto",
+                        width: "100%",
                       }}
                     >
                     {appearanceThemePresets.map((preset) => {
