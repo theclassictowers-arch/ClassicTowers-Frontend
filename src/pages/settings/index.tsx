@@ -506,7 +506,7 @@ export const SettingsPage: React.FC = () => {
           "logoTextEnabled",
           String(brandingInput.logoTextEnabled)
         );
-        brandingData.append("logoTextSize", String(logoTextSize));
+        brandingData.append("logoTextSize", `${logoTextSize}`);
         brandingData.append(
           "logoTextWidth",
           String(logoTextWidth)
@@ -552,12 +552,7 @@ export const SettingsPage: React.FC = () => {
       const normalizedSavedBranding = {
         ...savedBranding,
         logoText: normalizeLogoText(savedBranding.logoText),
-        logoTextSize: clampNumber(
-          savedBranding.logoTextSize,
-          LOGO_TEXT_MIN_SIZE,
-          LOGO_TEXT_MAX_SIZE,
-          DEFAULT_DASHBOARD_BRANDING.logoTextSize
-        ),
+        logoTextSize,
         logoTextWidth,
         sidebarWidth,
         sidebarHeight,
