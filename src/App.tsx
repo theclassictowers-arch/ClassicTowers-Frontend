@@ -125,21 +125,22 @@ const App: React.FC = () => {
             "@keyframes sidebarCharacterDrop": {
               "0%": {
                 transform:
-                  "translateY(-14px) translateZ(8px) rotateX(-82deg) scale(0.94)",
-                opacity: 0.25,
+                  "translateY(-10px) translateZ(0) rotateX(-55deg) rotateZ(-6deg) scale(0.96)",
+                opacity: 0.45,
               },
               "48%": {
                 transform:
-                  "translateY(5px) translateZ(14px) rotateX(18deg) scale(1.08)",
+                  "translateY(6px) translateZ(14px) rotateX(18deg) rotateZ(5deg) scale(1.16)",
                 opacity: 1,
               },
               "76%": {
                 transform:
-                  "translateY(-2px) translateZ(5px) rotateX(-7deg) scale(1.02)",
+                  "translateY(-2px) translateZ(7px) rotateX(-8deg) rotateZ(-2deg) scale(1.08)",
                 opacity: 1,
               },
               "100%": {
-                transform: "translateY(0) translateZ(0) rotateX(0deg) scale(1)",
+                transform:
+                  "translateY(0) translateZ(2px) rotateX(0deg) rotateZ(0deg) scale(1)",
                 opacity: 1,
               },
             },
@@ -706,8 +707,8 @@ const App: React.FC = () => {
               ".MuiDrawer-docked .MuiListItemButton-root:hover .sidebar-menu-char":
                 {
                   animation:
-                    "sidebarCharacterDrop 560ms cubic-bezier(0.16, 1, 0.3, 1) both",
-                  animationDelay: "calc(var(--char-index) * 30ms)",
+                    "sidebarCharacterDrop 620ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                  animationDelay: "calc(var(--char-index) * 32ms)",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected": {
                 backgroundColor: "rgba(25, 118, 210, 0.10) !important",
