@@ -543,7 +543,7 @@ export const SettingsPage: React.FC = () => {
             mx: "auto",
             my: 0,
             width: "100%",
-            maxWidth: 1100,
+            maxWidth: 860,
             boxSizing: "border-box",
             px: { xs: 1.5, sm: 2, md: 2.5 },
             py: { xs: 1.5, sm: 2 },
