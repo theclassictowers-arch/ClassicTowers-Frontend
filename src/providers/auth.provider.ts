@@ -1,12 +1,18 @@
 import type { AuthProvider } from "@refinedev/core";
 import { axiosInstance } from "../utils";
 import {
+  DEFAULT_APP_FONT,
   isDefaultDashboardTheme,
+  normalizeAppFont,
   normalizeDashboardTheme,
 } from "../theme";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 const DASHBOARD_THEME_STORAGE_KEY = "dashboardTheme";
+const APP_FONT_STORAGE_KEY = "appFontFamily";
+
+const isAppearanceMode = (value: unknown) =>
+  value === "light" || value === "dark" || value === "device";
 
 declare global {
   interface Window {
@@ -46,6 +52,25 @@ const syncDashboardTheme = (dashboardTheme: any) => {
   }
 };
 
+const syncDashboardPreferences = (data: any) => {
+  if (isAppearanceMode(data?.dashboardAppearanceMode)) {
+    localStorage.setItem("colorMode", data.dashboardAppearanceMode);
+    window.setDashboardAppearanceMode?.(data.dashboardAppearanceMode);
+  } else {
+    localStorage.setItem("colorMode", "device");
+    window.setDashboardAppearanceMode?.("device");
+  }
+
+  if (data?.dashboardFont) {
+    const font = normalizeAppFont(data.dashboardFont);
+    localStorage.setItem(APP_FONT_STORAGE_KEY, font);
+    window.setDashboardFont?.(font);
+  } else {
+    localStorage.setItem(APP_FONT_STORAGE_KEY, DEFAULT_APP_FONT);
+    window.setDashboardFont?.(DEFAULT_APP_FONT);
+  }
+};
+
 export const useAuthProvider = (confirm: () => Promise<boolean>): AuthProvider => {
   return {
     login: async ({ email, password }) => {
@@ -62,6 +87,7 @@ export const useAuthProvider = (confirm: () => Promise<boolean>): AuthProvider =
           localStorage.setItem("authToken", token);
         }
         syncDashboardTheme(dashboardTheme);
+        syncDashboardPreferences(data);
         window.setDashboardBranding?.(dashboardBranding);
         if (data?.mapOpeningLocation) {
           localStorage.setItem(
@@ -288,6 +314,7 @@ export const useAuthProvider = (confirm: () => Promise<boolean>): AuthProvider =
           localStorage.removeItem("mapOpeningLocation");
         }
         syncDashboardTheme(data?.dashboardTheme);
+        syncDashboardPreferences(data);
         window.setDashboardBranding?.(data?.dashboardBranding);
 
         const name = data.name || "N/A";

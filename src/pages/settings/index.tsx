@@ -54,6 +54,8 @@ type OrganizationUser = {
   name: string;
   dashboardTheme?: Partial<DashboardThemeColors>;
   dashboardBranding?: DashboardBranding;
+  dashboardFont?: string;
+  dashboardAppearanceMode?: "light" | "dark" | "device";
 };
 
 type DashboardBranding = {
@@ -138,6 +140,11 @@ const getAppearanceThemeLabel = (modePreference: AppearanceMode) => {
   return "Light Themes";
 };
 
+const normalizeAppearanceMode = (value?: string | null): AppearanceMode =>
+  value === "light" || value === "dark" || value === "device"
+    ? value
+    : "device";
+
 export const SettingsPage: React.FC = () => {
   const { role } = useAuthContext();
   const {
@@ -173,9 +180,11 @@ export const SettingsPage: React.FC = () => {
     "colors"
   );
   const [fontInput, setFontInput] = useState(fontFamily);
+  const [appearanceModeInput, setAppearanceModeInput] =
+    useState<AppearanceMode>(modePreference);
   const appearanceThemePresets = useMemo(
-    () => getAppearanceThemePresets(modePreference),
-    [modePreference]
+    () => getAppearanceThemePresets(appearanceModeInput),
+    [appearanceModeInput]
   );
 
   useEffect(() => {
@@ -217,13 +226,29 @@ export const SettingsPage: React.FC = () => {
   }, [currentUserId, role, selectedTargetUserId]);
 
   useEffect(() => {
+    if (targetUserId === currentUserId) {
+      setAppearanceModeInput(modePreference);
+    }
+  }, [currentUserId, modePreference, targetUserId]);
+
+  useEffect(() => {
     if (!canManageSettings || !targetUserId) return;
 
     const fetchTheme = async () => {
       setLoadingTheme(true);
       try {
         const response = await axiosInstance.get(`/users/${targetUserId}`);
+        const targetAppearanceMode = normalizeAppearanceMode(
+          response.data?.dashboardAppearanceMode
+        );
+        const targetFont = normalizeAppFont(response.data?.dashboardFont);
         setThemeInput(normalizeDashboardTheme(response.data?.dashboardTheme));
+        setAppearanceModeInput(targetAppearanceMode);
+        setFontInput(targetFont);
+        if (targetUserId === currentUserId) {
+          setModePreference(targetAppearanceMode);
+          setFontFamily(targetFont);
+        }
         setBrandingInput({
           logoText: normalizeLogoText(response.data?.dashboardBranding?.logoText),
           logoIcon: response.data?.dashboardBranding?.logoIcon || null,
@@ -267,7 +292,13 @@ export const SettingsPage: React.FC = () => {
     };
 
     fetchTheme();
-  }, [canManageSettings, targetUserId]);
+  }, [
+    canManageSettings,
+    currentUserId,
+    setFontFamily,
+    setModePreference,
+    targetUserId,
+  ]);
 
   if (!canManageSettings || !currentUserId) {
     return null;
@@ -293,7 +324,10 @@ export const SettingsPage: React.FC = () => {
       areSameTheme(selectedTheme, preset.colors)
     );
 
-    setModePreference(nextMode);
+    setAppearanceModeInput(nextMode);
+    if (targetUserId === currentUserId) {
+      setModePreference(nextMode);
+    }
 
     if (!currentThemeExistsInMode && nextPresets[0]) {
       setThemeInput(normalizeDashboardTheme(nextPresets[0].colors));
@@ -330,6 +364,10 @@ export const SettingsPage: React.FC = () => {
           `/users/${targetUserId}/dashboard-theme`,
           payload
         );
+        await axiosInstance.patch(`/users/${targetUserId}`, {
+          dashboardTheme: payload,
+          dashboardAppearanceMode: appearanceModeInput,
+        });
       } catch (error: unknown) {
         const statusCode = (error as { response?: { status?: number } })
           ?.response?.status;
@@ -339,12 +377,14 @@ export const SettingsPage: React.FC = () => {
 
         await axiosInstance.patch(`/users/${targetUserId}`, {
           dashboardTheme: payload,
+          dashboardAppearanceMode: appearanceModeInput,
         });
       }
 
       setThemeInput(payload);
       if (targetUserId === currentUserId) {
         setDashboardTheme(payload);
+        setModePreference(appearanceModeInput);
       }
       setOrganizations((prev) =>
         prev.map((org) =>
@@ -352,6 +392,7 @@ export const SettingsPage: React.FC = () => {
             ? {
                 ...org,
                 dashboardTheme: payload,
+                dashboardAppearanceMode: appearanceModeInput,
               }
             : org
         )
@@ -374,15 +415,40 @@ export const SettingsPage: React.FC = () => {
     }
   };
 
-  const handleSaveFontSettings = () => {
+  const handleSaveFontSettings = async () => {
+    if (!targetUserId) return;
     const normalizedFont = normalizeAppFont(fontInput);
-    setFontInput(normalizedFont);
-    setFontFamily(normalizedFont);
-    open?.({
-      type: "success",
-      message: "Font settings saved",
-      description: "Dashboard font updated successfully.",
-    });
+    setIsSaving(true);
+    try {
+      await axiosInstance.patch(`/users/${targetUserId}`, {
+        dashboardFont: normalizedFont,
+      });
+      setFontInput(normalizedFont);
+      if (targetUserId === currentUserId) {
+        setFontFamily(normalizedFont);
+      }
+      setOrganizations((prev) =>
+        prev.map((org) =>
+          org._id === targetUserId
+            ? { ...org, dashboardFont: normalizedFont }
+            : org
+        )
+      );
+      open?.({
+        type: "success",
+        message: "Font settings saved",
+        description: "Dashboard font updated successfully.",
+      });
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      open?.({
+        type: "error",
+        message: "Failed to save font settings",
+        description: err.response?.data?.message || "Please try again.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSaveBranding = async () => {
@@ -700,7 +766,8 @@ export const SettingsPage: React.FC = () => {
                     >
                       {APPEARANCE_MODE_OPTIONS.map((option) => {
                         const Icon = option.icon;
-                        const isSelected = modePreference === option.value;
+                        const isSelected =
+                          appearanceModeInput === option.value;
                         return (
                           <Button
                             key={option.value}
@@ -761,7 +828,7 @@ export const SettingsPage: React.FC = () => {
                         color: "text.primary",
                       }}
                     >
-                      {getAppearanceThemeLabel(modePreference)}
+                      {getAppearanceThemeLabel(appearanceModeInput)}
                     </Typography>
                     <Box
                       sx={{

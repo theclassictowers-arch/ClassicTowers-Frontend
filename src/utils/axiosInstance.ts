@@ -7,6 +7,8 @@ declare global {
   interface Window {
     setDashboardTheme?: any;
     setDashboardPrimaryColor?: any;
+    setDashboardAppearanceMode?: any;
+    setDashboardFont?: any;
   }
 }
 
@@ -16,8 +18,12 @@ const clearSessionStorage = () => {
   localStorage.removeItem("authToken");
   localStorage.removeItem("mapOpeningLocation");
   localStorage.removeItem("dashboardTheme");
+  localStorage.removeItem("appFontFamily");
+  localStorage.setItem("colorMode", "device");
   window.setDashboardTheme?.(null);
   window.setDashboardPrimaryColor?.(null);
+  window.setDashboardAppearanceMode?.("device");
+  window.setDashboardFont?.(null);
   window.setDashboardBranding?.(null);
 };
 

@@ -26,6 +26,8 @@ declare global {
   interface Window {
     setDashboardPrimaryColor?: any;
     setDashboardTheme?: any;
+    setDashboardAppearanceMode?: any;
+    setDashboardFont?: any;
   }
 }
 
@@ -114,7 +116,11 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const setModePreference = useCallback((preference: ColorModePreference) => {
-    setModePreferenceState(preference);
+    setModePreferenceState(
+      preference === "light" || preference === "dark" || preference === "device"
+        ? preference
+        : "device"
+    );
   }, []);
 
   const setPrimaryColor = useCallback(
@@ -184,11 +190,21 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
       );
     };
 
+    window.setDashboardAppearanceMode = (preference: ColorModePreference) => {
+      setModePreference(preference);
+    };
+
+    window.setDashboardFont = (font: string | null) => {
+      setFontFamily(font || DEFAULT_APP_FONT);
+    };
+
     return () => {
       delete window.setDashboardPrimaryColor;
       delete window.setDashboardTheme;
+      delete window.setDashboardAppearanceMode;
+      delete window.setDashboardFont;
     };
-  }, [setDashboardTheme]);
+  }, [setDashboardTheme, setFontFamily, setModePreference]);
 
   const value = useMemo(
     () => ({
