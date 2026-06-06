@@ -1260,7 +1260,8 @@ export const SettingsPage: React.FC = () => {
                           xs: "1fr",
                           sm: "repeat(2, max-content)",
                         },
-                        gap: 2,
+                        columnGap: "40px",
+                        rowGap: 2,
                         alignItems: "start",
                       }}
                     >
