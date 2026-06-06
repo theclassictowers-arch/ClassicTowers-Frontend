@@ -71,7 +71,7 @@ type DashboardBranding = {
 
 const LOGO_TEXT_MAX_LENGTH = 15;
 const LOGO_TEXT_MIN_SIZE = 8;
-const LOGO_TEXT_MAX_SIZE = 12;
+const LOGO_TEXT_MAX_SIZE = 16;
 
 const clampNumber = (
   value: unknown,
@@ -1477,7 +1477,7 @@ export const SettingsPage: React.FC = () => {
                           step={1}
                           marks={[
                             { value: LOGO_TEXT_MIN_SIZE, label: "8px" },
-                            { value: LOGO_TEXT_MAX_SIZE, label: "12px" },
+                            { value: LOGO_TEXT_MAX_SIZE, label: "16px" },
                           ]}
                           disabled={!brandingInput.logoTextEnabled}
                           onChange={(_, value) =>

@@ -11,7 +11,7 @@ import { axiosInstance } from "../utils";
 const DEFAULT_LOGO_TEXT = "Classic Towers";
 const LOGO_TEXT_MAX_LENGTH = 15;
 const LOGO_TEXT_MIN_SIZE = 8;
-const LOGO_TEXT_MAX_SIZE = 12;
+const LOGO_TEXT_MAX_SIZE = 16;
 
 const clampNumber = (value: unknown, min: number, max: number, fallback: number) => {
   const numberValue = Number(value);
