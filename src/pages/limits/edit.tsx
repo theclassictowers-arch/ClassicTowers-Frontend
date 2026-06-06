@@ -1,4 +1,4 @@
-import {
+﻿import {
   Typography,
   Card,
   CardContent,
@@ -13,7 +13,103 @@ import { useForm } from "@refinedev/react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
-import { AxisLimitInputGroup, LimitInputGroup, SectionHeading, SubSectionHeading } from "./components/LimitInputGroup";
+
+const SectionHeading = ({ title }: { title: string }) => (
+  <Typography
+    variant="h6"
+    sx={{
+      mt: 1.5,
+      mb: 1,
+      fontSize: "1rem",
+      fontWeight: 600,
+      color: (theme) => theme.palette.text.primary,
+    }}
+  >
+    {title}
+  </Typography>
+);
+
+const SubSectionHeading = ({ title }: { title: string }) => (
+  <Typography
+    variant="caption"
+    sx={{
+      display: "block",
+      mb: 0.5,
+      color: (theme) => theme.palette.text.secondary,
+      fontWeight: 500,
+    }}
+  >
+    {title}
+  </Typography>
+);
+
+const generateAxisFields = (
+  register: any,
+  errors: any,
+  prefix: string,
+  axis: string = "",
+  domains: string[] = ["green", "yellow", "red"]
+) => {
+  return domains.flatMap((domain) => [
+    <TextField
+      key={`${prefix}-${axis}-${domain}-max`}
+      {...register(`${prefix}.${axis}.${domain}.max`, {
+        valueAsNumber: true,
+      })}
+      error={!!errors?.[prefix]?.[axis]?.[domain]?.max}
+      helperText={errors?.[prefix]?.[axis]?.[domain]?.max?.message}
+      margin="dense"
+      fullWidth
+      size="small"
+      InputLabelProps={{ shrink: true }}
+      type="number"
+      label={`${domain.charAt(0).toUpperCase() + domain.slice(1)} Max ${
+        axis ? `(${axis.toUpperCase()})` : ""
+      }`}
+    />,
+    <TextField
+      key={`${prefix}-${axis}-${domain}-min`}
+      {...register(`${prefix}.${axis}.${domain}.min`, {
+        valueAsNumber: true,
+      })}
+      error={!!errors?.[prefix]?.[axis]?.[domain]?.min}
+      helperText={errors?.[prefix]?.[axis]?.[domain]?.min?.message}
+      margin="dense"
+      fullWidth
+      size="small"
+      InputLabelProps={{ shrink: true }}
+      type="number"
+      label={`${domain.charAt(0).toUpperCase() + domain.slice(1)} Min ${
+        axis ? `(${axis.toUpperCase()})` : ""
+      }`}
+    />,
+  ]);
+};
+
+const AxisSection = ({
+  prefix,
+  axis,
+  register,
+  errors,
+}: {
+  prefix: string;
+  axis: string;
+  register: any;
+  errors: any;
+}) => (
+  <Paper
+    elevation={0}
+    sx={{
+      p: 2,
+      mb: 1,
+      backgroundColor: "#333",
+      borderRadius: 2,
+    }}
+  >
+    <SubSectionHeading title={`${axis.toUpperCase()} Axis`} />
+    {generateAxisFields(register, errors, prefix, axis)}
+  </Paper>
+);
 
 export const LimitsEdit = () => {
   const navigate = useNavigate();
@@ -94,7 +190,7 @@ export const LimitsEdit = () => {
                     <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Angle" />
                       {["x", "y", "z"].map((axis) => (
-                        <AxisLimitInputGroup
+                        <AxisSection
                           key={`angle-${axis}`}
                           prefix="vibrationAngle"
                           axis={axis}
@@ -107,7 +203,7 @@ export const LimitsEdit = () => {
                     <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Displacement" />
                       {["x", "y", "z"].map((axis) => (
-                        <AxisLimitInputGroup
+                        <AxisSection
                           key={`displacement-${axis}`}
                           prefix="vibrationDisplacement"
                           axis={axis}
@@ -120,7 +216,7 @@ export const LimitsEdit = () => {
                     <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Speed" />
                       {["x", "y", "z"].map((axis) => (
-                        <AxisLimitInputGroup
+                        <AxisSection
                           key={`speed-${axis}`}
                           prefix="vibrationSpeed"
                           axis={axis}
@@ -133,7 +229,7 @@ export const LimitsEdit = () => {
                     <Box sx={{ mb: 2 }}>
                       <SectionHeading title="Frequency" />
                       {["x", "y", "z"].map((axis) => (
-                        <AxisLimitInputGroup
+                        <AxisSection
                           key={`frequency-${axis}`}
                           prefix="vibrationFrequency"
                           axis={axis}
@@ -160,7 +256,7 @@ export const LimitsEdit = () => {
                         }}
                       >
                         <SubSectionHeading title="Direction" />
-                        <LimitInputGroup register={register} errors={errors} prefix="windDirection" title="Direction" />
+                        {generateAxisFields(register, errors, "windDirection")}
                       </Paper>
 
                       <Paper
@@ -172,7 +268,7 @@ export const LimitsEdit = () => {
                         }}
                       >
                         <SubSectionHeading title="Speed" />
-                        <LimitInputGroup register={register} errors={errors} prefix="windSpeed" title="Speed" />
+                        {generateAxisFields(register, errors, "windSpeed")}
                       </Paper>
                     </Box>
 
@@ -186,7 +282,7 @@ export const LimitsEdit = () => {
                           backgroundColor: "#333",
                         }}
                       >
-                        <LimitInputGroup register={register} errors={errors} prefix="windTemperature" />
+                        {generateAxisFields(register, errors, "windTemperature")}
                       </Paper>
                     </Box>
 
@@ -200,7 +296,7 @@ export const LimitsEdit = () => {
                           backgroundColor: "#333",
                         }}
                       >
-                        <LimitInputGroup register={register} errors={errors} prefix="windHumidity" />
+                        {generateAxisFields(register, errors, "windHumidity")}
                       </Paper>
                     </Box>
 
@@ -216,12 +312,11 @@ export const LimitsEdit = () => {
                         }}
                       >
                         <SubSectionHeading title="Pitch Angle" />
-                        <LimitInputGroup
-                          register={register}
-                          errors={errors}
-                          prefix="vibrationPitchAngle"
-                          title="Pitch Angle"
-                        />
+                        {generateAxisFields(
+                          register,
+                          errors,
+                          "vibrationPitchAngle"
+                        )}
                       </Paper>
 
                       <Paper
@@ -233,7 +328,7 @@ export const LimitsEdit = () => {
                         }}
                       >
                         <SubSectionHeading title="Roll Angle" />
-                        <LimitInputGroup register={register} errors={errors} prefix="vibrationRollAngle" title="Roll Angle" />
+                        {generateAxisFields(register, errors, "vibrationRollAngle")}
                       </Paper>
                     </Box>
                   </Grid>
@@ -247,4 +342,3 @@ export const LimitsEdit = () => {
 };
 
 export default LimitsEdit;
-

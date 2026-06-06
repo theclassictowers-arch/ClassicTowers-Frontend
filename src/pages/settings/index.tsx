@@ -6,6 +6,10 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   Tab,
   Tabs,
@@ -49,9 +53,6 @@ import {
 } from "./constants";
 import { SettingsFontSection } from "./components/SettingsFontSection";
 import { SettingsLogoSection } from "./components/SettingsLogoSection";
-import { TargetSelector } from "./components/TargetSelector";
-import { ThemePresetCard } from "./components/ThemePresetCard";
-import { ColorPickerField } from "./components/ColorPickerField";
 import type { DashboardBranding, OrganizationUser } from "./types";
 
 const clampNumber = (
@@ -91,6 +92,12 @@ const APPEARANCE_MODE_OPTIONS = [
 ] as const;
 
 type AppearanceMode = (typeof APPEARANCE_MODE_OPTIONS)[number]["value"];
+
+const getPresetGradient = (colors: DashboardThemeColors) =>
+  `conic-gradient(${colors.primaryColor} 0 25%, ${colors.textColor} 25% 50%, ${colors.backgroundColor} 50% 75%, ${alpha(
+    colors.primaryColor,
+    0.34
+  )} 75% 100%)`;
 
 const getAppearanceThemePresets = (modePreference: AppearanceMode) => {
   if (modePreference === "dark") return DARK_DASHBOARD_THEME_PRESETS;
@@ -608,14 +615,31 @@ export const SettingsPage: React.FC = () => {
               Settings
             </Typography>
 
-            <TargetSelector
-              currentUserId={currentUserId}
-              loading={loadingOrganizations}
-              organizations={organizations}
-              role={role}
-              selectedTargetUserId={selectedTargetUserId}
-              onTargetUserChange={setSelectedTargetUserId}
-            />
+            {role === "admin" ? (
+              <FormControl fullWidth size="small">
+                <InputLabel id="settings-target-label">Target</InputLabel>
+                <Select
+                  labelId="settings-target-label"
+                  label="Target"
+                  value={selectedTargetUserId}
+                  disabled={loadingOrganizations}
+                  onChange={(event) =>
+                    setSelectedTargetUserId(String(event.target.value))
+                  }
+                >
+                  <MenuItem value={currentUserId}>My Account (Admin)</MenuItem>
+                  {organizations.map((org) => (
+                    <MenuItem key={org._id} value={org._id}>
+                      {org.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ) : (
+              <Typography sx={{ textAlign: "center", color: "text.secondary" }}>
+                My Organization
+              </Typography>
+            )}
 
             <Button
               type="submit"
@@ -802,18 +826,69 @@ export const SettingsPage: React.FC = () => {
                         width: "100%",
                       }}
                     >
-                    {appearanceThemePresets.map((preset) => (
-                      <ThemePresetCard
-                        key={preset.id}
-                        colors={preset.colors}
-                        isSelected={areSameTheme(
-                          normalizeDashboardTheme(themeInput),
-                          preset.colors
-                        )}
-                        name={preset.name}
-                        onSelect={() => handleSelectPreset(preset.colors)}
-                      />
-                    ))}
+                    {appearanceThemePresets.map((preset) => {
+                      const isSelected = areSameTheme(
+                        normalizeDashboardTheme(themeInput),
+                        preset.colors
+                      );
+
+                      return (
+                        <Button
+                          key={preset.id}
+                          aria-label={preset.name}
+                          type="button"
+                          onClick={() => handleSelectPreset(preset.colors)}
+                          sx={{
+                            aspectRatio: "1 / 1",
+                            bgcolor: "action.hover",
+                            border: "1px solid",
+                            borderColor: isSelected
+                              ? "primary.main"
+                              : "divider",
+                            borderRadius: 2,
+                            minWidth: 0,
+                            p: 0,
+                            position: "relative",
+                            "&:hover": {
+                              bgcolor: "action.selected",
+                              borderColor: "primary.main",
+                            },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              background: getPresetGradient(preset.colors),
+                              border: "1px solid",
+                              borderColor: alpha("#000000", 0.14),
+                              borderRadius: "50%",
+                              height: 64,
+                              width: 64,
+                            }}
+                          />
+                          {isSelected && (
+                            <Box
+                              sx={{
+                                alignItems: "center",
+                                bgcolor: "primary.main",
+                                border: "2px solid",
+                                borderColor: "background.paper",
+                                borderRadius: "50%",
+                                color: "primary.contrastText",
+                                display: "flex",
+                                height: 30,
+                                justifyContent: "center",
+                                position: "absolute",
+                                right: 12,
+                                top: 12,
+                                width: 30,
+                              }}
+                            >
+                              <CheckIcon fontSize="small" />
+                            </Box>
+                          )}
+                        </Button>
+                      );
+                    })}
                     <Button
                       aria-label="Pick custom color"
                       type="button"
@@ -1063,30 +1138,72 @@ export const SettingsPage: React.FC = () => {
                           />
                         ))}
                       </Box>
-                      <ColorPickerField
-                        fallbackColor={DEFAULT_DASHBOARD_THEME.primaryColor}
-                        label="Primary Color"
-                        value={themeInput.primaryColor}
-                        onChange={(value) =>
-                          handleChangeThemeInput("primaryColor", value)
-                        }
-                      />
-                      <ColorPickerField
-                        fallbackColor={DEFAULT_DASHBOARD_THEME.backgroundColor}
-                        label="Background Color"
-                        value={themeInput.backgroundColor}
-                        onChange={(value) =>
-                          handleChangeThemeInput("backgroundColor", value)
-                        }
-                      />
-                      <ColorPickerField
-                        fallbackColor={DEFAULT_DASHBOARD_THEME.textColor}
-                        label="Text Color"
-                        value={themeInput.textColor}
-                        onChange={(value) =>
-                          handleChangeThemeInput("textColor", value)
-                        }
-                      />
+                      <Stack spacing={0.5} sx={{ width: "100%", maxWidth: 260 }}>
+                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                          Primary Color
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          type="color"
+                          value={
+                            isHexColor(themeInput.primaryColor)
+                              ? themeInput.primaryColor
+                              : DEFAULT_DASHBOARD_THEME.primaryColor
+                          }
+                          onChange={(event) =>
+                            handleChangeThemeInput(
+                              "primaryColor",
+                              event.target.value
+                            )
+                          }
+                          sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                          inputProps={{ "aria-label": "Pick primary color" }}
+                        />
+                      </Stack>
+                      <Stack spacing={0.5} sx={{ width: "100%", maxWidth: 260 }}>
+                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                          Background Color
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          type="color"
+                          value={
+                            isHexColor(themeInput.backgroundColor)
+                              ? themeInput.backgroundColor
+                              : DEFAULT_DASHBOARD_THEME.backgroundColor
+                          }
+                          onChange={(event) =>
+                            handleChangeThemeInput(
+                              "backgroundColor",
+                              event.target.value
+                            )
+                          }
+                          sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                          inputProps={{ "aria-label": "Pick background color" }}
+                        />
+                      </Stack>
+                      <Stack spacing={0.5} sx={{ width: "100%", maxWidth: 260 }}>
+                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                          Text Color
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          type="color"
+                          value={
+                            isHexColor(themeInput.textColor)
+                              ? themeInput.textColor
+                              : DEFAULT_DASHBOARD_THEME.textColor
+                          }
+                          onChange={(event) =>
+                            handleChangeThemeInput(
+                              "textColor",
+                              event.target.value
+                            )
+                          }
+                          sx={{ "& input": { height: 48, cursor: "pointer" } }}
+                          inputProps={{ "aria-label": "Pick text color" }}
+                        />
+                      </Stack>
                     </DialogContent>
                   </Dialog>
                 </Box>
