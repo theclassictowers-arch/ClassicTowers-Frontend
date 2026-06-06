@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { Dispatch, FC, useState, useEffect } from "react";
 import { Box, Divider, useTheme } from "@mui/material";
 import { useList } from "@refinedev/core";
 import dayjs, { Dayjs } from "dayjs";
@@ -10,7 +10,7 @@ import { SensorParametersList } from "./SensorParametersList";
 
 // Update the interface to include the onModalStateChange callback
 interface ExtendedInfoWindowContentProps extends InfoWindowContentProps {
-  onModalStateChange?: (isOpen: boolean) => void;
+  onModalStateChange?: Dispatch<boolean>;
 }
 
 const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
@@ -70,22 +70,15 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
     filters,
     queryOptions: {
       enabled: sensorParameters.length > 0,
-      onSuccess: (data) => {
-        console.log("DEBUG: Raw Sensor Data Response:", data);
-        const responseData = data?.data;
-        const sensorObj = Array.isArray(responseData) ? responseData[0] : responseData;
-        const processedData = sensorObj?.processedSensorData || [];
-        console.log(`DEBUG: Successfully loaded ${processedData?.length || 0} points.`);
+      onError: () => {
+        setFilterError("Unable to load sensor data. Please try again.");
       },
-      onError: (err) => {
-        console.error("DEBUG: Sensor API Fetch Error:", err);
-      }
     },
   });
 
   // This function is now called after parameter selection and OK button click
   const handleParameterSelected = (keys: string[]) => {
-    console.log("Selecting Parameters:", keys);
+    setFilterError(null);
     setSensorParameters(keys);
     setIsModalOpen(true);
   };
@@ -137,7 +130,6 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
       endDateTime: endISO,
     };
 
-    console.log(`DEBUG: Applying Custom Filter: ${startISO} to ${endISO}`);
     setAppliedFilter(newFilter);
 
     if (sensorParameters.length > 0) {
@@ -157,7 +149,6 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
       endDateTime: endISO,
     };
 
-    console.log(`DEBUG: Applying Preset Filter: ${startISO} to ${endISO}`);
     setAppliedFilter(newFilter);
 
     if (sensorParameters.length > 0) {

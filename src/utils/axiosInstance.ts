@@ -46,9 +46,6 @@ axiosInstance.interceptors.request.use(
     // 2. Handle JWT expiration logic - get token from localStorage
     let token = localStorage.getItem("authToken");
 
-    // Debug: log token status
-    console.log("[Axios Interceptor] URL:", config.url, "| Token exists:", !!token);
-
     if (token) {
       try {
         const decodedToken = jwtDecode<JwtPayload>(token);
@@ -60,9 +57,8 @@ axiosInstance.interceptors.request.use(
         }
         // Token is valid, add Authorization header
         config.headers["Authorization"] = `Bearer ${token}`;
-      } catch (error) {
+      } catch {
         // Invalid token, remove it
-        console.error("[Axios Interceptor] Invalid token, removing:", error);
         localStorage.removeItem("authToken");
       }
     }

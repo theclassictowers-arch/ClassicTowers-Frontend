@@ -1,6 +1,5 @@
 ﻿import React from "react";
 import { BrowserRouter } from "react-router-dom";
-import { useEffect } from "react";
 import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import {
@@ -40,43 +39,6 @@ const App: React.FC = () => {
   const authProvider = useAuthProvider(confirm);
   const resources = role ? getResources(role) : [];
 
-  useEffect(() => {
-    const splitSidebarLabels = () => {
-      document
-        .querySelectorAll<HTMLElement>(
-          ".MuiDrawer-docked .MuiListItemText-primary"
-        )
-        .forEach((label) => {
-          if (label.dataset.sidebarCharacters === "true") return;
-
-          const text = label.textContent ?? "";
-          if (!text.trim()) return;
-
-          label.dataset.sidebarCharacters = "true";
-          label.setAttribute("aria-label", text);
-          label.textContent = "";
-
-          Array.from(text).forEach((character, index) => {
-            const characterNode = document.createElement("span");
-            characterNode.className =
-              character === " "
-                ? "sidebar-menu-char sidebar-menu-space"
-                : "sidebar-menu-char";
-            characterNode.style.setProperty("--char-index", String(index));
-            characterNode.textContent =
-              character === " " ? "\u00a0" : character;
-            label.appendChild(characterNode);
-          });
-        });
-    };
-
-    splitSidebarLabels();
-
-    const observer = new MutationObserver(splitSidebarLabels);
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    return () => observer.disconnect();
-  }, [role]);
 
   return (
     <BrowserRouter>

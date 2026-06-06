@@ -32,7 +32,7 @@ export const sensorProvider: DataProvider = {
           type: "success",
         },
       };
-    } catch (error) {
+    } catch {
       // MOCK DATA FOR TESTING - اگر API fail ہو تو mock data دیں
       const parameterValue = filters?.find(f => (f as any).field === "parameter")?.value || "windSpeed";
       const parameter = Array.isArray(parameterValue) ? parameterValue[0] : parameterValue;
@@ -42,10 +42,6 @@ export const sensorProvider: DataProvider = {
         parameter: parameter, // Trend lines ke liye parameter field lazmi hai
       }));
       const mockLimits = generateMockLimits();
-
-      console.log("🧪 [MOCK DATA] Using test data for parameter:", parameter);
-      console.log("🧪 [MOCK DATA] Generated", mockData.length, "data points");
-      console.log("🧪 [MOCK DATA] Sample data point:", mockData[0]);
 
       return {
         data: [
