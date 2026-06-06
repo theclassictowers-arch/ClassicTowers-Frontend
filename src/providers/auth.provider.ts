@@ -1,7 +1,6 @@
 import type { AuthProvider } from "@refinedev/core";
 import { axiosInstance } from "../utils";
 import {
-  DEFAULT_APP_FONT,
   isDefaultDashboardTheme,
   normalizeAppFont,
   normalizeDashboardTheme,
@@ -65,9 +64,6 @@ const syncDashboardPreferences = (data: any) => {
     const font = normalizeAppFont(data.dashboardFont);
     localStorage.setItem(APP_FONT_STORAGE_KEY, font);
     window.setDashboardFont?.(font);
-  } else {
-    localStorage.setItem(APP_FONT_STORAGE_KEY, DEFAULT_APP_FONT);
-    window.setDashboardFont?.(DEFAULT_APP_FONT);
   }
 };
 

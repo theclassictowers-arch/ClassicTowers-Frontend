@@ -41,6 +41,7 @@ import { MapBackgroundPage } from "../../components/map-background-page";
 import {
   APP_FONT_OPTIONS,
   DARK_DASHBOARD_THEME_PRESETS,
+  DEFAULT_APP_FONT,
   DEFAULT_DASHBOARD_THEME,
   DEVICE_DASHBOARD_THEME_PRESETS,
   LIGHT_DASHBOARD_THEME_PRESETS,
@@ -241,7 +242,11 @@ export const SettingsPage: React.FC = () => {
         const targetAppearanceMode = normalizeAppearanceMode(
           response.data?.dashboardAppearanceMode
         );
-        const targetFont = normalizeAppFont(response.data?.dashboardFont);
+        const targetFont = response.data?.dashboardFont
+          ? normalizeAppFont(response.data.dashboardFont)
+          : targetUserId === currentUserId
+            ? fontFamily
+            : DEFAULT_APP_FONT;
         setThemeInput(normalizeDashboardTheme(response.data?.dashboardTheme));
         setAppearanceModeInput(targetAppearanceMode);
         setFontInput(targetFont);
