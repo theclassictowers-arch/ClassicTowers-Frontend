@@ -1200,7 +1200,12 @@ export const SettingsPage: React.FC = () => {
                           <MenuItem
                             key={font.value}
                             value={font.value}
-                            sx={{ fontFamily: font.value }}
+                            sx={{
+                              fontFamily: `${font.value} !important`,
+                              "& *": {
+                                fontFamily: `${font.value} !important`,
+                              },
+                            }}
                           >
                             {font.label}
                           </MenuItem>
@@ -1214,18 +1219,27 @@ export const SettingsPage: React.FC = () => {
                         borderRadius: 1,
                         p: 1.5,
                         bgcolor: "background.paper",
-                        fontFamily: fontInput,
+                        fontFamily: `${fontInput} !important`,
+                        "& *": {
+                          fontFamily: `${fontInput} !important`,
+                        },
                       }}
                     >
                       <Typography
                         variant="subtitle1"
-                        sx={{ fontFamily: "inherit", fontWeight: 800 }}
+                        sx={{
+                          fontFamily: `${fontInput} !important`,
+                          fontWeight: 800,
+                        }}
                       >
                         Classic Towers
                       </Typography>
                       <Typography
                         variant="body2"
-                        sx={{ fontFamily: "inherit", color: "text.secondary" }}
+                        sx={{
+                          fontFamily: `${fontInput} !important`,
+                          color: "text.secondary",
+                        }}
                       >
                         Monitoring dashboard font preview
                       </Typography>
