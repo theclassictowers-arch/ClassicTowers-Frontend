@@ -402,6 +402,10 @@ export const createAppTheme = (
           body: {
             backgroundColor,
             color: textColor,
+            fontFamily,
+          },
+          "button, input, textarea, select": {
+            fontFamily,
           },
         },
       },

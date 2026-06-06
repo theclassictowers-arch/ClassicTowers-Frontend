@@ -32,7 +32,7 @@ import { getResources } from "./utils";
 
 const App: React.FC = () => {
   const { role } = useAuthContext();
-  const { dashboardTheme } = useColorModeContext();
+  const { dashboardTheme, fontFamily } = useColorModeContext();
   const { branding } = useBrandingContext();
   const sidebarWidth = branding.sidebarWidth;
   const sidebarHeight = branding.sidebarHeight;
@@ -87,15 +87,22 @@ const App: React.FC = () => {
             html: {
               WebkitFontSmoothing: "auto",
               backgroundColor: dashboardTheme.backgroundColor,
+              fontFamily,
             },
             body: {
               margin: 0,
               padding: 0,
               backgroundColor: `${dashboardTheme.backgroundColor} !important`,
+              fontFamily,
             },
             "#root": {
               minHeight: "100dvh",
               backgroundColor: dashboardTheme.backgroundColor,
+              fontFamily,
+            },
+            "button, input, textarea, select, table, .MuiTypography-root, .MuiDataGrid-root":
+              {
+                fontFamily,
             },
             "@keyframes sidebarIconTwist": {
               "0%": {
