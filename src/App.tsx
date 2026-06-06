@@ -83,38 +83,6 @@ const App: React.FC = () => {
                   "translateX(1px) translateZ(4px) rotateY(-7deg) scale(1.08)",
               },
             },
-            "@keyframes sidebarTextFlip": {
-              "0%": {
-                transform: "translateX(0) translateZ(0) rotateX(0deg)",
-              },
-              "45%": {
-                transform: "translateX(3px) translateZ(10px) rotateX(10deg)",
-              },
-              "100%": {
-                transform: "translateX(1px) translateZ(3px) rotateX(0deg)",
-              },
-            },
-            "@keyframes sidebarCharacterDrop": {
-              "0%": {
-                transform:
-                  "translateY(-14px) translateZ(8px) rotateX(-82deg) scale(0.94)",
-                opacity: 0.25,
-              },
-              "48%": {
-                transform:
-                  "translateY(5px) translateZ(14px) rotateX(18deg) scale(1.08)",
-                opacity: 1,
-              },
-              "76%": {
-                transform:
-                  "translateY(-2px) translateZ(5px) rotateX(-7deg) scale(1.02)",
-                opacity: 1,
-              },
-              "100%": {
-                transform: "translateY(0) translateZ(0) rotateX(0deg) scale(1)",
-                opacity: 1,
-              },
-            },
             "@keyframes sidebarIconDrop": {
               "0%": {
                 transform:
@@ -636,17 +604,14 @@ const App: React.FC = () => {
                 fontSize: "0.95rem !important",
                 fontWeight: 700,
                 letterSpacing: "0 !important",
-                transition:
-                  "transform 260ms cubic-bezier(0.16, 1, 0.3, 1), color 180ms ease",
-                transformOrigin: "left center",
-                transformStyle: "preserve-3d",
+                transition: "color 180ms ease",
+                transform: "none !important",
               },
               ".MuiDrawer-docked .sidebar-menu-char": {
                 display: "inline-block",
-                transformOrigin: "left center",
-                transformStyle: "preserve-3d",
-                backfaceVisibility: "hidden",
-                willChange: "transform",
+                animation: "none !important",
+                transform: "none !important",
+                willChange: "auto",
               },
               ".MuiDrawer-docked .sidebar-menu-space": {
                 width: "0.28em",
@@ -692,12 +657,13 @@ const App: React.FC = () => {
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemText-primary":
                 {
                   animation: "none",
+                  transform: "none !important",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .sidebar-menu-char":
                 {
-                  animation:
-                    "sidebarCharacterDrop 560ms cubic-bezier(0.16, 1, 0.3, 1) both",
-                  animationDelay: "calc(var(--char-index) * 30ms)",
+                  animation: "none !important",
+                  animationDelay: "0ms",
+                  transform: "none !important",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected": {
                 backgroundColor: "rgba(25, 118, 210, 0.10) !important",
