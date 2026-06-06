@@ -542,7 +542,7 @@ export const appGlobalStyles: CSSObject = {
                 },
               ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiList-root a":
                 {
-                  display: "block !important",
+                  display: "flex !important",
                   height: "52px !important",
                   minHeight: "52px !important",
                   maxHeight: "52px !important",
