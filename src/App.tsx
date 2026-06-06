@@ -915,6 +915,7 @@ const App: React.FC = () => {
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
+                opacity: 0.82,
                 right: 10,
                 pointerEvents: "none",
                 position: "fixed",
