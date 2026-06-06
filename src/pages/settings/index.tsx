@@ -1528,18 +1528,66 @@ export const SettingsPage: React.FC = () => {
                       display: "grid",
                       gridTemplateColumns: {
                         xs: "1fr",
-                        sm: "64px 140px max-content",
+                        sm: "max-content 140px 64px",
                       },
                       alignItems: "center",
                       columnGap: 2,
                       rowGap: 1,
                     }}
                   >
+                    {role === "admin" && (
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={brandingInput.logoIconEnabled}
+                            onChange={(event) =>
+                              setBrandingInput((prev) => ({
+                                ...prev,
+                                logoIconEnabled: event.target.checked,
+                              }))
+                            }
+                          />
+                        }
+                        label="Logo Image"
+                        sx={{
+                          m: 0,
+                          justifySelf: { xs: "center", sm: "start" },
+                          "& .MuiFormControlLabel-label": {
+                            whiteSpace: "nowrap",
+                          },
+                        }}
+                      />
+                    )}
+                    <Button
+                      component="label"
+                      variant="outlined"
+                      disabled={!brandingInput.logoIconEnabled}
+                      sx={{
+                        width: { xs: "100%", sm: 140 },
+                        minWidth: 0,
+                        justifySelf: "center",
+                        justifyContent: "center",
+                        overflow: "hidden",
+                        textTransform: "none",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {logoIconFile ? logoIconFile.name : "Choose Image"}
+                      <input
+                        hidden
+                        type="file"
+                        accept="image/png,image/jpeg"
+                        onChange={(event) =>
+                          setLogoIconFile(event.target.files?.[0] || null)
+                        }
+                      />
+                    </Button>
                     <Box
                       sx={{
                         width: 64,
                         height: 64,
-                        justifySelf: { xs: "center", sm: "start" },
+                        justifySelf: { xs: "center", sm: "end" },
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -1572,54 +1620,6 @@ export const SettingsPage: React.FC = () => {
                         <ImageOutlinedIcon color="disabled" />
                       )}
                     </Box>
-                    <Button
-                      component="label"
-                      variant="outlined"
-                      disabled={!brandingInput.logoIconEnabled}
-                      sx={{
-                        width: { xs: "100%", sm: 140 },
-                        minWidth: 0,
-                        justifySelf: "center",
-                        justifyContent: "center",
-                        overflow: "hidden",
-                        textTransform: "none",
-                        whiteSpace: "nowrap",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {logoIconFile ? logoIconFile.name : "Choose Image"}
-                      <input
-                        hidden
-                        type="file"
-                        accept="image/png,image/jpeg"
-                        onChange={(event) =>
-                          setLogoIconFile(event.target.files?.[0] || null)
-                        }
-                      />
-                    </Button>
-                    {role === "admin" && (
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={brandingInput.logoIconEnabled}
-                            onChange={(event) =>
-                              setBrandingInput((prev) => ({
-                                ...prev,
-                                logoIconEnabled: event.target.checked,
-                              }))
-                            }
-                          />
-                        }
-                        label="Logo Image"
-                        sx={{
-                          m: 0,
-                          justifySelf: { xs: "center", sm: "start" },
-                          "& .MuiFormControlLabel-label": {
-                            whiteSpace: "nowrap",
-                          },
-                        }}
-                      />
-                    )}
                   </Box>
                   {role === "admin" && (
                     <>
