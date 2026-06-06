@@ -70,37 +70,6 @@ const App: React.FC = () => {
               {
                 fontFamily: "var(--app-font-family) !important",
             },
-            "@keyframes sidebarIconTwist": {
-              "0%": {
-                transform: "translateX(0) translateZ(0) rotateY(0deg) scale(1)",
-              },
-              "55%": {
-                transform:
-                  "translateX(3px) translateZ(12px) rotateY(-18deg) scale(1.14)",
-              },
-              "100%": {
-                transform:
-                  "translateX(1px) translateZ(4px) rotateY(-7deg) scale(1.08)",
-              },
-            },
-            "@keyframes sidebarIconDrop": {
-              "0%": {
-                transform:
-                  "translateY(-10px) translateZ(0) rotateX(-55deg) rotateZ(-8deg) scale(0.96)",
-              },
-              "48%": {
-                transform:
-                  "translateY(6px) translateZ(15px) rotateX(18deg) rotateZ(8deg) scale(1.16)",
-              },
-              "76%": {
-                transform:
-                  "translateY(-2px) translateZ(8px) rotateX(-8deg) rotateZ(-3deg) scale(1.1)",
-              },
-              "100%": {
-                transform:
-                  "translateY(0) translateZ(3px) rotateX(0deg) rotateZ(0deg) scale(1.08)",
-              },
-            },
             "@keyframes sidebarItemReveal": {
               "0%": {
                 opacity: 0,
@@ -542,10 +511,9 @@ const App: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "8px",
-                transformOrigin: "center",
-                transformStyle: "preserve-3d",
                 transition:
-                  "background-color 180ms ease, transform 320ms cubic-bezier(0.16, 1, 0.3, 1), color 180ms ease",
+                  "background-color 180ms ease, color 180ms ease",
+                transform: "none !important",
               },
               ".MuiDrawer-docked .MuiListItemIcon-root .MuiSvgIcon-root": {
                 fontSize: "20px",
@@ -644,8 +612,8 @@ const App: React.FC = () => {
               },
               ".MuiDrawer-docked .MuiListItemButton-root:hover .MuiListItemIcon-root":
                 {
-                  animation:
-                    "sidebarIconDrop 620ms cubic-bezier(0.16, 1, 0.3, 1) both",
+                  animation: "none !important",
+                  transform: "none !important",
                 },
               "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root:hover .MuiListItemText-root":
                 {
@@ -680,11 +648,11 @@ const App: React.FC = () => {
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root":
                 {
                   color: "primary.main",
-                  transform: "scale(1.08)",
+                  transform: "none !important",
                 },
               ".MuiDrawer-docked .MuiListItemButton-root.Mui-selected:hover .MuiListItemIcon-root":
                 {
-                  transform: "translateX(2px) scale(1.14)",
+                  transform: "none !important",
                 },
               "nav:has([data-sidebar-collapsed='true']):not(:has([data-sidebar-collapsed='false'])) .MuiListItemButton-root.Mui-selected .MuiListItemText-root":
                 {
