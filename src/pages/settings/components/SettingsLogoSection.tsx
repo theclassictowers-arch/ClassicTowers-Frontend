@@ -71,7 +71,7 @@ export const SettingsLogoSection = ({
         variant="subtitle2"
         sx={{ fontWeight: 700, color: "text.primary" }}
       >
-        Sidebar Logo Settings
+        Logo
       </Typography>
 
       {isAdmin && (

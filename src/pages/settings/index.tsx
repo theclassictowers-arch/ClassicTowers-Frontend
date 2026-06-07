@@ -691,13 +691,13 @@ export const SettingsPage: React.FC = () => {
                   value="fonts"
                   icon={<FontDownloadOutlinedIcon />}
                   iconPosition="start"
-                  label="Font Settings"
+                  label="Font"
                 />
                 <Tab
                   value="logo"
                   icon={<ImageOutlinedIcon />}
                   iconPosition="start"
-                  label="Logo Settings"
+                  label="Logo"
                 />
               </Tabs>
 

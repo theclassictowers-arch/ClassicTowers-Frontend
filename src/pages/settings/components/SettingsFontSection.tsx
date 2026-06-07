@@ -25,7 +25,7 @@ export const SettingsFontSection = ({
       variant="subtitle2"
       sx={{ fontWeight: 700, color: "text.primary" }}
     >
-      Font Settings
+      Font
     </Typography>
     <Box
       sx={{
