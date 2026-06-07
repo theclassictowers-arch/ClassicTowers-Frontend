@@ -115,12 +115,12 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
             {formattedDateTime}
           </TableCell>
           <TableCell sx={{ borderRight: "1px solid #444", color: "#111" }}>
-            {status.display_name}
-          </TableCell>
-          <TableCell sx={{ color: "#111" }}>
             <Typography variant="body2" noWrap sx={{ maxWidth: 300 }}>
               {status.message?.split(" at ")[0] || "System Status: " + status.status}
             </Typography>
+          </TableCell>
+          <TableCell sx={{ color: "#111" }}>
+            {status.display_name}
           </TableCell>
         </TableRow>
       );
