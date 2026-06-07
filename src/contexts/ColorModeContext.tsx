@@ -165,6 +165,17 @@ export const ColorModeProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [dashboardTheme]);
 
   useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--app-bg-color",
+      resolvedDashboardTheme.backgroundColor
+    );
+  }, [resolvedDashboardTheme.backgroundColor]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty("--app-font-family", fontFamily);
+  }, [fontFamily]);
+
+  useEffect(() => {
     window.setDashboardPrimaryColor = (color: string | null) => {
       if (!color) {
         setDashboardThemeState(null);

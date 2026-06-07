@@ -114,6 +114,11 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [setBranding]);
 
   useEffect(() => {
+    document.documentElement.style.setProperty("--sidebar-width", `${branding.sidebarWidth}px`);
+    document.documentElement.style.setProperty("--sidebar-height", `${branding.sidebarHeight}dvh`);
+  }, [branding.sidebarWidth, branding.sidebarHeight]);
+
+  useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
       setBranding(null);
