@@ -7,6 +7,7 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Box from "@mui/material/Box";
+import { useColorModeContext } from "./ColorModeContext";
 
 type LogoutConfirmContextType = {
   confirm: () => Promise<boolean>;
@@ -27,6 +28,7 @@ type Props = {
 };
 
 export const LogoutConfirmProvider = ({ children }: Props) => {
+  const { dashboardTheme } = useColorModeContext();
   const [open, setOpen] = useState(false);
   const [resolvePromise, setResolvePromise] = useState<((value: boolean) => void) | null>(null);
 
@@ -60,6 +62,11 @@ export const LogoutConfirmProvider = ({ children }: Props) => {
           sx: {
             borderRadius: 3,
             minWidth: 340,
+            background: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 60%, transparent)`,
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            border: "1px solid rgba(148, 163, 184, 0.22)",
+            boxShadow: "0 8px 32px rgba(15, 23, 42, 0.18)",
           },
         }}
       >
