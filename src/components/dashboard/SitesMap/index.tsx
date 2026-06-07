@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { Map } from "@vis.gl/react-google-maps";
 import { styles } from "./styles";
@@ -137,8 +137,7 @@ const buildMapsErrorMessage = (error: unknown): string => {
 
 type DashboardMapType = "roadmap" | "satellite";
 
-export const SitesMap = ({ siteData, isLoading }: any) => {
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+export const SitesMap = ({ siteData, isLoading, onExpandChange }: any) => {
   const [mapLoadError, setMapLoadError] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [mapTypeId, setMapTypeId] = useState<DashboardMapType>(() => {
@@ -146,29 +145,13 @@ export const SitesMap = ({ siteData, isLoading }: any) => {
     return storedMapType === "satellite" ? "satellite" : "roadmap";
   });
 
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(document.fullscreenElement === mapContainerRef.current);
-    };
-
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-
-    return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-    };
-  }, []);
-
-  const handleToggleFullscreen = useCallback(async () => {
-    const container = mapContainerRef.current;
-    if (!container) return;
-
-    if (document.fullscreenElement === container) {
-      await document.exitFullscreen();
-      return;
-    }
-
-    await container.requestFullscreen();
-  }, []);
+  const handleToggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => {
+      const next = !prev;
+      onExpandChange?.(next);
+      return next;
+    });
+  }, [onExpandChange]);
 
   const handleToggleMapType = useCallback(() => {
     setMapTypeId((currentType) => {
@@ -253,15 +236,7 @@ export const SitesMap = ({ siteData, isLoading }: any) => {
   return (
     <>
       <Box
-        ref={mapContainerRef}
-        sx={{
-          ...styles.container,
-          "&:fullscreen": {
-            bgcolor: "background.default",
-            height: "100vh",
-            width: "100vw",
-          },
-        }}
+        sx={styles.container}
       >
         {isLoading ? (
           <Box sx={styles.progressLoader}>
