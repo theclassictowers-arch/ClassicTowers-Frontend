@@ -1,7 +1,7 @@
 ﻿import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, IconButton, Stack, Tooltip } from "@mui/material";
 import { alpha, useTheme } from "@mui/material/styles";
 import { MapBackgroundPage } from "../map-background-page";
 
@@ -131,40 +131,53 @@ export const TableBottomActions = ({
     <Stack
       direction="row"
       alignItems="center"
-      justifyContent="space-between"
-      gap={1}
+      gap={0.75}
       sx={{
-        position: "sticky",
-        bottom: 0,
-        mt: 1,
-        px: 1,
-        py: 0.75,
-        borderTop: `1px solid ${alpha(theme.palette.divider, 0.22)}`,
-        backgroundColor: alpha(theme.palette.background.paper, 0.54),
+        position: "absolute",
+        left: 8,
+        bottom: 8,
+        px: 0.5,
+        py: 0.35,
+        border: `1px solid ${alpha(theme.palette.divider, 0.22)}`,
+        borderRadius: "8px",
+        backgroundColor: alpha(theme.palette.background.paper, 0.66),
         backdropFilter: "blur(8px)",
-        zIndex: 2,
+        zIndex: 3,
       }}
     >
-      <Button
-        size="small"
-        variant="outlined"
-        startIcon={<ArrowBackIcon />}
-        onClick={() => navigate(-1)}
-        sx={{
-          minHeight: 32,
-          borderRadius: "8px",
-          textTransform: "none",
-        }}
-      >
-        Back
-      </Button>
+      <Tooltip title="Back">
+        <IconButton
+          size="small"
+          aria-label="Back"
+          onClick={() => navigate(-1)}
+          sx={{
+            width: 30,
+            height: 30,
+            borderRadius: "7px",
+            color: theme.palette.primary.main,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.42)}`,
+            backgroundColor: alpha(theme.palette.background.paper, 0.72),
+            "&:hover": {
+              backgroundColor: alpha(theme.palette.primary.main, 0.1),
+            },
+          }}
+        >
+          <ArrowBackIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
       <Box
         sx={{
           minWidth: 0,
           "& .MuiButton-root": {
-            minHeight: 32,
-            borderRadius: "8px",
-            textTransform: "none",
+            width: 30,
+            minWidth: "30px !important",
+            height: 30,
+            minHeight: "30px !important",
+            px: "0 !important",
+            borderRadius: "7px",
+          },
+          "& .MuiButton-startIcon, & .MuiButton-endIcon": {
+            m: "0 !important",
           },
         }}
       >

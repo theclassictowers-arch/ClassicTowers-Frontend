@@ -13,6 +13,7 @@ import {
   TableBottomActions,
 } from "../../components/map-table-page";
 import { TableSkeleton } from "../../components/table-skeleton";
+import { Box } from "@mui/material";
 
 const ActionsCell = ({ row }: any) => (
   <>
@@ -117,50 +118,52 @@ export const SiteList = () => {
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
-          <DataGrid
-          {...dataGridProps}
-          rows={rows}
-          rowCount={rows.length}
-          columns={columns}
-          autoHeight
-          rowHeight={34}
-          columnHeaderHeight={38}
-          // Professional Full Client-side Configuration
-          // Professional Uncontrolled Configuration for Instant Search
-          filterModel={undefined}
-          sortModel={undefined}
-          paginationModel={undefined}
-          onFilterModelChange={undefined}
-          onSortModelChange={undefined}
-          onPaginationModelChange={undefined}
-          sortingMode="client"
-          filterMode="client"
-          paginationMode="client"
-          initialState={{
-            pagination: { paginationModel: { pageSize: 10, page: 0 } },
-          }}
-          slots={{
-            toolbar: GridToolbar,
-          }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-              quickFilterProps: {
-                debounceMs: 250,
-                placeholder: "Search by Name, IMEI, Region...",
+          <Box sx={{ position: "relative" }}>
+            <DataGrid
+            {...dataGridProps}
+            rows={rows}
+            rowCount={rows.length}
+            columns={columns}
+            autoHeight
+            rowHeight={34}
+            columnHeaderHeight={38}
+            // Professional Full Client-side Configuration
+            // Professional Uncontrolled Configuration for Instant Search
+            filterModel={undefined}
+            sortModel={undefined}
+            paginationModel={undefined}
+            onFilterModelChange={undefined}
+            onSortModelChange={undefined}
+            onPaginationModelChange={undefined}
+            sortingMode="client"
+            filterMode="client"
+            paginationMode="client"
+            initialState={{
+              pagination: { paginationModel: { pageSize: 10, page: 0 } },
+            }}
+            slots={{
+              toolbar: GridToolbar,
+            }}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                quickFilterProps: {
+                  debounceMs: 250,
+                  placeholder: "Search by Name, IMEI, Region...",
+                },
               },
-            },
-          }}
-          getRowId={(row) => row._id}
-          />
+            }}
+            getRowId={(row) => row._id}
+            />
+            <TableBottomActions
+              createButton={
+                role === "admin" || role === "organization" ? (
+                  <CreateButton hideText />
+                ) : null
+              }
+            />
+          </Box>
         )}
-        <TableBottomActions
-          createButton={
-            role === "admin" || role === "organization" ? (
-              <CreateButton />
-            ) : null
-          }
-        />
       </List>
     </MapTablePage>
   );

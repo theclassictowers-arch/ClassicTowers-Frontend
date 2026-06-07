@@ -7,6 +7,7 @@ import {
   CreateButton,
 } from "@refinedev/mui";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import { Box } from "@mui/material";
 import {
   MapTablePage,
   TableBottomActions,
@@ -97,43 +98,45 @@ export const LimitsList = () => {
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
-          <DataGrid
-          {...dataGridProps}
-          rows={rows}
-          rowCount={rows.length}
-          columns={columns}
-          autoHeight
-          rowHeight={34}
-          columnHeaderHeight={38}
-          // Professional Uncontrolled Configuration for Instant Search
-          filterModel={undefined}
-          sortModel={undefined}
-          paginationModel={undefined}
-          onFilterModelChange={undefined}
-          onSortModelChange={undefined}
-          onPaginationModelChange={undefined}
-          sortingMode="client"
-          filterMode="client"
-          paginationMode="client"
-          initialState={{
-            pagination: { paginationModel: { pageSize: 10, page: 0 } },
-          }}
-          slots={{ toolbar: GridToolbar }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-              quickFilterProps: {
-                debounceMs: 250,
-                placeholder: "Search by Sensor ID...",
+          <Box sx={{ position: "relative" }}>
+            <DataGrid
+            {...dataGridProps}
+            rows={rows}
+            rowCount={rows.length}
+            columns={columns}
+            autoHeight
+            rowHeight={34}
+            columnHeaderHeight={38}
+            // Professional Uncontrolled Configuration for Instant Search
+            filterModel={undefined}
+            sortModel={undefined}
+            paginationModel={undefined}
+            onFilterModelChange={undefined}
+            onSortModelChange={undefined}
+            onPaginationModelChange={undefined}
+            sortingMode="client"
+            filterMode="client"
+            paginationMode="client"
+            initialState={{
+              pagination: { paginationModel: { pageSize: 10, page: 0 } },
+            }}
+            slots={{ toolbar: GridToolbar }}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                quickFilterProps: {
+                  debounceMs: 250,
+                  placeholder: "Search by Sensor ID...",
+                },
               },
-            },
-          }}
-          getRowId={(row) => row._id}
-          />
+            }}
+            getRowId={(row) => row._id}
+            />
+            <TableBottomActions
+              createButton={canEdit ? <CreateButton hideText /> : null}
+            />
+          </Box>
         )}
-        <TableBottomActions
-          createButton={canEdit ? <CreateButton /> : null}
-        />
       </List>
     </MapTablePage>
   );
