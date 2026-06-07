@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { Map } from "@vis.gl/react-google-maps";
 import { styles } from "./styles";
@@ -145,13 +145,21 @@ export const SitesMap = ({ siteData, isLoading, onExpandChange }: any) => {
     return storedMapType === "satellite" ? "satellite" : "roadmap";
   });
 
-  const handleToggleFullscreen = useCallback(() => {
-    setIsFullscreen((prev) => {
-      const next = !prev;
-      onExpandChange?.(next);
-      return next;
-    });
-  }, [onExpandChange]);
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  const handleToggleFullscreen = useCallback(async () => {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      return;
+    }
+    await document.documentElement.requestFullscreen();
+  }, []);
 
   const handleToggleMapType = useCallback(() => {
     setMapTypeId((currentType) => {
