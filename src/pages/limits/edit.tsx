@@ -126,7 +126,7 @@ export const LimitsEdit = () => {
         initialWidth={760}
         minWidth={460}
         maxWidth={1250}
-        onClose={() => navigate("/limits")}
+        onClose={() => navigate("/")}
       >
         <Card
           sx={{

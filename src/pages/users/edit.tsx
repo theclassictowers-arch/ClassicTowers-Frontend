@@ -205,7 +205,7 @@ export const UsersEdit: React.FC = () => {
           initialWidth={400}
           minWidth={320}
           maxWidth={980}
-          onClose={() => navigate("/users")}
+          onClose={() => navigate("/")}
         >
           <Box
             component="form"

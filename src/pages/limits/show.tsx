@@ -213,7 +213,7 @@ export const LimitsShow = () => {
                 <Button
                   size="small"
                   startIcon={<ArrowBackIcon fontSize="small" />}
-                  onClick={() => navigate("/limits")}
+                  onClick={() => navigate("/")}
                   sx={{ position: "absolute", left: 0, top: 0 }}
                 >
                   Back

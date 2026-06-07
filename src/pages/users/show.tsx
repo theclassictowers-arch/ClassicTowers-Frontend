@@ -129,7 +129,7 @@ export const UserShow = () => {
                 <Button
                   size="small"
                   startIcon={<ArrowBackIcon fontSize="small" />}
-                  onClick={() => navigate("/users")}
+                  onClick={() => navigate("/")}
                   sx={{ position: "absolute", left: 0, top: 0 }}
                 >
                   Back
