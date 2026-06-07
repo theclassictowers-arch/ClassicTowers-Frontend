@@ -893,16 +893,16 @@ const App: React.FC = () => {
                 backdropFilter: "blur(6px)",
                 border: "1px solid rgba(148, 163, 184, 0.2)",
                 borderRadius: 8,
-                bottom: role ? 54 : 8,
+                bottom: 10,
                 boxShadow: "0 4px 12px rgba(15, 23, 42, 0.08)",
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
-                left: role ? `calc(${sidebarWidth}px + 10px)` : 10,
                 opacity: 0.78,
                 padding: "4px 6px",
                 pointerEvents: "none",
                 position: "fixed",
+                right: 10,
                 zIndex: 20,
               }}
             >
