@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { alpha } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -62,7 +63,7 @@ export const LogoutConfirmProvider = ({ children }: Props) => {
           sx: {
             borderRadius: 3,
             minWidth: 340,
-            background: `color-mix(in srgb, ${dashboardTheme.backgroundColor} 60%, transparent)`,
+            background: alpha(dashboardTheme.backgroundColor, 0.88),
             backdropFilter: "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
             border: "1px solid rgba(148, 163, 184, 0.22)",
