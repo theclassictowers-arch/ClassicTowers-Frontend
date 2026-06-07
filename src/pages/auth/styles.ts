@@ -30,6 +30,26 @@
     border: "1px solid rgba(164, 198, 236, 0.42)",
     transition: "all 0.3s ease",
     "&:hover": { boxShadow: 5 },
+    "& .MuiTextField-root, & .MuiFormControl-root": {
+      marginTop: "6px !important",
+      marginBottom: "6px !important",
+    },
+    "& .MuiInputBase-input": {
+      paddingTop: "9px",
+      paddingBottom: "9px",
+    },
+    "& .MuiInputBase-inputSizeSmall": {
+      paddingTop: "7px",
+      paddingBottom: "7px",
+    },
+    "& .MuiSelect-select": {
+      paddingTop: "9px",
+      paddingBottom: "9px",
+    },
+    "& .MuiFormHelperText-root": {
+      marginTop: "2px",
+      lineHeight: 1.15,
+    },
   },
   title: {
     textAlign: "center",
