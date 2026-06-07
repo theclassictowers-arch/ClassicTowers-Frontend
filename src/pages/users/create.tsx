@@ -287,7 +287,7 @@ export const UserCreate: React.FC = () => {
           }}
         >
           <Typography variant="h4" gutterBottom sx={formStyles.title}>
-            Add New User
+            New User
           </Typography>
 
         {/* User Type Selection */}
