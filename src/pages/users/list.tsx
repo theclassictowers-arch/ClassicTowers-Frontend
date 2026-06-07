@@ -133,7 +133,7 @@ export const UserList = () => {
 
   return (
     <MapTablePage>
-      <List headerButtons={null}>
+      <List headerButtons={() => null}>
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
@@ -175,7 +175,7 @@ export const UserList = () => {
             getRowId={(row) => row._id}
             />
             <TableBottomActions
-              createButton={canAddUsers ? <CreateButton hideText /> : null}
+              createButton={canAddUsers ? <CreateButton /> : null}
             />
           </Box>
         )}

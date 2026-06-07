@@ -169,15 +169,16 @@ export const TableBottomActions = ({
         sx={{
           minWidth: 0,
           "& .MuiButton-root": {
-            width: 30,
-            minWidth: "30px !important",
+            minWidth: "auto !important",
             height: 30,
             minHeight: "30px !important",
-            px: "0 !important",
+            px: "9px !important",
             borderRadius: "7px",
+            textTransform: "none",
           },
-          "& .MuiButton-startIcon, & .MuiButton-endIcon": {
-            m: "0 !important",
+          "& .MuiButton-startIcon": {
+            mr: "4px !important",
+            ml: "0 !important",
           },
         }}
       >

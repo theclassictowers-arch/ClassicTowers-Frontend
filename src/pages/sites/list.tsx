@@ -114,7 +114,7 @@ export const SiteList = () => {
 
   return (
     <MapTablePage>
-      <List headerButtons={null}>
+      <List headerButtons={() => null}>
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
@@ -158,7 +158,7 @@ export const SiteList = () => {
             <TableBottomActions
               createButton={
                 role === "admin" || role === "organization" ? (
-                  <CreateButton hideText />
+                  <CreateButton />
                 ) : null
               }
             />

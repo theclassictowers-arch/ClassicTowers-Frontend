@@ -94,7 +94,7 @@ export const LimitsList = () => {
 
   return (
     <MapTablePage>
-      <List headerButtons={null}>
+      <List headerButtons={() => null}>
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
@@ -133,7 +133,7 @@ export const LimitsList = () => {
             getRowId={(row) => row._id}
             />
             <TableBottomActions
-              createButton={canEdit ? <CreateButton hideText /> : null}
+              createButton={canEdit ? <CreateButton /> : null}
             />
           </Box>
         )}
