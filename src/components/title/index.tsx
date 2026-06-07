@@ -103,21 +103,9 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
               py: 0.7,
               borderRadius: "8px",
               border: `1px solid ${theme.palette.divider}`,
-              backgroundColor:
-                theme.palette.mode === "light"
-                  ? "rgba(255, 255, 255, 0.68)"
-                  : "rgba(15, 23, 42, 0.48)",
-              backdropFilter: "blur(6px)",
               boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
               overflow: "hidden",
-              transition:
-                "background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease",
-              "&:hover": {
-                backgroundColor:
-                  theme.palette.mode === "light"
-                    ? "rgba(255, 255, 255, 0.82)"
-                    : "rgba(15, 23, 42, 0.62)",
-              },
+              transition: "box-shadow 180ms ease, transform 180ms ease",
             }}
           >
             <Typography
