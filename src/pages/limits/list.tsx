@@ -1,7 +1,16 @@
 import React from "react";
-import { useDataGrid, EditButton, ShowButton, List } from "@refinedev/mui";
+import {
+  useDataGrid,
+  EditButton,
+  ShowButton,
+  List,
+  CreateButton,
+} from "@refinedev/mui";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
-import { MapTablePage } from "../../components/map-table-page";
+import {
+  MapTablePage,
+  TableBottomActions,
+} from "../../components/map-table-page";
 import { useAuthContext } from "../../contexts";
 import { TableSkeleton } from "../../components/table-skeleton";
 
@@ -84,7 +93,7 @@ export const LimitsList = () => {
 
   return (
     <MapTablePage>
-      <List>
+      <List headerButtons={null}>
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
@@ -122,6 +131,9 @@ export const LimitsList = () => {
           getRowId={(row) => row._id}
           />
         )}
+        <TableBottomActions
+          createButton={canEdit ? <CreateButton /> : null}
+        />
       </List>
     </MapTablePage>
   );

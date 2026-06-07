@@ -8,7 +8,10 @@ import {
   CreateButton,
 } from "@refinedev/mui";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
-import { MapTablePage } from "../../components/map-table-page";
+import {
+  MapTablePage,
+  TableBottomActions,
+} from "../../components/map-table-page";
 import { TableSkeleton } from "../../components/table-skeleton";
 
 const ActionsCell = ({ row }: any) => (
@@ -110,11 +113,7 @@ export const SiteList = () => {
 
   return (
     <MapTablePage>
-      <List
-        headerButtons={
-          role === "admin" || role === "organization" ? <CreateButton /> : null
-        }
-      >
+      <List headerButtons={null}>
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
@@ -155,6 +154,13 @@ export const SiteList = () => {
           getRowId={(row) => row._id}
           />
         )}
+        <TableBottomActions
+          createButton={
+            role === "admin" || role === "organization" ? (
+              <CreateButton />
+            ) : null
+          }
+        />
       </List>
     </MapTablePage>
   );

@@ -362,6 +362,8 @@ const App: React.FC = () => {
                 borderRight: "0 !important",
                 background: "transparent !important",
                 backgroundColor: "transparent !important",
+                backdropFilter: "none !important",
+                WebkitBackdropFilter: "none !important",
                 boxShadow: "none !important",
               },
               "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper": {
@@ -422,6 +424,8 @@ const App: React.FC = () => {
                 {
                   background: "transparent !important",
                   backgroundColor: "transparent !important",
+                  backdropFilter: "none !important",
+                  WebkitBackdropFilter: "none !important",
                   boxShadow: "none !important",
                   borderRight: "0 !important",
                 },
@@ -443,6 +447,8 @@ const App: React.FC = () => {
                   overflow: "hidden !important",
                   background: "transparent !important",
                   backgroundColor: "transparent !important",
+                  backdropFilter: "none !important",
+                  WebkitBackdropFilter: "none !important",
                 },
               "nav:has([data-sidebar-collapsed='false']) .MuiDrawer-paper > .MuiBox-root":
                 {
@@ -882,24 +888,29 @@ const App: React.FC = () => {
               aria-label="Product of Classic Electronics"
               style={{
                 alignItems: "flex-end",
-                background: "transparent",
-                border: 0,
-                bottom: 10,
+                background:
+                  "color-mix(in srgb, rgba(255, 255, 255, 0.72) 78%, transparent)",
+                backdropFilter: "blur(6px)",
+                border: "1px solid rgba(148, 163, 184, 0.2)",
+                borderRadius: 8,
+                bottom: role ? 54 : 8,
+                boxShadow: "0 4px 12px rgba(15, 23, 42, 0.08)",
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
-                opacity: 0.82,
-                right: 10,
+                left: role ? `calc(${sidebarWidth}px + 10px)` : 10,
+                opacity: 0.78,
+                padding: "4px 6px",
                 pointerEvents: "none",
                 position: "fixed",
-                zIndex: 1400,
+                zIndex: 20,
               }}
             >
               <span
                 style={{
                   color: dashboardTheme.textColor,
                   fontFamily,
-                  fontSize: 9,
+                  fontSize: 7,
                   fontWeight: 700,
                   lineHeight: 1,
                   textShadow: "0 1px 2px rgba(255, 255, 255, 0.75)",
@@ -916,9 +927,9 @@ const App: React.FC = () => {
                   background: "transparent",
                   display: "block",
                   height: "auto",
-                  maxWidth: "36vw",
+                  maxWidth: "28vw",
                   mixBlendMode: "multiply",
-                  width: 142,
+                  width: 96,
                 }}
               />
             </div>

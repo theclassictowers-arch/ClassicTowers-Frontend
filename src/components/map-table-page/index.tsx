@@ -1,5 +1,7 @@
 ﻿import type { ReactNode } from "react";
-import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Box, Button, Stack } from "@mui/material";
 import { alpha, useTheme } from "@mui/material/styles";
 import { MapBackgroundPage } from "../map-background-page";
 
@@ -114,6 +116,61 @@ export const MapTablePage = ({ children }: { children: ReactNode }) => {
         </Box>
       </Box>
     </MapBackgroundPage>
+  );
+};
+
+export const TableBottomActions = ({
+  createButton,
+}: {
+  createButton?: ReactNode;
+}) => {
+  const theme = useTheme();
+  const navigate = useNavigate();
+
+  return (
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
+      gap={1}
+      sx={{
+        position: "sticky",
+        bottom: 0,
+        mt: 1,
+        px: 1,
+        py: 0.75,
+        borderTop: `1px solid ${alpha(theme.palette.divider, 0.22)}`,
+        backgroundColor: alpha(theme.palette.background.paper, 0.54),
+        backdropFilter: "blur(8px)",
+        zIndex: 2,
+      }}
+    >
+      <Button
+        size="small"
+        variant="outlined"
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate(-1)}
+        sx={{
+          minHeight: 32,
+          borderRadius: "8px",
+          textTransform: "none",
+        }}
+      >
+        Back
+      </Button>
+      <Box
+        sx={{
+          minWidth: 0,
+          "& .MuiButton-root": {
+            minHeight: 32,
+            borderRadius: "8px",
+            textTransform: "none",
+          },
+        }}
+      >
+        {createButton}
+      </Box>
+    </Stack>
   );
 };
 

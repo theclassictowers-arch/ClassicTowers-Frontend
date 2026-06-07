@@ -88,7 +88,15 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
     return data.map((status: any, index: number) => {
       const timestamp = `${status.date}T${status.time}Z`;
       const utcDate = new Date(timestamp);
-      const formattedTime = utcDate.toLocaleTimeString("en-GB", { hour12: false });
+      const formattedTime = utcDate.toLocaleTimeString("en-GB", {
+        hour12: false,
+      });
+      const formattedDate = utcDate.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+      const formattedDateTime = `${formattedTime} / ${formattedDate}`;
 
       return (
         <TableRow
@@ -104,10 +112,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
           }}
         >
           <TableCell sx={{ borderRight: "1px solid #444", color: "#111" }}>
-            {status.date}
-          </TableCell>
-          <TableCell sx={{ borderRight: "1px solid #444", color: "#111" }}>
-            {formattedTime}
+            {formattedDateTime}
           </TableCell>
           <TableCell sx={{ borderRight: "1px solid #444", color: "#111" }}>
             {status.display_name}
