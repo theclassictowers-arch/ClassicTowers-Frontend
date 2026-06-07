@@ -87,8 +87,8 @@ export const LogoutConfirmProvider = ({ children }: Props) => {
               width: 40,
               height: 40,
               borderRadius: "50%",
-              bgcolor: "error.light",
-              color: "error.main",
+              bgcolor: alpha(dashboardTheme.primaryColor, 0.15),
+              color: dashboardTheme.primaryColor,
             }}
           >
             <LogoutIcon fontSize="small" />
@@ -112,9 +112,14 @@ export const LogoutConfirmProvider = ({ children }: Props) => {
           <Button
             onClick={handleConfirm}
             variant="contained"
-            color="error"
             autoFocus
-            sx={{ borderRadius: 2, textTransform: "none", minWidth: 90 }}
+            sx={{
+              borderRadius: 2,
+              textTransform: "none",
+              minWidth: 90,
+              bgcolor: dashboardTheme.primaryColor,
+              "&:hover": { bgcolor: alpha(dashboardTheme.primaryColor, 0.85) },
+            }}
           >
             Logout
           </Button>
