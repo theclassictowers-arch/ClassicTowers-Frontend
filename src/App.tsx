@@ -908,7 +908,7 @@ const App: React.FC = () => {
             >
               <span
                 style={{
-                  color: dashboardTheme.textColor,
+                  color: "#000000",
                   fontFamily,
                   fontSize: 7,
                   fontWeight: 700,
