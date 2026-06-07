@@ -273,6 +273,7 @@ export const UserCreate: React.FC = () => {
         initialWidth={400}
         minWidth={320}
         maxWidth={980}
+        onClose={() => navigate("/users")}
       >
         <Box
           component="form"

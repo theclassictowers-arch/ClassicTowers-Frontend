@@ -1,6 +1,8 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import { type SxProps, type Theme, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -183,6 +185,20 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   const inlineBackButtonSx: SxProps<Theme> = {
     ...windowButtonBaseSx,
     flexShrink: 0,
+  };
+  const backIconButtonSx: SxProps<Theme> = {
+    ...backButtonSx,
+    width: 34,
+    minWidth: 34,
+    height: 34,
+    p: 0,
+  };
+  const inlineBackIconButtonSx: SxProps<Theme> = {
+    ...inlineBackButtonSx,
+    width: 34,
+    minWidth: 34,
+    height: 34,
+    p: 0,
   };
   const inlineFullPageButtonSx: SxProps<Theme> = {
     ...windowButtonBaseSx,
@@ -420,16 +436,21 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   const actions = (
     <>
       {onClose && (
-        <Button
-          aria-label="Back"
-          data-no-drag="true"
-          onClick={onClose}
-          size="small"
-          startIcon={<ArrowBackIcon fontSize="small" />}
-          sx={shouldUseInlineActions ? inlineBackButtonSx : backButtonSx}
-        >
-          Back
-        </Button>
+        <Tooltip title="Back">
+          <IconButton
+            aria-label="Back"
+            data-no-drag="true"
+            onClick={onClose}
+            size="small"
+            sx={
+              shouldUseInlineActions
+                ? inlineBackIconButtonSx
+                : backIconButtonSx
+            }
+          >
+            <ArrowBackIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
       )}
       {showFullPageButton && (
         <Button
