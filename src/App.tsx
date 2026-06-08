@@ -99,7 +99,7 @@ const App: React.FC = () => {
                 flexDirection: "column",
                 gap: 1,
                 opacity: 0.92,
-                padding: "6px 10px 8px",
+                padding: "5px 8px 7px",
                 pointerEvents: "none",
                 position: "fixed",
                 right: 10,
@@ -109,7 +109,7 @@ const App: React.FC = () => {
               <span
                 style={{
                   color: "#0f172a",
-                  fontSize: 11,
+                  fontSize: 9,
                   fontWeight: 700,
                   lineHeight: 1,
                   textAlign: "right",
@@ -126,7 +126,7 @@ const App: React.FC = () => {
                   display: "block",
                   height: "auto",
                   maxWidth: "36vw",
-                  width: 142,
+                  width: 110,
                 }}
               />
             </div>
