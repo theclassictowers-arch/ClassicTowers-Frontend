@@ -11,6 +11,7 @@ import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import {
   MapTablePage,
   TableBottomActions,
+  TableCenterLogo,
 } from "../../components/map-table-page";
 import { TableSkeleton } from "../../components/table-skeleton";
 import { Box } from "@mui/material";
@@ -162,6 +163,7 @@ export const SiteList = () => {
                 ) : null
               }
             />
+            <TableCenterLogo />
           </Box>
         )}
       </List>

@@ -13,6 +13,7 @@ import { useAuthContext } from "../../contexts";
 import {
   MapTablePage,
   TableBottomActions,
+  TableCenterLogo,
 } from "../../components/map-table-page";
 import { TableSkeleton } from "../../components/table-skeleton";
 
@@ -177,6 +178,7 @@ export const UserList = () => {
             <TableBottomActions
               createButton={canAddUsers ? <CreateButton /> : null}
             />
+            <TableCenterLogo />
           </Box>
         )}
       </List>

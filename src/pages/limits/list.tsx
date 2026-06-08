@@ -11,6 +11,7 @@ import { Box } from "@mui/material";
 import {
   MapTablePage,
   TableBottomActions,
+  TableCenterLogo,
 } from "../../components/map-table-page";
 import { useAuthContext } from "../../contexts";
 import { TableSkeleton } from "../../components/table-skeleton";
@@ -135,6 +136,7 @@ export const LimitsList = () => {
             <TableBottomActions
               createButton={canEdit ? <CreateButton /> : null}
             />
+            <TableCenterLogo />
           </Box>
         )}
       </List>

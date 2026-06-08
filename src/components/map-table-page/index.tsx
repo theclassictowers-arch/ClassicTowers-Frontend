@@ -188,4 +188,36 @@ export const TableBottomActions = ({
   );
 };
 
+export const TableCenterLogo = () => {
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        position: "absolute",
+        bottom: 8,
+        left: "50%",
+        transform: "translateX(-50%)",
+        px: 0.75,
+        py: 0.35,
+        border: `1px solid ${alpha(theme.palette.divider, 0.22)}`,
+        borderRadius: "8px",
+        backgroundColor: alpha(theme.palette.background.paper, 0.66),
+        backdropFilter: "blur(8px)",
+        zIndex: 3,
+        display: "flex",
+        alignItems: "center",
+        pointerEvents: "none",
+      }}
+    >
+      <Box
+        component="img"
+        src="/images/classic-electronics-brand-transparent.png"
+        alt="Classic Electronics"
+        sx={{ height: 22, width: "auto", display: "block" }}
+      />
+    </Box>
+  );
+};
+
 export default MapTablePage;
