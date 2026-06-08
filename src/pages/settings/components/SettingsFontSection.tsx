@@ -31,11 +31,8 @@ export const SettingsFontSection = ({
       sx={{
         display: "grid",
         gap: 1.25,
-        gridTemplateColumns: {
-          xs: "1fr",
-          sm: "1fr",
-        },
-        alignItems: "start",
+        gridTemplateColumns: "1fr 1fr",
+        alignItems: "center",
       }}
     >
       <FormControl fullWidth size="small">
