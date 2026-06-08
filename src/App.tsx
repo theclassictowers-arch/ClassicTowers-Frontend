@@ -88,29 +88,30 @@ const App: React.FC = () => {
             <div
               aria-label="Product of Classic Electronics"
               style={{
-                alignItems: "flex-end",
+                alignItems: "center",
                 background: "transparent",
                 border: 0,
                 bottom: 10,
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
-                opacity: 0.82,
+                left: "50%",
+                transform: "translateX(-50%)",
+                opacity: 0.38,
                 pointerEvents: "none",
                 position: "fixed",
-                right: 10,
-                zIndex: 1400,
+                zIndex: 1,
               }}
             >
               <span
                 style={{
                   color: "#0f172a",
-                  fontSize: 9,
+                  fontSize: 8,
                   fontWeight: 700,
                   lineHeight: 1,
-                  textAlign: "right",
-              //   textShadow: "0 1px 2px rgba(255, 255, 255, 0.75)",
+                  textAlign: "center",
                   textTransform: "uppercase",
+                  letterSpacing: "0.06em",
                 }}
               >
                 Product of
@@ -123,8 +124,7 @@ const App: React.FC = () => {
                   display: "block",
                   height: "auto",
                   maxWidth: "36vw",
-                  width: 142,
-                  opacity:0.60,
+                  width: 120,
                 }}
               />
             </div>

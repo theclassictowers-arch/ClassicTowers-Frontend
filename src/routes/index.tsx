@@ -25,7 +25,7 @@ import {
   CatchAllNavigate,
   NavigateToResource,
 } from "@refinedev/react-router-v6";
-import { Title } from "../components";
+import { Title, CustomSider } from "../components";
 import { PersistentDashboardMap } from "../components";
 
 const SettingsPage = lazy(() =>
@@ -66,7 +66,8 @@ const AppRoutes: React.FC = () => {
             <ThemedLayoutV2
               Header={() => null}
               Title={Title}
-initialSiderCollapsed={true}
+              Sider={CustomSider}
+              initialSiderCollapsed={true}
             >
               <PersistentDashboardMap />
               <Outlet />
