@@ -37,6 +37,7 @@ import {
 import { axiosInstance } from "../../utils";
 import { formStyles } from "../auth/styles";
 import { MapBackgroundPage } from "../../components/map-background-page";
+import { ShowPageLogo } from "../../components/map-table-page";
 import {
   DARK_DASHBOARD_THEME_PRESETS,
   DEFAULT_APP_FONT,
@@ -1239,6 +1240,7 @@ export const SettingsPage: React.FC = () => {
               )}
             </Stack>
           )}
+          <ShowPageLogo />
         </Box>
       </Box>
     </MapBackgroundPage>
