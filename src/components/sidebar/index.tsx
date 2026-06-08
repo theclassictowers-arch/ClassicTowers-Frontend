@@ -15,7 +15,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { Title } from "../title";
 
@@ -90,35 +89,20 @@ export const CustomSider: React.FC = () => {
 
               <Box
                 sx={{
-                  px: 1.25,
-                  pt: 0.75,
-                  pb: 1.5,
+                  px: 1.5,
+                  pt: 0.5,
+                  pb: 1.25,
                   display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 0.4,
+                  justifyContent: "center",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: 8,
-                    fontWeight: 700,
-                    letterSpacing: "0.06em",
-                    lineHeight: 1,
-                    textTransform: "uppercase",
-                    color: "text.disabled",
-                  }}
-                >
-                  Product of
-                </Typography>
                 <Box
                   component="img"
                   src="/images/classic-electronics-brand-transparent.png"
                   alt="Classic Electronics"
                   sx={{
                     display: "block",
-                    width: "100%",
-                    maxWidth: 148,
+                    width: 90,
                     height: "auto",
                     opacity: 1,
                   }}
