@@ -112,7 +112,7 @@ export const CustomSider: React.FC = () => {
                   alt="Classic Electronics"
                   sx={{
                     display: "block",
-                    width: 90,
+                    width: 140,
                     height: "auto",
                     opacity: 1,
                   }}
