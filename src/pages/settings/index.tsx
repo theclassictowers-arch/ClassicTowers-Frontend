@@ -830,8 +830,8 @@ export const SettingsPage: React.FC = () => {
                         gap: 1.5,
                         gridTemplateColumns: {
                           xs: "repeat(2, 108px)",
-                          sm: "repeat(3, 108px)",
-                          md: "repeat(3, 108px)",
+                          sm: "repeat(4, 108px)",
+                          md: "repeat(4, 108px)",
                         },
                         justifyContent: "center",
                         mx: "auto",
