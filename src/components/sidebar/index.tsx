@@ -6,7 +6,7 @@ import {
   useLink,
   CanAccess,
 } from "@refinedev/core";
-import { ThemedLayoutContext } from "@refinedev/mui";
+import { ThemedLayoutContext, HamburgerMenu } from "@refinedev/mui";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -41,6 +41,7 @@ export const CustomSider: React.FC = () => {
           }}
         >
           <Title collapsed={siderCollapsed} />
+          {!siderCollapsed && <HamburgerMenu />}
         </Paper>
         <Box
           sx={{
