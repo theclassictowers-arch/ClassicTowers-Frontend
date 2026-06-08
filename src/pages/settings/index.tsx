@@ -27,6 +27,8 @@ import DevicesOutlinedIcon from "@mui/icons-material/DevicesOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import { alpha } from "@mui/material/styles";
 import { useNotification } from "@refinedev/core";
+import { useNavigate } from "react-router-dom";
+import IconButton from "@mui/material/IconButton";
 import {
   useAuthContext,
   useBrandingContext,
@@ -128,6 +130,7 @@ export const SettingsPage: React.FC = () => {
   } = useColorModeContext();
   const { setBranding } = useBrandingContext();
   const { open } = useNotification();
+  const navigate = useNavigate();
   const currentUserId = localStorage.getItem("userId");
   const canManageSettings = role === "admin" || role === "organization";
 
@@ -608,12 +611,21 @@ export const SettingsPage: React.FC = () => {
               gap: 1,
             }}
           >
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: 700, color: "text.primary", textAlign: "left" }}
-            >
-              Settings
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <IconButton
+                onClick={() => navigate(-1)}
+                size="small"
+                sx={{ borderRadius: "10px" }}
+              >
+                <ArrowBackIcon fontSize="small" />
+              </IconButton>
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: 700, color: "text.primary" }}
+              >
+                Settings
+              </Typography>
+            </Box>
 
             {role === "admin" ? (
               <FormControl fullWidth size="small">
