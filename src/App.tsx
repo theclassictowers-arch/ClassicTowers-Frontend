@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
@@ -28,6 +28,31 @@ import { getResources } from "./utils";
 const App: React.FC = () => {
   const { role } = useAuthContext();
   const { confirm } = useLogoutConfirm();
+
+  useEffect(() => {
+    const wrapChars = (el: Element) => {
+      if (el.getAttribute("data-char-wrapped")) return;
+      const text = el.textContent ?? "";
+      if (!text.trim()) return;
+      el.setAttribute("data-char-wrapped", "true");
+      el.innerHTML = [...text]
+        .map((ch, i) =>
+          ch === " "
+            ? `<span class="sidebar-menu-space"> </span>`
+            : `<span class="sidebar-menu-char" style="--char-index:${i}">${ch}</span>`
+        )
+        .join("");
+    };
+    const process = () => {
+      document
+        .querySelectorAll("nav .MuiListItemText-primary:not([data-char-wrapped])")
+        .forEach(wrapChars);
+    };
+    process();
+    const observer = new MutationObserver(process);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
   const authProvider = useAuthProvider(confirm);
   const resources = role ? getResources(role) : [];
 
