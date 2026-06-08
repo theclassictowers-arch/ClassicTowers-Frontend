@@ -89,7 +89,7 @@ const App: React.FC = () => {
               aria-label="Product of Classic Electronics"
               style={{
                 alignItems: "flex-end",
-                background: "rgba(255,255,255,0.52)",
+                background: "rgba(255,255,255,0.72)",
                 backdropFilter: "blur(6px)",
                 WebkitBackdropFilter: "blur(6px)",
                 border: 0,
@@ -98,7 +98,7 @@ const App: React.FC = () => {
                 display: "flex",
                 flexDirection: "column",
                 gap: 1,
-                opacity: 0.52,
+                opacity: 0.62,
                 padding: "5px 8px 7px",
                 pointerEvents: "none",
                 position: "fixed",
