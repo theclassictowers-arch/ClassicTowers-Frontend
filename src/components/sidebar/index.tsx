@@ -6,7 +6,7 @@ import {
   useLink,
   CanAccess,
 } from "@refinedev/core";
-import { ThemedLayoutContext, HamburgerMenu } from "@refinedev/mui";
+import { ThemedLayoutContext } from "@refinedev/mui";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -15,11 +15,13 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
+import IconButton from "@mui/material/IconButton";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { Title } from "../title";
 
 export const CustomSider: React.FC = () => {
-  const { siderCollapsed } = useContext(ThemedLayoutContext);
+  const { siderCollapsed, setSiderCollapsed } = useContext(ThemedLayoutContext);
   const { menuItems, selectedKey } = useMenu();
   const authProvider = useActiveAuthProvider();
   const { mutate: logout } = useLogout({
@@ -41,7 +43,14 @@ export const CustomSider: React.FC = () => {
           }}
         >
           <Title collapsed={siderCollapsed} />
-          {!siderCollapsed && <HamburgerMenu />}
+          {!siderCollapsed && (
+            <IconButton
+              onClick={() => setSiderCollapsed(true)}
+              size="small"
+            >
+              <ChevronLeftIcon />
+            </IconButton>
+          )}
         </Paper>
         <Box
           sx={{
