@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import AssignedSites from "../../components/site-assign/assignedSites";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
+import { ShowPageLogo } from "../../components/map-table-page";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
@@ -230,6 +231,7 @@ export const UserShow = () => {
               <Box mt={2}>
                 <AssignedSites userRole={role} />
               </Box>
+            <ShowPageLogo />
             </CardContent>
           </Card>
         </Show>

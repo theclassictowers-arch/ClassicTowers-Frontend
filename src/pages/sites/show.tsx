@@ -13,6 +13,7 @@ import { Show } from "@refinedev/mui";
 import { useNavigate } from "react-router-dom";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
+import { ShowPageLogo } from "../../components/map-table-page";
 
 const DetailRow = ({
   label,
@@ -111,6 +112,7 @@ export const SiteShow = () => {
                 </Stack>
               </Grid>
             </Grid>
+            <ShowPageLogo />
           </CardContent>
         </Card>
       </Show>

@@ -220,4 +220,40 @@ export const TableCenterLogo = () => {
   );
 };
 
+export const ShowPageLogo = () => {
+  const theme = useTheme();
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        mt: 2,
+        mb: 0.5,
+        px: 0.75,
+        py: 0.35,
+      }}
+    >
+      <Box
+        sx={{
+          display: "inline-flex",
+          alignItems: "center",
+          px: 0.75,
+          py: 0.35,
+          border: `1px solid ${alpha(theme.palette.divider, 0.22)}`,
+          borderRadius: "8px",
+          backgroundColor: alpha(theme.palette.background.paper, 0.66),
+          backdropFilter: "blur(8px)",
+        }}
+      >
+        <Box
+          component="img"
+          src="/images/classic-electronics-brand-transparent.png"
+          alt="Classic Electronics"
+          sx={{ height: 22, width: "auto", display: "block" }}
+        />
+      </Box>
+    </Box>
+  );
+};
+
 export default MapTablePage;
