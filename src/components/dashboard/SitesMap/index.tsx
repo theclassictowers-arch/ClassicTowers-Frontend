@@ -291,6 +291,11 @@ export const SitesMap = ({ siteData, isLoading, onExpandChange }: any) => {
               gestureHandling="greedy"
               disableDefaultUI
               mapTypeId={mapTypeId}
+              minZoom={2}
+              restriction={{
+                latLngBounds: { north: 85, south: -85, west: -180, east: 180 },
+                strictBounds: true,
+              }}
               {...(VITE_MAP_ID ? { mapId: VITE_MAP_ID } : {})}
             >
               <Markers points={locations} />
