@@ -168,7 +168,7 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ bgcolor: "background.default" }}>
+      <Box sx={{ backgroundColor: theme.palette.background.default }}>
         <Box sx={{ p: 1 }}>
           {/* Applied filter chip */}
           {isFilterApplied && (
@@ -188,7 +188,7 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
                 sx={{
                   height: "20px",
                   fontSize: "0.65rem",
-                  bgcolor: theme.palette.grey[100],
+                  bgcolor: theme.palette.action.selected,
                   color: theme.palette.text.primary,
                   "& .MuiChip-deleteIcon": {
                     fontSize: "0.75rem",
