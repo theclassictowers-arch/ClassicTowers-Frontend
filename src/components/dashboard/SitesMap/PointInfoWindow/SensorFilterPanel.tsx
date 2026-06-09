@@ -170,36 +170,6 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ backgroundColor: theme.palette.background.default }}>
         <Box sx={{ p: 1 }}>
-          {/* Applied filter chip */}
-          {isFilterApplied && (
-            <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 0.5 }}>
-              <Chip
-                label={getTimeRangeText()}
-                size="small"
-                onDelete={() => {
-                  setActivePreset(null);
-                  onResetFilter();
-                }}
-                deleteIcon={
-                  <Tooltip title="Reset filter">
-                    <RefreshIcon />
-                  </Tooltip>
-                }
-                sx={{
-                  height: "20px",
-                  fontSize: "0.65rem",
-                  bgcolor: theme.palette.action.selected,
-                  color: theme.palette.text.primary,
-                  "& .MuiChip-deleteIcon": {
-                    fontSize: "0.75rem",
-                    marginLeft: "2px",
-                    color: theme.palette.text.secondary,
-                  },
-                }}
-              />
-            </Box>
-          )}
-
           {/* Infrastructure ID */}
           {infrastructureId && (
             <Typography
@@ -230,31 +200,62 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
           </Typography>
         )}
 
-        {/* History button */}
-        <Button
-          size="small"
-          variant={activePreset ? "contained" : "outlined"}
-          startIcon={<HistoryIcon sx={{ fontSize: "0.9rem !important" }} />}
-          onClick={(e) => setHistoryAnchor(e.currentTarget)}
-          disableElevation
-          sx={{
-            my: 0.5,
-            width: "100%",
-            fontSize: "0.72rem",
-            textTransform: "none",
-            py: 0.4,
-            borderColor: theme.palette.divider,
-            color: activePreset ? "inherit" : theme.palette.text.primary,
-            justifyContent: "flex-start",
-            gap: 0.5,
-          }}
-        >
-          {activePreset
-            ? activePreset === "custom"
-              ? "Custom range"
-              : `Last ${activePreset}`
-            : "History"}
-        </Button>
+        {/* History button (left) + applied filter chip (right) — same row */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, my: 0.5 }}>
+          <Button
+            size="small"
+            variant={activePreset ? "contained" : "outlined"}
+            startIcon={<HistoryIcon sx={{ fontSize: "0.9rem !important" }} />}
+            onClick={(e) => setHistoryAnchor(e.currentTarget)}
+            disableElevation
+            sx={{
+              flexShrink: 0,
+              fontSize: "0.72rem",
+              textTransform: "none",
+              py: 0.4,
+              borderColor: theme.palette.divider,
+              color: activePreset ? "inherit" : theme.palette.text.primary,
+              justifyContent: "flex-start",
+              gap: 0.5,
+            }}
+          >
+            {activePreset
+              ? activePreset === "custom"
+                ? "Custom range"
+                : `Last ${activePreset}`
+              : "History"}
+          </Button>
+
+          {isFilterApplied && (
+            <Chip
+              label={getTimeRangeText()}
+              size="small"
+              onDelete={() => {
+                setActivePreset(null);
+                onResetFilter();
+              }}
+              deleteIcon={
+                <Tooltip title="Reset filter">
+                  <RefreshIcon />
+                </Tooltip>
+              }
+              sx={{
+                height: "20px",
+                fontSize: "0.65rem",
+                minWidth: 0,
+                flex: 1,
+                bgcolor: theme.palette.action.selected,
+                color: theme.palette.text.primary,
+                "& .MuiChip-label": { overflow: "hidden", textOverflow: "ellipsis" },
+                "& .MuiChip-deleteIcon": {
+                  fontSize: "0.75rem",
+                  marginLeft: "2px",
+                  color: theme.palette.text.secondary,
+                },
+              }}
+            />
+          )}
+        </Box>
 
         <Popover
           open={Boolean(historyAnchor)}
