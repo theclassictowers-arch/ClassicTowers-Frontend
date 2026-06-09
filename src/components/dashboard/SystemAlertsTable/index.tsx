@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useTheme,
   Paper,
@@ -58,7 +58,6 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
       if ("touches" in event) {
         return event.touches[0]?.clientY ?? event.changedTouches[0]?.clientY ?? 0;
       }
-
       return event.clientY;
     };
 
@@ -88,9 +87,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
     return data.map((status: any, index: number) => {
       const timestamp = `${status.date}T${status.time}Z`;
       const utcDate = new Date(timestamp);
-      const formattedTime = utcDate.toLocaleTimeString("en-GB", {
-        hour12: false,
-      });
+      const formattedTime = utcDate.toLocaleTimeString("en-GB", { hour12: false });
       const formattedDate = utcDate.toLocaleDateString("en-GB", {
         day: "numeric",
         month: "long",
@@ -119,9 +116,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
               {status.message?.split(" at ")[0] || "System Status: " + status.status}
             </Typography>
           </TableCell>
-          <TableCell sx={{ color: "#111" }}>
-            {status.display_name}
-          </TableCell>
+          <TableCell sx={{ color: "#111" }}>{status.display_name}</TableCell>
         </TableRow>
       );
     });
@@ -134,37 +129,44 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
 
   const handleDecreaseWidthClick = () => {
     setWidthPercent((current) => {
-      const nextWidth = Math.max(
-        current - WIDTH_STEP_PERCENT,
-        CLOSED_WIDTH_PERCENT
-      );
-
-      if (nextWidth < FULL_WIDTH_PERCENT) {
-        setIsExpanded(false);
-      }
-
+      const nextWidth = Math.max(current - WIDTH_STEP_PERCENT, CLOSED_WIDTH_PERCENT);
+      if (nextWidth < FULL_WIDTH_PERCENT) setIsExpanded(false);
       return nextWidth;
     });
   };
 
   const handleIncreaseWidthClick = () => {
-    setWidthPercent((current) =>
-      Math.min(current + WIDTH_STEP_PERCENT, FULL_WIDTH_PERCENT)
-    );
+    setWidthPercent((current) => Math.min(current + WIDTH_STEP_PERCENT, FULL_WIDTH_PERCENT));
   };
 
   const handleFullWidthClick = () => {
     setWidthPercent(FULL_WIDTH_PERCENT);
   };
 
+  const iconBtnSx = {
+    width: 30,
+    height: 30,
+    color: theme.palette.primary.main,
+    border: `1px solid ${theme.palette.primary.main}`,
+    bgcolor: "background.paper",
+    boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
+    transition:
+      "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
+    "&:hover": {
+      color: theme.palette.primary.dark,
+      bgcolor: "action.hover",
+      boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
+      transform: "scale(1.06)",
+    },
+    "&:active": { transform: "scale(0.94)" },
+    "&.Mui-disabled": { opacity: 0.42 },
+  };
+
   return (
     <Box
       ref={containerRef}
       sx={{
-        width: {
-          xs: "100%",
-          md: `${widthPercent}%`,
-        },
+        width: { xs: "100%", md: `${widthPercent}%` },
         mx: 0,
         mt: 0,
         position: "relative",
@@ -174,14 +176,12 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
         transition: "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
       }}
     >
+      {/* Alert bar */}
       <Paper
         elevation={8}
         sx={{
           display: isClosedWidth ? "none" : "block",
-          bgcolor: alpha(
-            theme.palette.background.paper,
-            ALERT_BACKGROUND_OPACITY
-          ),
+          bgcolor: alpha(theme.palette.background.paper, ALERT_BACKGROUND_OPACITY),
           borderRadius: 0,
           overflow: "hidden",
           border: `1px solid ${theme.palette.divider}`,
@@ -191,8 +191,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
             px: isCompactWidth ? 0.65 : 1,
             py: 0,
             lineHeight: 1.15,
-            transition:
-              "font-size 220ms ease, padding 220ms ease",
+            transition: "font-size 220ms ease, padding 220ms ease",
           },
           "& .MuiTypography-root": {
             fontSize: isCompactWidth ? "0.68rem" : "0.8125rem",
@@ -201,16 +200,17 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
         }}
       >
         <Box sx={{ display: "flex", alignItems: "stretch" }}>
+          {/* Table content */}
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <TableContainer
               sx={{
-                maxHeight: isExpanded ? expandedHeight : 33,
+                maxHeight: isExpanded ? expandedHeight : 34,
+                minHeight: 34,
                 position: "relative",
                 overflowY: isExpanded ? "auto" : "hidden",
-                transition:
-                  isResizing
-                    ? "none"
-                    : "max-height 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+                transition: isResizing
+                  ? "none"
+                  : "max-height 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
                 scrollBehavior: "smooth",
               }}
             >
@@ -229,9 +229,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
                             gap: 1,
                           }}
                         >
-                          <Typography>
-                            All systems are operating normally
-                          </Typography>
+                          <Typography>All systems are operating normally</Typography>
                         </Box>
                       </TableCell>
                     </TableRow>
@@ -240,7 +238,79 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
               </Table>
             </TableContainer>
           </Box>
+
+          {/* Inline buttons — only when full width */}
+          {isFullWidth && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                px: 0.5,
+                flexShrink: 0,
+                borderLeft: `1px solid ${theme.palette.divider}`,
+                bgcolor: alpha(theme.palette.background.paper, 0.72),
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              <Tooltip title="Close alerts">
+                <span>
+                  <IconButton
+                    onClick={handleMinWidthClick}
+                    aria-label="Close alerts"
+                    size="small"
+                    sx={iconBtnSx}
+                  >
+                    <KeyboardDoubleArrowLeftIcon fontSize="small" />
+                  </IconButton>
+                </span>
+              </Tooltip>
+
+              <Tooltip
+                title={`Decrease width to ${Math.max(
+                  widthPercent - WIDTH_STEP_PERCENT,
+                  CLOSED_WIDTH_PERCENT
+                )}%`}
+              >
+                <span>
+                  <IconButton
+                    onClick={handleDecreaseWidthClick}
+                    aria-label="Decrease alerts width"
+                    size="small"
+                    sx={iconBtnSx}
+                  >
+                    <KeyboardArrowLeftIcon fontSize="small" />
+                  </IconButton>
+                </span>
+              </Tooltip>
+
+              <Tooltip title={isExpanded ? "Collapse height" : "Increase height"}>
+                <IconButton
+                  onClick={() => setIsExpanded((c) => !c)}
+                  aria-label={isExpanded ? "Collapse alerts height" : "Increase alerts height"}
+                  size="small"
+                  sx={{
+                    width: 30,
+                    height: 30,
+                    color: theme.palette.primary.main,
+                    transition:
+                      "color 180ms ease, transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+                    transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                    "&:hover": { color: theme.palette.primary.dark, bgcolor: "action.hover" },
+                    "&:active": {
+                      transform: isExpanded
+                        ? "rotate(180deg) scale(0.94)"
+                        : "rotate(0deg) scale(0.94)",
+                    },
+                  }}
+                >
+                  <KeyboardArrowDownIcon fontSize="medium" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          )}
         </Box>
+
         {allowResize && isFullWidth && isExpanded && (
           <Box
             onMouseDown={(event) => {
@@ -268,232 +338,107 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
                 borderRadius: 99,
                 bgcolor: "text.disabled",
               },
-              "&:hover": {
-                bgcolor: "action.hover",
-              },
+              "&:hover": { bgcolor: "action.hover" },
             }}
           />
         )}
       </Paper>
 
-      <Box
-        sx={{
-          position: "absolute",
-          top: 2,
-          left: {
-            xs: "auto",
-            md: isFullWidth ? "auto" : "100%",
-          },
-          right: {
-            xs: 6,
-            md: isFullWidth ? 8 : "auto",
-          },
-          transform: {
-            xs: "none",
-            md: isFullWidth
-              ? "none"
-              : isClosedWidth
-              ? "translateX(-6px)"
-              : "translateX(10px)",
-          },
-          zIndex: 20,
-          display: "flex",
-          alignItems: "center",
-          gap: 0.5,
-          px: 0.5,
-          py: 0.35,
-          borderRadius: "999px",
-          backgroundColor: "rgba(255, 255, 255, 0.72)",
-          border: `1px solid ${theme.palette.divider}`,
-          backdropFilter: "blur(8px)",
-          boxShadow: "0 10px 24px rgba(15, 23, 42, 0.18)",
-        }}
-      >
-        {!isClosedWidth && (
-          <Tooltip title="Close alerts">
-            <span>
-              <IconButton
-                onClick={handleMinWidthClick}
-                aria-label="Close alerts"
-                size="small"
-                sx={{
-                  width: 30,
-                  height: 30,
-                  color: theme.palette.primary.main,
-                  border: `1px solid ${theme.palette.primary.main}`,
-                  bgcolor: "background.paper",
-                  boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
-                  transition:
-                    "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
-                  "&:hover": {
-                    color: theme.palette.primary.dark,
-                    bgcolor: "action.hover",
-                    boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
-                    transform: "scale(1.06)",
-                  },
-                  "&:active": {
-                    transform: "scale(0.94)",
-                  },
-                }}
-              >
-                <KeyboardDoubleArrowLeftIcon fontSize="small" />
-              </IconButton>
-            </span>
-          </Tooltip>
-        )}
-        {!isClosedWidth && (
+      {/* Floating buttons — only when NOT full width */}
+      {!isFullWidth && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: { xs: "auto", md: "100%" },
+            right: { xs: 6, md: "auto" },
+            transform: {
+              xs: "translateY(-50%)",
+              md: isClosedWidth
+                ? "translate(-6px, -50%)"
+                : "translate(10px, -50%)",
+            },
+            zIndex: 20,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            px: 0.5,
+            py: 0.35,
+            borderRadius: "999px",
+            backgroundColor: "rgba(255, 255, 255, 0.72)",
+            border: `1px solid ${theme.palette.divider}`,
+            backdropFilter: "blur(8px)",
+            boxShadow: "0 10px 24px rgba(15, 23, 42, 0.18)",
+          }}
+        >
+          {!isClosedWidth && (
+            <Tooltip title="Close alerts">
+              <span>
+                <IconButton
+                  onClick={handleMinWidthClick}
+                  aria-label="Close alerts"
+                  size="small"
+                  sx={iconBtnSx}
+                >
+                  <KeyboardDoubleArrowLeftIcon fontSize="small" />
+                </IconButton>
+              </span>
+            </Tooltip>
+          )}
+          {!isClosedWidth && (
+            <Tooltip
+              title={`Decrease width to ${Math.max(
+                widthPercent - WIDTH_STEP_PERCENT,
+                CLOSED_WIDTH_PERCENT
+              )}%`}
+            >
+              <span>
+                <IconButton
+                  onClick={handleDecreaseWidthClick}
+                  aria-label="Decrease alerts width"
+                  size="small"
+                  sx={iconBtnSx}
+                >
+                  <KeyboardArrowLeftIcon fontSize="small" />
+                </IconButton>
+              </span>
+            </Tooltip>
+          )}
           <Tooltip
-            title={`Decrease width to ${Math.max(
-              widthPercent - WIDTH_STEP_PERCENT,
-              CLOSED_WIDTH_PERCENT
-            )}%`}
+            title={
+              isClosedWidth
+                ? "Show alerts"
+                : `Increase width to ${Math.min(
+                    widthPercent + WIDTH_STEP_PERCENT,
+                    FULL_WIDTH_PERCENT
+                  )}%`
+            }
           >
             <span>
               <IconButton
-                onClick={handleDecreaseWidthClick}
-                aria-label="Decrease alerts width"
-                disabled={isClosedWidth}
+                onClick={handleIncreaseWidthClick}
+                aria-label={isClosedWidth ? "Show alerts" : "Increase alerts width"}
                 size="small"
-                sx={{
-                  width: 30,
-                  height: 30,
-                  color: theme.palette.primary.main,
-                  border: `1px solid ${theme.palette.primary.main}`,
-                  bgcolor: "background.paper",
-                  boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
-                  transition:
-                    "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
-                  "&:hover": {
-                    color: theme.palette.primary.dark,
-                    bgcolor: "action.hover",
-                    boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
-                    transform: "scale(1.06)",
-                  },
-                  "&:active": {
-                    transform: "scale(0.94)",
-                  },
-                  "&.Mui-disabled": {
-                    opacity: 0.42,
-                  },
-                }}
+                sx={iconBtnSx}
               >
-                <KeyboardArrowLeftIcon fontSize="small" />
+                <KeyboardArrowRightIcon fontSize="small" />
               </IconButton>
             </span>
           </Tooltip>
-        )}
-        <Tooltip
-          title={
-            isClosedWidth
-              ? "Show alerts"
-              : `Increase width to ${Math.min(
-                  widthPercent + WIDTH_STEP_PERCENT,
-                  FULL_WIDTH_PERCENT
-                )}%`
-          }
-        >
-          <span>
-            <IconButton
-              onClick={handleIncreaseWidthClick}
-              aria-label={
-                isClosedWidth ? "Show alerts" : "Increase alerts width"
-              }
-              disabled={isFullWidth}
-              size="small"
-              sx={{
-                width: 30,
-                height: 30,
-                color: theme.palette.primary.main,
-                border: `1px solid ${theme.palette.primary.main}`,
-                bgcolor: "background.paper",
-                boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
-                transition:
-                  "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
-                "&:hover": {
-                  color: theme.palette.primary.dark,
-                  bgcolor: "action.hover",
-                  boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
-                  transform: "scale(1.06)",
-                },
-                "&:active": {
-                  transform: "scale(0.94)",
-                },
-                "&.Mui-disabled": {
-                  opacity: 0.42,
-                },
-              }}
-            >
-              <KeyboardArrowRightIcon fontSize="small" />
-            </IconButton>
-          </span>
-        </Tooltip>
-        {!isClosedWidth && (
-          <Tooltip title="Set width to 100%">
-            <IconButton
-              onClick={handleFullWidthClick}
-              aria-label="Set alerts width to 100 percent"
-              disabled={isFullWidth}
-              size="small"
-              sx={{
-                width: 30,
-                height: 30,
-                color: theme.palette.primary.main,
-                border: `1px solid ${theme.palette.primary.main}`,
-                bgcolor: "background.paper",
-                boxShadow: "0 6px 14px rgba(15, 23, 42, 0.14)",
-                transition:
-                  "background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
-                "&:hover": {
-                  color: theme.palette.primary.dark,
-                  bgcolor: "action.hover",
-                  boxShadow: "0 9px 18px rgba(15, 23, 42, 0.18)",
-                  transform: "scale(1.06)",
-                },
-                "&:active": {
-                  transform: "scale(0.94)",
-                },
-                "&.Mui-disabled": {
-                  opacity: 0.42,
-                },
-              }}
-            >
-              <KeyboardDoubleArrowRightIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        )}
-        {isFullWidth && (
-          <Tooltip title={isExpanded ? "Collapse height" : "Increase height"}>
-            <IconButton
-              onClick={() => setIsExpanded((current) => !current)}
-              aria-label={
-                isExpanded
-                  ? "Collapse alerts height"
-                  : "Increase alerts height"
-              }
-              size="small"
-              sx={{
-                width: 30,
-                height: 30,
-                color: theme.palette.primary.main,
-                transition:
-                  "color 180ms ease, transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1)",
-                transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                "&:hover": {
-                  color: theme.palette.primary.dark,
-                  bgcolor: "action.hover",
-                },
-                "&:active": {
-                  transform: isExpanded
-                    ? "rotate(180deg) scale(0.94)"
-                    : "rotate(0deg) scale(0.94)",
-                },
-              }}
-            >
-              <KeyboardArrowDownIcon fontSize="medium" />
-            </IconButton>
-          </Tooltip>
-        )}
-      </Box>
+          {!isClosedWidth && (
+            <Tooltip title="Set width to 100%">
+              <IconButton
+                onClick={handleFullWidthClick}
+                aria-label="Set alerts width to 100 percent"
+                size="small"
+                sx={iconBtnSx}
+              >
+                <KeyboardDoubleArrowRightIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
+      )}
     </Box>
   );
 };
