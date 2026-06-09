@@ -159,7 +159,7 @@ export const LimitsCreate = () => {
         initialWidth={760}
         minWidth={460}
         maxWidth={1250}
-        onClose={() => navigate("/")}
+        onClose={() => navigate("/limits")}
       >
         <Card
           component="form"

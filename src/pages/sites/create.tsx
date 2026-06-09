@@ -93,7 +93,7 @@ export const SiteCreate: React.FC = () => {
         initialWidth={460}
         minWidth={320}
         maxWidth={760}
-        onClose={() => navigate("/")}
+        onClose={() => navigate("/sites")}
       >
         <Box
           component="form"
