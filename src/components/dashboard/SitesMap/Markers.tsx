@@ -47,6 +47,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
 
   // Use refs for values that shouldn't trigger re-renders
   const isDraggingRef = useRef(false);
+  const markerJustClickedRef = useRef(false);
   const initialCursorPositionRef = useRef({ x: 0, y: 0 });
   const initialInfoPositionRef = useRef<google.maps.LatLngLiteral | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -74,6 +75,10 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
     if (!map) return;
 
     const handleMapClick = () => {
+      if (markerJustClickedRef.current) {
+        markerJustClickedRef.current = false;
+        return;
+      }
       if (!isDraggingRef.current) {
         setSelectedPoint(null);
       }
@@ -132,10 +137,14 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
         position: point.location,
         title: point.display_name || point.key,
       });
-      const listener = marker.addListener("click", () => {
+      const onMarkerClick = () => {
+        markerJustClickedRef.current = true;
         handleMarkerClick(point);
+      };
+      marker.element.addEventListener("click", onMarkerClick);
+      markerListenersRef.current.push({
+        remove: () => marker.element.removeEventListener("click", onMarkerClick),
       });
-      markerListenersRef.current.push(listener);
       return marker;
     });
 
@@ -280,7 +289,10 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
           <PinMarker
             key={point.key}
             point={point}
-            onClick={() => handleMarkerClick(point)}
+            onClick={() => {
+              markerJustClickedRef.current = true;
+              handleMarkerClick(point);
+            }}
           />
         ))}
 
