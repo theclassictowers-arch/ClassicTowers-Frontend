@@ -110,7 +110,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   const handleMarkerClick = useCallback(
     (point: Point) => {
       setSelectedPoint((prev) => (prev?.key === point.key ? null : point));
-      setSelectedSite(point.location.lng, point.location.lat, point.display_name || point.name || point.key);
+      setSelectedSite(point.location.lng, point.location.lat, point.display_name || point.key);
     },
     [setSelectedSite]
   );
