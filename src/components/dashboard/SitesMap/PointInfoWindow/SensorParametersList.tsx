@@ -3,15 +3,14 @@ import {
   Box,
   Typography,
   Button,
+  Checkbox,
+  FormControlLabel,
   Stack,
-  Select,
-  MenuItem,
-  IconButton,
-  FormControl,
+  Popover,
+  Divider,
   useTheme,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
+import TuneIcon from "@mui/icons-material/Tune";
 
 interface SensorParametersListProps {
   status: Record<string, any>;
@@ -40,37 +39,29 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
   onStatusClick,
 }) => {
   const theme = useTheme();
-  const [rows, setRows] = useState<string[]>([""]);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [checked, setChecked] = useState<Record<string, boolean>>({});
 
   const availableKeys = Object.keys(status);
 
-  const handleRowChange = (index: number, value: string) => {
-    setRows((prev) => prev.map((r, i) => (i === index ? value : r)));
+  const handleToggle = (key: string) => {
+    setChecked((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleAdd = () => {
-    setRows((prev) => [...prev, ""]);
-  };
-
-  const handleRemove = (index: number) => {
-    setRows((prev) => {
-      const next = prev.filter((_, i) => i !== index);
-      return next.length === 0 ? [""] : next;
-    });
-  };
+  const selectedKeys = availableKeys.filter((k) => checked[k]);
 
   const handleConfirm = () => {
-    const selected = rows.filter((r) => r !== "");
-    if (selected.length > 0) {
-      onStatusClick(selected);
-      setRows([""]);
+    if (selectedKeys.length > 0) {
+      onStatusClick(selectedKeys);
+      setAnchorEl(null);
+      setChecked({});
     }
   };
 
-  const selectedKeys = rows.filter((r) => r !== "");
-  const allSelected = availableKeys.every((k) => rows.includes(k));
-  const hasEmptyRow = rows.some((r) => r === "");
-  const canAdd = !hasEmptyRow && !allSelected;
+  const handleClose = () => {
+    setAnchorEl(null);
+    setChecked({});
+  };
 
   return (
     <Box sx={{ p: 1, backgroundColor: theme.palette.background.default }}>
@@ -82,92 +73,102 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
           letterSpacing: 0.5,
           fontSize: "0.65rem",
           display: "block",
-          mb: 1,
+          mb: 0.75,
         }}
       >
         PARAMETERS
       </Typography>
 
-      <Stack spacing={0.75}>
-        {rows.map((row, index) => (
-          <Stack key={index} direction="row" spacing={0.5} alignItems="center">
-            <FormControl fullWidth size="small">
-              <Select
-                value={row}
-                onChange={(e) => handleRowChange(index, e.target.value as string)}
-                displayEmpty
-                sx={{
-                  fontSize: "0.75rem",
-                  "& .MuiSelect-select": { py: 0.6 },
-                }}
-              >
-                <MenuItem value="" disabled sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
-                  Select parameter…
-                </MenuItem>
-                {availableKeys
-                  .filter((k) => !rows.includes(k) || k === row)
-                  .map((k) => (
-                    <MenuItem key={k} value={k} sx={{ fontSize: "0.75rem" }}>
-                      {labelMapping[k] ?? k}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-
-            <IconButton
-              size="small"
-              onClick={() => handleRemove(index)}
-              disabled={rows.length === 1 && row === ""}
-              sx={{
-                flexShrink: 0,
-                color: "text.secondary",
-                "&:hover": { color: "error.main" },
-              }}
-            >
-              <CloseIcon sx={{ fontSize: "0.9rem" }} />
-            </IconButton>
-          </Stack>
-        ))}
-      </Stack>
-
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        sx={{ mt: 1 }}
+      <Button
+        size="small"
+        variant="outlined"
+        startIcon={<TuneIcon sx={{ fontSize: "0.9rem !important" }} />}
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        sx={{
+          width: "100%",
+          justifyContent: "flex-start",
+          textTransform: "none",
+          fontSize: "0.75rem",
+          py: 0.5,
+          borderColor: theme.palette.divider,
+          color: "text.secondary",
+        }}
       >
-        <Button
-          size="small"
-          startIcon={<AddIcon sx={{ fontSize: "0.85rem !important" }} />}
-          onClick={handleAdd}
-          disabled={!canAdd}
-          sx={{
-            fontSize: "0.7rem",
-            textTransform: "none",
-            color: theme.palette.primary.main,
-            px: 0.5,
-          }}
-        >
-          Add
-        </Button>
+        Select parameters…
+      </Button>
 
-        <Button
-          variant="contained"
-          size="small"
-          onClick={handleConfirm}
-          disabled={selectedKeys.length === 0}
-          disableElevation
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+        PaperProps={{
+          sx: {
+            width: 230,
+            borderRadius: 1.5,
+            boxShadow: "0 8px 24px rgba(15,23,42,0.14)",
+          },
+        }}
+      >
+        <Stack sx={{ px: 1, pt: 1, pb: 0.5 }}>
+          {availableKeys.map((key) => (
+            <FormControlLabel
+              key={key}
+              control={
+                <Checkbox
+                  size="small"
+                  checked={!!checked[key]}
+                  onChange={() => handleToggle(key)}
+                  sx={{ py: 0.3, px: 0.75 }}
+                />
+              }
+              label={
+                <Typography sx={{ fontSize: "0.78rem" }}>
+                  {labelMapping[key] ?? key}
+                </Typography>
+              }
+              sx={{ m: 0, py: 0.15 }}
+            />
+          ))}
+        </Stack>
+
+        <Divider />
+
+        <Box
           sx={{
-            textTransform: "none",
-            px: 1.5,
-            py: 0.4,
-            fontSize: "0.7rem",
-            minWidth: 0,
+            px: 1,
+            py: 0.75,
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 0.75,
           }}
         >
-          Ok
-        </Button>
-      </Stack>
+          <Button
+            size="small"
+            onClick={handleClose}
+            sx={{ fontSize: "0.72rem", textTransform: "none", minWidth: 0 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            disableElevation
+            disabled={selectedKeys.length === 0}
+            onClick={handleConfirm}
+            sx={{
+              fontSize: "0.72rem",
+              textTransform: "none",
+              px: 1.5,
+              py: 0.4,
+              minWidth: 0,
+            }}
+          >
+            Ok
+          </Button>
+        </Box>
+      </Popover>
     </Box>
   );
 };
