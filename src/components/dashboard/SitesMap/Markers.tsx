@@ -275,43 +275,51 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
 
   // Inject site name badge into Google Maps native .gm-style-iw-chr header
   useEffect(() => {
+    // Always remove old containers first so portal unmounts cleanly
+    document.querySelectorAll(".site-badge-portal").forEach((el) => el.remove());
+    setBadgeContainer(null);
+
     if (!selectedPoint) {
-      document.querySelector(".site-badge-portal")?.remove();
-      setBadgeContainer(null);
       const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
       if (chr) chr.style.background = "";
       return;
     }
 
+    const primaryColor = theme.palette.primary.main;
+
     const inject = () => {
       const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
       if (!chr) return false;
 
-      chr.style.background = theme.palette.primary.main;
-      chr.style.display = "flex";
-      chr.style.alignItems = "center";
-      chr.style.padding = "4px 4px 4px 10px";
-      chr.style.borderRadius = "8px 8px 0 0";
+      Object.assign(chr.style, {
+        background: primaryColor,
+        display: "flex",
+        alignItems: "center",
+        padding: "4px 4px 4px 10px",
+        borderRadius: "8px 8px 0 0",
+        minHeight: "36px",
+      });
 
       const closeBtn = chr.querySelector("button") as HTMLButtonElement | null;
       if (closeBtn) {
         closeBtn.style.filter = "brightness(0) invert(1)";
-        closeBtn.style.opacity = "0.9";
+        closeBtn.style.opacity = "0.85";
+        closeBtn.style.flexShrink = "0";
       }
 
-      let container = chr.querySelector(".site-badge-portal") as HTMLDivElement | null;
-      if (!container) {
-        container = document.createElement("div");
-        container.className = "site-badge-portal";
-        container.style.flex = "1";
-        chr.insertBefore(container, chr.firstChild);
-      }
+      // Always create fresh container so React portal re-mounts
+      const container = document.createElement("div");
+      container.className = "site-badge-portal";
+      container.style.flex = "1";
+      container.style.minWidth = "0";
+      container.style.overflow = "hidden";
+      chr.insertBefore(container, chr.firstChild);
       setBadgeContainer(container);
       return true;
     };
 
     if (!inject()) {
-      const timer = setTimeout(inject, 150);
+      const timer = setTimeout(inject, 200);
       return () => clearTimeout(timer);
     }
   }, [selectedPoint, theme.palette.primary.main]);
@@ -331,9 +339,32 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
         ))}
 
       {badgeContainer && selectedPoint && createPortal(
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, border: "1.5px solid rgba(255,255,255,0.75)", borderRadius: "20px", px: 1, py: 0.3, overflow: "hidden", maxWidth: 240 }}>
-          <LocationOnIcon sx={{ color: "white", fontSize: "0.95rem", flexShrink: 0 }} />
-          <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "white", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        <Box
+          key={selectedPoint.key}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            border: "1.5px solid rgba(255,255,255,0.70)",
+            borderRadius: "20px",
+            px: 1,
+            py: 0.25,
+            overflow: "hidden",
+            maxWidth: 260,
+          }}
+        >
+          <LocationOnIcon sx={{ color: "white", fontSize: "0.9rem", flexShrink: 0 }} />
+          <Typography
+            sx={{
+              fontSize: "0.78rem",
+              fontWeight: 700,
+              color: "white",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              letterSpacing: 0.2,
+            }}
+          >
             {selectedPoint.display_name}
           </Typography>
         </Box>,
