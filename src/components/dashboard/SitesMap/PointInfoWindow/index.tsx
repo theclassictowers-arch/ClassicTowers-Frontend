@@ -202,6 +202,8 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         siteName={point.display_name}
         region={point.region}
         infrastructureId={point.infrastructure_id}
+        lat={point.location?.lat}
+        lng={point.location?.lng}
       />
 
       <Divider sx={{ borderColor: theme.palette.grey[300] }} />

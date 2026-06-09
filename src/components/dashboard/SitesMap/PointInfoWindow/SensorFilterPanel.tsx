@@ -39,6 +39,8 @@ interface SensorFilterPanelProps {
   siteName: string;
   region?: string;
   infrastructureId?: string;
+  lat?: number;
+  lng?: number;
 }
 
 // Define preset types
@@ -61,6 +63,8 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
   siteName,
   region,
   infrastructureId,
+  lat,
+  lng,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<PresetType>(null);
@@ -214,33 +218,64 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
             </Tooltip>
           </Stack>
 
-          {/* Applied filter chip */}
-          {isFilterApplied && (
-            <Chip
-              label={getTimeRangeText()}
-              size="small"
-              onDelete={() => {
-                setActivePreset(null);
-                onResetFilter();
-              }}
-              deleteIcon={
-                <Tooltip title="Reset filter">
-                  <RefreshIcon />
-                </Tooltip>
-              }
-              sx={{
-                height: "20px",
-                fontSize: "0.65rem",
-                bgcolor: theme.palette.grey[100],
-                color: theme.palette.text.primary,
-                "& .MuiChip-deleteIcon": {
-                  fontSize: "0.75rem",
-                  marginLeft: "2px",
-                  color: theme.palette.text.secondary,
-                },
-              }}
-            />
-          )}
+          <Stack direction="row" alignItems="center" spacing={0.75} flexShrink={0}>
+            {/* Coordinates badge */}
+            {lat !== undefined && lng !== undefined && (
+              <Box
+                sx={{
+                  border: `1.5px solid ${theme.palette.primary.main}`,
+                  borderRadius: "6px",
+                  px: 0.75,
+                  py: 0.25,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  bgcolor: `${theme.palette.primary.main}14`,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "0.62rem",
+                    fontWeight: 600,
+                    color: theme.palette.primary.main,
+                    lineHeight: 1.2,
+                    whiteSpace: "nowrap",
+                    fontFamily: "monospace",
+                  }}
+                >
+                  {lat.toFixed(4)}, {lng.toFixed(4)}
+                </Typography>
+              </Box>
+            )}
+
+            {/* Applied filter chip */}
+            {isFilterApplied && (
+              <Chip
+                label={getTimeRangeText()}
+                size="small"
+                onDelete={() => {
+                  setActivePreset(null);
+                  onResetFilter();
+                }}
+                deleteIcon={
+                  <Tooltip title="Reset filter">
+                    <RefreshIcon />
+                  </Tooltip>
+                }
+                sx={{
+                  height: "20px",
+                  fontSize: "0.65rem",
+                  bgcolor: theme.palette.grey[100],
+                  color: theme.palette.text.primary,
+                  "& .MuiChip-deleteIcon": {
+                    fontSize: "0.75rem",
+                    marginLeft: "2px",
+                    color: theme.palette.text.secondary,
+                  },
+                }}
+              />
+            )}
+          </Stack>
         </Box>
 
         {/* Region */}
