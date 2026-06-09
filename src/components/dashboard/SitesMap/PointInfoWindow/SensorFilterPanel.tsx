@@ -182,23 +182,23 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
                 display: "flex",
                 alignItems: "center",
                 gap: 0.5,
-                bgcolor: "white",
-                border: `1.5px solid ${theme.palette.primary.dark}`,
+                bgcolor: "transparent",
+                border: "1.5px solid rgba(255,255,255,0.75)",
                 borderRadius: "20px",
                 px: 1,
                 py: 0.3,
-                maxWidth: 240,
+                maxWidth: 260,
                 overflow: "hidden",
               }}
             >
               <LocationOnIcon
-                sx={{ color: theme.palette.primary.main, fontSize: "0.95rem", flexShrink: 0 }}
+                sx={{ color: "white", fontSize: "0.95rem", flexShrink: 0 }}
               />
               <Typography
                 sx={{
                   fontSize: "0.8rem",
                   fontWeight: 600,
-                  color: theme.palette.primary.main,
+                  color: "white",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
