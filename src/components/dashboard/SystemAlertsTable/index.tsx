@@ -27,7 +27,7 @@ interface SystemAlertsTableProps {
 
 const CLOSED_WIDTH_PERCENT = 0;
 const DEFAULT_WIDTH_PERCENT = 40;
-const FULL_WIDTH_PERCENT = 80;
+const FULL_WIDTH_PERCENT = 90;
 const WIDTH_STEP_PERCENT = 20;
 const ALERT_BACKGROUND_OPACITY = 0.02;
 

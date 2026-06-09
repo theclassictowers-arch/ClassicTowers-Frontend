@@ -89,7 +89,7 @@ const App: React.FC = () => {
               aria-label="Product of Classic Electronics"
               style={{
                 alignItems: "flex-end",
-                background: "rgba(255, 255, 255, 0.3)",
+                background: "rgba(255, 255, 255, 0.1)",
                 backdropFilter: "blur(6px)",
                 WebkitBackdropFilter: "blur(6px)",
                 border: 0,
@@ -98,7 +98,6 @@ const App: React.FC = () => {
                 display: "flex",
                 flexDirection: "column",
                 gap: 1,
-              //  opacity: 0.52,
                 padding: "5px 8px 7px",
                 pointerEvents: "none",
                 position: "fixed",
@@ -106,19 +105,7 @@ const App: React.FC = () => {
                 zIndex: 1400,
               }}
             >
-              <span
-                style={{
-                  color: "#0f172a",
-                  fontSize: 9,
-                  fontWeight: 700,
-                  lineHeight: 1,
-                  textAlign: "right",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                Product of
-              </span>
+            
               <img
                 src="/images/classic-electronics-brand-transparent.png"
                 alt="Classic Electronics"
@@ -127,7 +114,6 @@ const App: React.FC = () => {
                   height: "auto",
                   maxWidth: "36vw",
                   width: 110,
-                  opacity: 1,
                 }}
               />
             </div>
