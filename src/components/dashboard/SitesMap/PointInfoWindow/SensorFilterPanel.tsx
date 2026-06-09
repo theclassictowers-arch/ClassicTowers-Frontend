@@ -162,79 +162,59 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ borderRadius: 1, bgcolor: "background.paper", p: 1 }}>
-        {/* Header with location — always first/topmost row */}
+      <Box sx={{ borderRadius: 1, bgcolor: "background.paper" }}>
+        {/* Blue header bar */}
         <Box
           sx={{
+            bgcolor: theme.palette.primary.main,
+            borderRadius: "8px 8px 0 0",
+            px: 1.5,
+            py: 0.85,
             display: "flex",
-            justifyContent: "space-between",
             alignItems: "center",
-            mb: 0.5,
+            justifyContent: "flex-end",
+            pr: 5,
           }}
         >
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={0.5}
-            sx={{ overflow: "hidden" }}
-          >
-            <LocationOnIcon
+          <Tooltip title={siteName} arrow placement="bottom-end">
+            <Box
               sx={{
-                color: theme.palette.primary.main,
-                flexShrink: 0,
-                fontSize: "1rem",
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                bgcolor: "white",
+                border: `1.5px solid ${theme.palette.primary.dark}`,
+                borderRadius: "20px",
+                px: 1,
+                py: 0.3,
+                maxWidth: 240,
+                overflow: "hidden",
               }}
-            />
-            <Tooltip title={siteName} arrow placement="bottom-start">
+            >
+              <LocationOnIcon
+                sx={{ color: theme.palette.primary.main, fontSize: "0.95rem", flexShrink: 0 }}
+              />
               <Typography
-                variant="body2"
-                fontWeight={500}
                 sx={{
+                  fontSize: "0.8rem",
+                  fontWeight: 600,
+                  color: theme.palette.primary.main,
+                  whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  maxWidth: "200px",
-                  fontSize: "0.8rem",
-                  color: "text.primary",
                 }}
               >
                 {siteName}
               </Typography>
-            </Tooltip>
-          </Stack>
+            </Box>
+          </Tooltip>
+        </Box>
 
-          <Stack direction="row" alignItems="center" spacing={0.75} flexShrink={0}>
-            {/* Coordinates badge */}
-            {lat !== undefined && lng !== undefined && (
-              <Box
-                sx={{
-                  border: `1.5px solid ${theme.palette.primary.main}`,
-                  borderRadius: "6px",
-                  px: 0.75,
-                  py: 0.25,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.5,
-                  bgcolor: `${theme.palette.primary.main}14`,
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "0.62rem",
-                    fontWeight: 600,
-                    color: theme.palette.primary.main,
-                    lineHeight: 1.2,
-                    whiteSpace: "nowrap",
-                    fontFamily: "monospace",
-                  }}
-                >
-                  {lat.toFixed(4)}, {lng.toFixed(4)}
-                </Typography>
-              </Box>
-            )}
-
-            {/* Applied filter chip */}
-            {isFilterApplied && (
+        {/* Content area */}
+        <Box sx={{ p: 1 }}>
+          {/* Applied filter chip */}
+          {isFilterApplied && (
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 0.5 }}>
               <Chip
                 label={getTimeRangeText()}
                 size="small"
@@ -259,24 +239,23 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
                   },
                 }}
               />
-            )}
-          </Stack>
-        </Box>
+            </Box>
+          )}
 
-        {/* Infrastructure ID — below header */}
-        {infrastructureId && (
-          <Typography
-            variant="caption"
-            sx={{
-              display: "block",
-              color: theme.palette.text.secondary,
-              fontSize: "0.7rem",
-              mb: 0.5,
-            }}
-          >
-            ID: <strong>{infrastructureId}</strong>
-          </Typography>
-        )}
+          {/* Infrastructure ID */}
+          {infrastructureId && (
+            <Typography
+              variant="caption"
+              sx={{
+                display: "block",
+                color: theme.palette.text.secondary,
+                fontSize: "0.7rem",
+                mb: 0.5,
+              }}
+            >
+              ID: <strong>{infrastructureId}</strong>
+            </Typography>
+          )}
 
         {/* Region */}
         {region && (
@@ -373,6 +352,7 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
             {filterError}
           </Alert>
         )}
+        </Box>
       </Box>
 
       {/* Custom Filter Modal */}
