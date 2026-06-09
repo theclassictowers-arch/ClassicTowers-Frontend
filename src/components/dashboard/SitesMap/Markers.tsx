@@ -1,6 +1,7 @@
 import { useState, memo, FC, useEffect, useCallback, useMemo, useRef } from "react";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { InfoWindow, useMap } from "@vis.gl/react-google-maps";
+import { useTheme } from "@mui/material/styles";
 import { useSiteContext } from "../../../contexts";
 import { Point } from "../../../interfaces";
 import PinMarker from "./PinMarker";
@@ -29,6 +30,7 @@ const getStatusGlyph = (statuses: string[]): string => {
 
 const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   const { selectedSite, setSelectedSite } = useSiteContext();
+  const theme = useTheme();
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
@@ -267,6 +269,73 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
     };
   }, [handleDrag, handleDragEnd]);
 
+
+  // Style Google Maps InfoWindow header + inject site name
+  useEffect(() => {
+    const cleanup = () => {
+      document.querySelector(".gm-iw-site-name")?.remove();
+      const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
+      if (chr) chr.style.background = "";
+    };
+
+    if (!selectedPoint) { cleanup(); return; }
+
+    const primaryColor = theme.palette.primary.main;
+    const paperColor = theme.palette.background.paper;
+
+    const apply = () => {
+      const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
+      if (!chr) return false;
+
+      // Style header bar
+      Object.assign(chr.style, {
+        background: primaryColor,
+        display: "flex",
+        alignItems: "center",
+        padding: "5px 2px 5px 12px",
+        minHeight: "38px",
+        boxSizing: "border-box",
+      });
+
+      // White close button
+      const closeBtn = chr.querySelector("button") as HTMLButtonElement | null;
+      if (closeBtn) {
+        closeBtn.style.filter = "brightness(0) invert(1)";
+        closeBtn.style.flexShrink = "0";
+        closeBtn.style.margin = "0";
+      }
+
+      // Style InfoWindow body background to match theme
+      const iwBody = document.querySelector(".gm-style-iw-d") as HTMLElement | null;
+      if (iwBody) iwBody.style.background = paperColor;
+      const iwC = document.querySelector(".gm-style-iw-c") as HTMLElement | null;
+      if (iwC) iwC.style.background = paperColor;
+
+      // Remove old, inject fresh site name
+      chr.querySelector(".gm-iw-site-name")?.remove();
+      const nameEl = document.createElement("div");
+      nameEl.className = "gm-iw-site-name";
+      Object.assign(nameEl.style, {
+        flex: "1",
+        minWidth: "0",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+        color: "white",
+        fontSize: "0.82rem",
+        fontWeight: "700",
+        letterSpacing: "0.2px",
+      });
+      nameEl.textContent = selectedPoint.display_name;
+      chr.insertBefore(nameEl, chr.firstChild);
+      return true;
+    };
+
+    if (!apply()) {
+      const t = setTimeout(apply, 200);
+      return () => clearTimeout(t);
+    }
+  }, [selectedPoint, theme.palette.primary.main, theme.palette.background.paper]);
 
   // Early return if no points
   if (!points.length) return null;
