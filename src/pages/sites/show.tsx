@@ -83,7 +83,7 @@ export const SiteShow = () => {
               <Button
                 size="small"
                 startIcon={<ArrowBackIcon fontSize="small" />}
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/sites")}
                 sx={{ position: "absolute", left: 0, top: 0 }}
               >
                 Back

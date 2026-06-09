@@ -13,6 +13,7 @@ import { useForm } from "@refinedev/react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
+import { ShowPageLogo } from "../../components/map-table-page";
 
 const SectionHeading = ({ title }: { title: string }) => (
   <Typography
@@ -126,7 +127,7 @@ export const LimitsEdit = () => {
         initialWidth={760}
         minWidth={460}
         maxWidth={1250}
-        onClose={() => navigate("/")}
+        onClose={() => navigate("/limits")}
       >
         <Card
           sx={{
@@ -334,6 +335,7 @@ export const LimitsEdit = () => {
                   </Grid>
               </Grid>
             </Box>
+            <ShowPageLogo />
           </CardContent>
         </Card>
       </MovableForm>

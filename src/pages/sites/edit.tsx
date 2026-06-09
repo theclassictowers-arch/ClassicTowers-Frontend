@@ -14,6 +14,7 @@ import { axiosInstance } from "../../utils";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
 import { MapBackgroundPage } from "../../components/map-background-page";
+import { ShowPageLogo } from "../../components/map-table-page";
 
 const defaultAxisData = { x: [0], y: [0], z: [0] };
 const imeiPattern = /^\d{15}$/;
@@ -171,7 +172,7 @@ export const SiteEdit: React.FC = () => {
           initialWidth={460}
           minWidth={320}
           maxWidth={760}
-          onClose={() => navigate("/")}
+          onClose={() => navigate("/sites")}
         >
           <Box
             component="form"
@@ -341,6 +342,7 @@ export const SiteEdit: React.FC = () => {
                 "Update Site"
               )}
             </Button>
+            <ShowPageLogo />
           </Box>
         </MovableForm>
       )}

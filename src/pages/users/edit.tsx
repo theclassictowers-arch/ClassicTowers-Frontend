@@ -23,6 +23,7 @@ import { useAuthContext } from "../../contexts";
 import AssignSite from "../../components/site-assign/assignSite";
 import { formStyles } from "../auth/styles";
 import { MovableForm } from "../../components/movable-form";
+import { ShowPageLogo } from "../../components/map-table-page";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
@@ -205,7 +206,7 @@ export const UsersEdit: React.FC = () => {
           initialWidth={400}
           minWidth={320}
           maxWidth={980}
-          onClose={() => navigate("/")}
+          onClose={() => navigate("/users")}
         >
           <Box
             component="form"
@@ -389,6 +390,7 @@ export const UsersEdit: React.FC = () => {
                 "Update User"
               )}
             </Button>
+            <ShowPageLogo />
           </Box>
         </MovableForm>
       )}
