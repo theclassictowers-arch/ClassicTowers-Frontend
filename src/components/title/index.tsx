@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import MemoryIcon from "@mui/icons-material/Memory";
-import { useTheme } from "@mui/material/styles";
+import { useTheme, alpha } from "@mui/material/styles";
 import { HamburgerMenu } from "@refinedev/mui";
 import Typography from "@mui/material/Typography";
 import { useBrandingContext, useColorModeContext } from "../../contexts";
@@ -34,15 +34,9 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
           justifyContent: "center",
           color: theme.palette.mode === "light" ? "#0b70c2" : "#fff",
           "& .MuiButtonBase-root": {
-            backgroundColor:
-              theme.palette.mode === "dark"
-                ? "rgba(255, 255, 255, 0.60)"
-                : "rgba(0, 0, 0, 0.60)",
+            backgroundColor: alpha(theme.palette.primary.main, 0.60),
             "&:hover": {
-              backgroundColor:
-                theme.palette.mode === "dark"
-                  ? "rgba(255, 255, 255, 0.72)"
-                  : "rgba(0, 0, 0, 0.72)",
+              backgroundColor: alpha(theme.palette.primary.main, 0.75),
             },
           },
         }}
