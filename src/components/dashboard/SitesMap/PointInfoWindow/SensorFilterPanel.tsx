@@ -11,9 +11,15 @@ import {
   Tooltip,
   IconButton,
   Chip,
+  Popover,
+  List,
+  ListItemButton,
+  ListItemText,
+  Divider,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CloseIcon from "@mui/icons-material/Close";
+import HistoryIcon from "@mui/icons-material/History";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -67,6 +73,7 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<PresetType>(null);
+  const [historyAnchor, setHistoryAnchor] = useState<HTMLButtonElement | null>(null);
   const theme = useTheme();
   const isFilterApplied =
     appliedFilter.startDateTime && appliedFilter.endDateTime;
@@ -264,70 +271,78 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
           </Typography>
         )}
 
-        {/* Preset buttons */}
-        <ButtonGroup
+        {/* History button */}
+        <Button
           size="small"
-          variant="outlined"
-          fullWidth
+          variant={activePreset ? "contained" : "outlined"}
+          startIcon={<HistoryIcon sx={{ fontSize: "0.9rem !important" }} />}
+          onClick={(e) => setHistoryAnchor(e.currentTarget)}
+          disableElevation
           sx={{
             my: 0.5,
-            "& .MuiButton-root": {
-              borderColor: theme.palette.divider,
-              color: theme.palette.text.primary,
-            },
+            width: "100%",
+            fontSize: "0.72rem",
+            textTransform: "none",
+            py: 0.4,
+            borderColor: theme.palette.divider,
+            color: activePreset ? "inherit" : theme.palette.text.primary,
+            justifyContent: "flex-start",
+            gap: 0.5,
           }}
         >
-          <Button
-            onClick={() => handlePresetFilter(1, "1h")}
-            sx={{
-              fontSize: "0.7rem",
-              py: 0.25,
-              ...getActiveButtonStyle("1h"),
-            }}
-          >
-            1h
-          </Button>
-          <Button
-            onClick={() => handlePresetFilter(6, "6h")}
-            sx={{
-              fontSize: "0.7rem",
-              py: 0.25,
-              ...getActiveButtonStyle("6h"),
-            }}
-          >
-            6h
-          </Button>
-          <Button
-            onClick={() => handlePresetFilter(12, "12h")}
-            sx={{
-              fontSize: "0.7rem",
-              py: 0.25,
-              ...getActiveButtonStyle("12h"),
-            }}
-          >
-            12h
-          </Button>
-          <Button
-            onClick={() => handlePresetFilter(24, "24h")}
-            sx={{
-              fontSize: "0.7rem",
-              py: 0.25,
-              ...getActiveButtonStyle("24h"),
-            }}
-          >
-            24h
-          </Button>
-          <Button
-            onClick={handleCustomizeClick}
-            sx={{
-              fontSize: "0.7rem",
-              py: 0.25,
-              ...getActiveButtonStyle("custom"),
-            }}
-          >
-            Custom
-          </Button>
-        </ButtonGroup>
+          {activePreset
+            ? activePreset === "custom"
+              ? "Custom range"
+              : `Last ${activePreset}`
+            : "History"}
+        </Button>
+
+        <Popover
+          open={Boolean(historyAnchor)}
+          anchorEl={historyAnchor}
+          onClose={() => setHistoryAnchor(null)}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+          transformOrigin={{ vertical: "top", horizontal: "left" }}
+          PaperProps={{ sx: { width: 160, borderRadius: 1.5, boxShadow: "0 8px 24px rgba(15,23,42,0.14)" } }}
+        >
+          <List dense disablePadding>
+            {[
+              { label: "Last 1 hour", preset: "1h" as PresetType, hours: 1 },
+              { label: "Last 6 hours", preset: "6h" as PresetType, hours: 6 },
+              { label: "Last 12 hours", preset: "12h" as PresetType, hours: 12 },
+              { label: "Last 24 hours", preset: "24h" as PresetType, hours: 24 },
+            ].map((item) => (
+              <ListItemButton
+                key={item.preset}
+                selected={activePreset === item.preset}
+                onClick={() => {
+                  handlePresetFilter(item.hours, item.preset);
+                  setHistoryAnchor(null);
+                }}
+                sx={{ py: 0.6, px: 1.5 }}
+              >
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{ fontSize: "0.75rem" }}
+                />
+              </ListItemButton>
+            ))}
+            <Divider />
+            <ListItemButton
+              selected={activePreset === "custom"}
+              onClick={() => {
+                handleCustomizeClick();
+                setHistoryAnchor(null);
+              }}
+              sx={{ py: 0.6, px: 1.5 }}
+            >
+              <ListItemText
+                primary="Custom range…"
+                primaryTypographyProps={{ fontSize: "0.75rem" }}
+              />
+            </ListItemButton>
+          </List>
+        </Popover>
 
         {filterError && (
           <Alert
