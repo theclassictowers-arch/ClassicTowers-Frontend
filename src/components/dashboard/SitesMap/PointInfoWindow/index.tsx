@@ -1,5 +1,6 @@
 import { Dispatch, FC, useState, useEffect } from "react";
-import { Box, Divider, useTheme } from "@mui/material";
+import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { useList } from "@refinedev/core";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -8,14 +9,15 @@ import { InfoWindowContentProps } from "./types";
 import { SensorFilterPanel } from "./SensorFilterPanel";
 import { SensorParametersList } from "./SensorParametersList";
 
-// Update the interface to include the onModalStateChange callback
 interface ExtendedInfoWindowContentProps extends InfoWindowContentProps {
   onModalStateChange?: Dispatch<boolean>;
+  onClose?: () => void;
 }
 
 const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   point,
   onModalStateChange,
+  onClose,
 }) => {
   const theme = useTheme();
   const [sensorParameters, setSensorParameters] = useState<string[]>([]);
@@ -180,8 +182,44 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
       sx={{
         bgcolor: "background.default",
         overflow: "hidden",
+        borderRadius: 2,
+        boxShadow: "0 4px 24px rgba(0,0,0,0.28)",
       }}
     >
+      {/* Custom header: primary color, site name left, X right */}
+      <Box
+        sx={{
+          bgcolor: "primary.main",
+          display: "flex",
+          alignItems: "center",
+          px: 1.5,
+          minHeight: 42,
+        }}
+      >
+        <Typography
+          sx={{
+            flex: 1,
+            color: "#fff",
+            fontSize: "0.85rem",
+            fontWeight: 700,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            letterSpacing: "0.3px",
+            mr: 1,
+          }}
+        >
+          {point.display_name}
+        </Typography>
+        <IconButton
+          size="small"
+          onClick={onClose}
+          sx={{ color: "#fff", p: 0.3, flexShrink: 0 }}
+        >
+          <CloseIcon sx={{ fontSize: "1rem" }} />
+        </IconButton>
+      </Box>
+
       <SensorFilterPanel
         startDate={startDate}
         startTime={startTime}

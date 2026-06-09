@@ -270,78 +270,6 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   }, [handleDrag, handleDragEnd]);
 
 
-  // Style Google Maps InfoWindow header + inject site name
-  useEffect(() => {
-    const cleanup = () => {
-      document.querySelector(".gm-iw-site-name")?.remove();
-      [".gm-style-iw-chr", ".gm-style-iw", ".gm-style-iw-c", ".gm-style-iw-d", ".gm-style-iw-t"].forEach((sel) => {
-        const el = document.querySelector(sel) as HTMLElement | null;
-        if (el) el.style.removeProperty("background");
-      });
-    };
-
-    if (!selectedPoint) { cleanup(); return; }
-
-    const primaryColor = theme.palette.primary.main;
-    const paperColor = theme.palette.background.default;
-
-    const apply = () => {
-      const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
-      if (!chr) return false;
-
-      // Style header bar
-      Object.assign(chr.style, {
-        background: primaryColor,
-        display: "flex",
-        alignItems: "center",
-        padding: "5px 2px 5px 12px",
-        minHeight: "38px",
-        boxSizing: "border-box",
-      });
-
-      // White close button
-      const closeBtn = chr.querySelector("button") as HTMLButtonElement | null;
-      if (closeBtn) {
-        closeBtn.style.filter = "brightness(0) invert(1)";
-        closeBtn.style.flexShrink = "0";
-        closeBtn.style.margin = "0";
-      }
-
-      // Apply app background to ALL Google Maps InfoWindow containers
-      [".gm-style-iw", ".gm-style-iw-c", ".gm-style-iw-d", ".gm-style-iw-t"].forEach((sel) => {
-        const el = document.querySelector(sel) as HTMLElement | null;
-        if (el) {
-          el.style.setProperty("background", paperColor, "important");
-          el.style.setProperty("background-color", paperColor, "important");
-        }
-      });
-
-      // Remove old, inject fresh site name
-      chr.querySelector(".gm-iw-site-name")?.remove();
-      const nameEl = document.createElement("div");
-      nameEl.className = "gm-iw-site-name";
-      Object.assign(nameEl.style, {
-        flex: "1",
-        minWidth: "0",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-        color: "white",
-        fontSize: "0.82rem",
-        fontWeight: "700",
-        letterSpacing: "0.2px",
-      });
-      nameEl.textContent = selectedPoint.display_name;
-      chr.insertBefore(nameEl, chr.firstChild);
-      return true;
-    };
-
-    if (!apply()) {
-      const t = setTimeout(apply, 200);
-      return () => clearTimeout(t);
-    }
-  }, [selectedPoint, theme.palette.primary.main, theme.palette.background.default]);
-
   // Early return if no points
   if (!points.length) return null;
 
@@ -386,6 +314,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
                   point={selectedPoint}
                   coordinates={selectedSite}
                   onModalStateChange={handleModalStateChange}
+                  onClose={() => setSelectedPoint(null)}
                 />
               )}
             </div>
