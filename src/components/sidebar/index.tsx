@@ -86,22 +86,13 @@ export const CustomSider: React.FC = () => {
               );
             })}
 
-            {/* Logout + branding at the bottom — wrapper gets marginTop:auto from globalStyles */}
+            {/* Branding + Logout at the bottom — wrapper gets marginTop:auto from globalStyles */}
             <Box>
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => logout()}>
-                  <ListItemIcon>
-                    <LogoutOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Logout" />
-                </ListItemButton>
-              </ListItem>
-
               <Box
                 sx={{
                   px: 1.5,
                   pt: 0.5,
-                  pb: 1.25,
+                  pb: 0.5,
                   display: "flex",
                   justifyContent: "center",
                 }}
@@ -118,6 +109,15 @@ export const CustomSider: React.FC = () => {
                   }}
                 />
               </Box>
+
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => logout()}>
+                  <ListItemIcon>
+                    <LogoutOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Logout" />
+                </ListItemButton>
+              </ListItem>
             </Box>
           </List>
         </Box>
