@@ -29,7 +29,7 @@ const getStatusGlyph = (statuses: string[]): string => {
 };
 
 const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
-  const { selectedSite, setSelectedSite } = useSiteContext();
+  const { setSelectedSite } = useSiteContext();
   const theme = useTheme();
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -309,14 +309,15 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
               onMouseDown={handleDragStart}
               onClick={(e) => e.stopPropagation()}
             >
-              {selectedSite && (
-                <PointInfoWindow
-                  point={selectedPoint}
-                  coordinates={selectedSite}
-                  onModalStateChange={handleModalStateChange}
-                  onClose={() => setSelectedPoint(null)}
-                />
-              )}
+              <PointInfoWindow
+                point={selectedPoint}
+                coordinates={{
+                  latitude: selectedPoint.location.lat,
+                  longitude: selectedPoint.location.lng,
+                }}
+                onModalStateChange={handleModalStateChange}
+                onClose={() => setSelectedPoint(null)}
+              />
             </div>
           </ThemeProvider>
         </InfoWindow>
