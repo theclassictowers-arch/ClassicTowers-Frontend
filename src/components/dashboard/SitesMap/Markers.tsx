@@ -137,14 +137,11 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
         position: point.location,
         title: point.display_name || point.key,
       });
-      const onMarkerClick = () => {
+      const listener = marker.addListener("click", () => {
         markerJustClickedRef.current = true;
         handleMarkerClick(point);
-      };
-      marker.element.addEventListener("click", onMarkerClick);
-      markerListenersRef.current.push({
-        remove: () => marker.element.removeEventListener("click", onMarkerClick),
       });
+      markerListenersRef.current.push(listener);
       return marker;
     });
 
