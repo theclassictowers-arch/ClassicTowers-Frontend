@@ -1,7 +1,7 @@
 import { useState, memo, FC, useEffect, useCallback, useMemo, useRef } from "react";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { InfoWindow, useMap } from "@vis.gl/react-google-maps";
-import { useTheme } from "@mui/material/styles";
+import { useTheme, ThemeProvider } from "@mui/material/styles";
 import { useSiteContext } from "../../../contexts";
 import { Point } from "../../../interfaces";
 import PinMarker from "./PinMarker";
@@ -364,29 +364,32 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
           disableAutoPan={false}
           pixelOffset={[0, -20]}
         >
-          <div
-            style={{
-              width: "408px",
-              maxWidth: "calc(100vw - 48px)",
-              height: "100%",
-              cursor: modalOpen
-                ? "default"
-                : isDraggingRef.current
-                ? "grabbing"
-                : "grab",
-              userSelect: "none",
-            }}
-            onMouseDown={handleDragStart}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {selectedSite && (
-              <PointInfoWindow
-                point={selectedPoint}
-                coordinates={selectedSite}
-                onModalStateChange={handleModalStateChange}
-              />
-            )}
-          </div>
+          <ThemeProvider theme={theme}>
+            <div
+              style={{
+                width: "408px",
+                maxWidth: "calc(100vw - 48px)",
+                height: "100%",
+                cursor: modalOpen
+                  ? "default"
+                  : isDraggingRef.current
+                  ? "grabbing"
+                  : "grab",
+                userSelect: "none",
+                backgroundColor: theme.palette.background.default,
+              }}
+              onMouseDown={handleDragStart}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {selectedSite && (
+                <PointInfoWindow
+                  point={selectedPoint}
+                  coordinates={selectedSite}
+                  onModalStateChange={handleModalStateChange}
+                />
+              )}
+            </div>
+          </ThemeProvider>
         </InfoWindow>
       )}
     </>
