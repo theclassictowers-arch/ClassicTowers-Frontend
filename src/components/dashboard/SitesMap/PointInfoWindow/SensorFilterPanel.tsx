@@ -11,15 +11,10 @@ import {
   Tooltip,
   IconButton,
   Chip,
-  Popover,
-  List,
-  ListItemButton,
-  ListItemText,
-  Divider,
 } from "@mui/material";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CloseIcon from "@mui/icons-material/Close";
-import HistoryIcon from "@mui/icons-material/History";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -44,8 +39,6 @@ interface SensorFilterPanelProps {
   siteName: string;
   region?: string;
   infrastructureId?: string;
-  lat?: number;
-  lng?: number;
 }
 
 // Define preset types
@@ -68,12 +61,9 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
   siteName,
   region,
   infrastructureId,
-  lat,
-  lng,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<PresetType>(null);
-  const [historyAnchor, setHistoryAnchor] = useState<HTMLButtonElement | null>(null);
   const theme = useTheme();
   const isFilterApplied =
     appliedFilter.startDateTime && appliedFilter.endDateTime;
@@ -168,52 +158,90 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ backgroundColor: theme.palette.background.default }}>
-        <Box sx={{ p: 1 }}>
+      <Box sx={{ borderRadius: 1, bgcolor: "background.paper", p: 1 }}>
+        {/* Infrastructure ID - top */}
+        {infrastructureId && (
+          <Typography
+            variant="caption"
+            sx={{
+              display: "block",
+              color: theme.palette.text.secondary,
+              fontSize: "0.7rem",
+              mb: 0.5,
+            }}
+          >
+            ID: <strong>{infrastructureId}</strong>
+          </Typography>
+        )}
+
+        {/* Header with location */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 0.5,
+          }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={0.5}
+            sx={{ overflow: "hidden" }}
+          >
+            <LocationOnIcon
+              sx={{
+                color: theme.palette.primary.main,
+                flexShrink: 0,
+                fontSize: "1rem",
+              }}
+            />
+            <Tooltip title={siteName} arrow placement="bottom-start">
+              <Typography
+                variant="body2"
+                fontWeight={500}
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: "200px",
+                  fontSize: "0.8rem",
+                  color: "text.primary",
+                }}
+              >
+                {siteName}
+              </Typography>
+            </Tooltip>
+          </Stack>
+
           {/* Applied filter chip */}
           {isFilterApplied && (
-            <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 0.5 }}>
-              <Chip
-                label={getTimeRangeText()}
-                size="small"
-                onDelete={() => {
-                  setActivePreset(null);
-                  onResetFilter();
-                }}
-                deleteIcon={
-                  <Tooltip title="Reset filter">
-                    <RefreshIcon />
-                  </Tooltip>
-                }
-                sx={{
-                  height: "20px",
-                  fontSize: "0.65rem",
-                  bgcolor: theme.palette.action.selected,
-                  color: theme.palette.text.primary,
-                  "& .MuiChip-deleteIcon": {
-                    fontSize: "0.75rem",
-                    marginLeft: "2px",
-                    color: theme.palette.text.secondary,
-                  },
-                }}
-              />
-            </Box>
-          )}
-
-          {/* Infrastructure ID */}
-          {infrastructureId && (
-            <Typography
-              variant="caption"
-              sx={{
-                display: "block",
-                color: theme.palette.text.secondary,
-                fontSize: "0.7rem",
-                mb: 0.5,
+            <Chip
+              label={getTimeRangeText()}
+              size="small"
+              onDelete={() => {
+                setActivePreset(null);
+                onResetFilter();
               }}
-            >
-              ID: <strong>{infrastructureId}</strong>
-            </Typography>
+              deleteIcon={
+                <Tooltip title="Reset filter">
+                  <RefreshIcon />
+                </Tooltip>
+              }
+              sx={{
+                height: "20px",
+                fontSize: "0.65rem",
+                bgcolor: theme.palette.grey[100],
+                color: theme.palette.text.primary,
+                "& .MuiChip-deleteIcon": {
+                  fontSize: "0.75rem",
+                  marginLeft: "2px",
+                  color: theme.palette.text.secondary,
+                },
+              }}
+            />
           )}
+        </Box>
 
         {/* Region */}
         {region && (
@@ -230,78 +258,70 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
           </Typography>
         )}
 
-        {/* History button */}
-        <Button
+        {/* Preset buttons */}
+        <ButtonGroup
           size="small"
-          variant={activePreset ? "contained" : "outlined"}
-          startIcon={<HistoryIcon sx={{ fontSize: "0.9rem !important" }} />}
-          onClick={(e) => setHistoryAnchor(e.currentTarget)}
-          disableElevation
+          variant="outlined"
+          fullWidth
           sx={{
             my: 0.5,
-            width: "100%",
-            fontSize: "0.72rem",
-            textTransform: "none",
-            py: 0.4,
-            borderColor: theme.palette.divider,
-            color: activePreset ? "inherit" : theme.palette.text.primary,
-            justifyContent: "flex-start",
-            gap: 0.5,
+            "& .MuiButton-root": {
+              borderColor: theme.palette.divider,
+              color: theme.palette.text.primary,
+            },
           }}
         >
-          {activePreset
-            ? activePreset === "custom"
-              ? "Custom range"
-              : `Last ${activePreset}`
-            : "History"}
-        </Button>
-
-        <Popover
-          open={Boolean(historyAnchor)}
-          anchorEl={historyAnchor}
-          onClose={() => setHistoryAnchor(null)}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-          transformOrigin={{ vertical: "top", horizontal: "left" }}
-          PaperProps={{ sx: { width: 160, borderRadius: 1.5, boxShadow: "0 8px 24px rgba(15,23,42,0.14)" } }}
-        >
-          <List dense disablePadding>
-            {[
-              { label: "Last 1 hour", preset: "1h" as PresetType, hours: 1 },
-              { label: "Last 6 hours", preset: "6h" as PresetType, hours: 6 },
-              { label: "Last 12 hours", preset: "12h" as PresetType, hours: 12 },
-              { label: "Last 24 hours", preset: "24h" as PresetType, hours: 24 },
-            ].map((item) => (
-              <ListItemButton
-                key={item.preset}
-                selected={activePreset === item.preset}
-                onClick={() => {
-                  handlePresetFilter(item.hours, item.preset);
-                  setHistoryAnchor(null);
-                }}
-                sx={{ py: 0.6, px: 1.5 }}
-              >
-                <ListItemText
-                  primary={item.label}
-                  primaryTypographyProps={{ fontSize: "0.75rem" }}
-                />
-              </ListItemButton>
-            ))}
-            <Divider />
-            <ListItemButton
-              selected={activePreset === "custom"}
-              onClick={() => {
-                handleCustomizeClick();
-                setHistoryAnchor(null);
-              }}
-              sx={{ py: 0.6, px: 1.5 }}
-            >
-              <ListItemText
-                primary="Custom range…"
-                primaryTypographyProps={{ fontSize: "0.75rem" }}
-              />
-            </ListItemButton>
-          </List>
-        </Popover>
+          <Button
+            onClick={() => handlePresetFilter(1, "1h")}
+            sx={{
+              fontSize: "0.7rem",
+              py: 0.25,
+              ...getActiveButtonStyle("1h"),
+            }}
+          >
+            1h
+          </Button>
+          <Button
+            onClick={() => handlePresetFilter(6, "6h")}
+            sx={{
+              fontSize: "0.7rem",
+              py: 0.25,
+              ...getActiveButtonStyle("6h"),
+            }}
+          >
+            6h
+          </Button>
+          <Button
+            onClick={() => handlePresetFilter(12, "12h")}
+            sx={{
+              fontSize: "0.7rem",
+              py: 0.25,
+              ...getActiveButtonStyle("12h"),
+            }}
+          >
+            12h
+          </Button>
+          <Button
+            onClick={() => handlePresetFilter(24, "24h")}
+            sx={{
+              fontSize: "0.7rem",
+              py: 0.25,
+              ...getActiveButtonStyle("24h"),
+            }}
+          >
+            24h
+          </Button>
+          <Button
+            onClick={handleCustomizeClick}
+            sx={{
+              fontSize: "0.7rem",
+              py: 0.25,
+              ...getActiveButtonStyle("custom"),
+            }}
+          >
+            Custom
+          </Button>
+        </ButtonGroup>
 
         {filterError && (
           <Alert
@@ -318,7 +338,6 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
             {filterError}
           </Alert>
         )}
-        </Box>
       </Box>
 
       {/* Custom Filter Modal */}

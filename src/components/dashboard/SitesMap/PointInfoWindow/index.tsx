@@ -1,6 +1,5 @@
 import { Dispatch, FC, useState, useEffect } from "react";
-import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Divider, useTheme } from "@mui/material";
 import { useList } from "@refinedev/core";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -9,15 +8,14 @@ import { InfoWindowContentProps } from "./types";
 import { SensorFilterPanel } from "./SensorFilterPanel";
 import { SensorParametersList } from "./SensorParametersList";
 
+// Update the interface to include the onModalStateChange callback
 interface ExtendedInfoWindowContentProps extends InfoWindowContentProps {
   onModalStateChange?: Dispatch<boolean>;
-  onClose?: () => void;
 }
 
 const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   point,
   onModalStateChange,
-  onClose,
 }) => {
   const theme = useTheme();
   const [sensorParameters, setSensorParameters] = useState<string[]>([]);
@@ -180,46 +178,13 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   return (
     <Box
       sx={{
-        backgroundColor: theme.palette.background.default,
-        overflow: "hidden",
+        backgroundColor: "background.paper",
         borderRadius: 2,
-        boxShadow: "0 4px 24px rgba(0,0,0,0.28)",
+        border: `1px solid ${theme.palette.grey[300]}`,
+        boxShadow: "0 18px 40px rgba(15, 23, 42, 0.16)",
+        overflow: "hidden",
       }}
     >
-      {/* Custom header: primary color, site name left, X right */}
-      <Box
-        sx={{
-          bgcolor: "primary.main",
-          display: "flex",
-          alignItems: "center",
-          px: 1.5,
-          minHeight: 42,
-        }}
-      >
-        <Typography
-          sx={{
-            flex: 1,
-            color: "#fff",
-            fontSize: "0.85rem",
-            fontWeight: 700,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            letterSpacing: "0.3px",
-            mr: 1,
-          }}
-        >
-          {point.display_name}
-        </Typography>
-        <IconButton
-          size="small"
-          onClick={onClose}
-          sx={{ color: "#fff", p: 0.3, flexShrink: 0 }}
-        >
-          <CloseIcon sx={{ fontSize: "1rem" }} />
-        </IconButton>
-      </Box>
-
       <SensorFilterPanel
         startDate={startDate}
         startTime={startTime}
@@ -237,8 +202,6 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         siteName={point.display_name}
         region={point.region}
         infrastructureId={point.infrastructure_id}
-        lat={point.location?.lat}
-        lng={point.location?.lng}
       />
 
       <Divider sx={{ borderColor: theme.palette.grey[300] }} />

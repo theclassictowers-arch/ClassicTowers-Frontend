@@ -1,7 +1,6 @@
 import { useState, memo, FC, useEffect, useCallback, useMemo, useRef } from "react";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { InfoWindow, useMap } from "@vis.gl/react-google-maps";
-import { useTheme, ThemeProvider } from "@mui/material/styles";
 import { useSiteContext } from "../../../contexts";
 import { Point } from "../../../interfaces";
 import PinMarker from "./PinMarker";
@@ -29,8 +28,7 @@ const getStatusGlyph = (statuses: string[]): string => {
 };
 
 const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
-  const { setSelectedSite } = useSiteContext();
-  const theme = useTheme();
+  const { selectedSite, setSelectedSite } = useSiteContext();
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
@@ -47,7 +45,6 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
 
   // Use refs for values that shouldn't trigger re-renders
   const isDraggingRef = useRef(false);
-  const markerJustClickedRef = useRef(false);
   const initialCursorPositionRef = useRef({ x: 0, y: 0 });
   const initialInfoPositionRef = useRef<google.maps.LatLngLiteral | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -75,10 +72,6 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
     if (!map) return;
 
     const handleMapClick = () => {
-      if (markerJustClickedRef.current) {
-        markerJustClickedRef.current = false;
-        return;
-      }
       if (!isDraggingRef.current) {
         setSelectedPoint(null);
       }
@@ -137,23 +130,16 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
         position: point.location,
         title: point.display_name || point.key,
       });
-
-      // Deduplicate: gmp-click and click can both fire for the same user action
       let lastFired = 0;
       const onMarkerClick = () => {
         const now = Date.now();
         if (now - lastFired < 300) return;
         lastFired = now;
-        markerJustClickedRef.current = true;
         handleMarkerClick(point);
       };
-
-      // gmp-click is the AdvancedMarkerElement preferred event (newer GM versions)
       const l1 = (marker as any).addListener("gmp-click", onMarkerClick);
-      // click for backwards compatibility (older GM versions)
       const l2 = marker.addListener("click", onMarkerClick);
       markerListenersRef.current.push(l1, l2);
-
       return marker;
     });
 
@@ -287,7 +273,6 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
     };
   }, [handleDrag, handleDragEnd]);
 
-
   // Early return if no points
   if (!points.length) return null;
 
@@ -298,48 +283,40 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
           <PinMarker
             key={point.key}
             point={point}
-            onClick={() => {
-              markerJustClickedRef.current = true;
-              handleMarkerClick(point);
-            }}
+            onClick={() => handleMarkerClick(point)}
           />
         ))}
 
-
-{selectedPoint && (
+      {selectedPoint && infoWindowPosition && (
         <InfoWindow
-          position={infoWindowPosition ?? selectedPoint.location}
+          position={infoWindowPosition}
           onCloseClick={() => setSelectedPoint(null)}
           disableAutoPan={false}
+          pixelOffset={[0, -20]}
         >
-          <ThemeProvider theme={theme}>
-            <div
-              style={{
-                width: "408px",
-                maxWidth: "calc(100vw - 48px)",
-                height: "100%",
-                cursor: modalOpen
-                  ? "default"
-                  : isDraggingRef.current
-                  ? "grabbing"
-                  : "grab",
-                userSelect: "none",
-                backgroundColor: "transparent",
-              }}
-              onMouseDown={handleDragStart}
-              onClick={(e) => e.stopPropagation()}
-            >
+          <div
+            style={{
+              width: "408px",
+              maxWidth: "calc(100vw - 48px)",
+              height: "100%",
+              cursor: modalOpen
+                ? "default"
+                : isDraggingRef.current
+                ? "grabbing"
+                : "grab",
+              userSelect: "none",
+            }}
+            onMouseDown={handleDragStart}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {selectedSite && (
               <PointInfoWindow
                 point={selectedPoint}
-                coordinates={{
-                  latitude: selectedPoint.location.lat,
-                  longitude: selectedPoint.location.lng,
-                }}
+                coordinates={selectedSite}
                 onModalStateChange={handleModalStateChange}
-                onClose={() => setSelectedPoint(null)}
               />
-            </div>
-          </ThemeProvider>
+            )}
+          </div>
         </InfoWindow>
       )}
     </>
