@@ -62,6 +62,13 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   useEffect(() => {
     if (selectedPoint) {
       setInfoWindowPosition(selectedPoint.location);
+      // Hide scrollbar after InfoWindow DOM is ready — JS inline style is
+      // safe here (unlike CSS overrides which break GM's initialization)
+      const t = setTimeout(() => {
+        const el = document.querySelector(".gm-style-iw-d") as HTMLElement | null;
+        if (el) el.style.overflow = "hidden";
+      }, 80);
+      return () => clearTimeout(t);
     } else {
       setInfoWindowPosition(null);
     }
