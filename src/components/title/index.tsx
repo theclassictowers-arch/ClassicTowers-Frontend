@@ -34,9 +34,10 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
           justifyContent: "center",
           color: theme.palette.mode === "light" ? "#0b70c2" : "#fff",
           "& .MuiButtonBase-root": {
-            backgroundColor: alpha(theme.palette.primary.main, 0.60),
+            backgroundColor: theme.palette.background.paper,
+            color: theme.palette.text.primary,
             "&:hover": {
-              backgroundColor: alpha(theme.palette.primary.main, 0.75),
+              backgroundColor: theme.palette.action.hover,
             },
           },
         }}
