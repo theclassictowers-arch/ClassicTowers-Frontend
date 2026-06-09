@@ -274,8 +274,10 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   useEffect(() => {
     const cleanup = () => {
       document.querySelector(".gm-iw-site-name")?.remove();
-      const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
-      if (chr) chr.style.background = "";
+      [".gm-style-iw-chr", ".gm-style-iw", ".gm-style-iw-c", ".gm-style-iw-d", ".gm-style-iw-t"].forEach((sel) => {
+        const el = document.querySelector(sel) as HTMLElement | null;
+        if (el) el.style.removeProperty("background");
+      });
     };
 
     if (!selectedPoint) { cleanup(); return; }
@@ -305,11 +307,14 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
         closeBtn.style.margin = "0";
       }
 
-      // Style InfoWindow body background to match theme
-      const iwBody = document.querySelector(".gm-style-iw-d") as HTMLElement | null;
-      if (iwBody) iwBody.style.background = paperColor;
-      const iwC = document.querySelector(".gm-style-iw-c") as HTMLElement | null;
-      if (iwC) iwC.style.background = paperColor;
+      // Apply app background to ALL Google Maps InfoWindow containers
+      [".gm-style-iw", ".gm-style-iw-c", ".gm-style-iw-d", ".gm-style-iw-t"].forEach((sel) => {
+        const el = document.querySelector(sel) as HTMLElement | null;
+        if (el) {
+          el.style.setProperty("background", paperColor, "important");
+          el.style.setProperty("background-color", paperColor, "important");
+        }
+      });
 
       // Remove old, inject fresh site name
       chr.querySelector(".gm-iw-site-name")?.remove();
