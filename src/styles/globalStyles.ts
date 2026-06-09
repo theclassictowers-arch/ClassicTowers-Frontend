@@ -326,4 +326,10 @@ export const appGlobalStyles = {
     ".MuiDrawer-docked:has([data-sidebar-collapsed='false']) .MuiListItemText-primary": { display: "block !important", opacity: "1 !important", visibility: "visible !important", overflow: "hidden !important", textOverflow: "ellipsis !important", whiteSpace: "nowrap !important", lineHeight: "1 !important" },
     ".MuiDrawer-docked a": { textDecoration: "none" },
   },
+
+  /* Google Maps InfoWindow — hide native chrome and scrollbars */
+  ".gm-style-iw-chr": { height: "0 !important", overflow: "hidden !important", padding: "0 !important" },
+  ".gm-style-iw-d": { overflow: "hidden !important" },
+  ".gm-style-iw-t": { display: "none !important" },
+  ".gm-style-iw-c": { padding: "0 !important" },
 };
