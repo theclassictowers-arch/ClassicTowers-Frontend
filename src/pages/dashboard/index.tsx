@@ -104,7 +104,7 @@ export const DashboardPage: React.FC = () => {
           position: isAdmin ? "absolute" : "relative",
           top: isAdmin ? 0 : "auto",
           left: isAdmin ? 0 : "auto",
-          right: isAdmin ? 0 : "auto",
+          right: isAdmin ? { xs: 0, md: "112px" } : "auto",
           zIndex: 2,
           pointerEvents: "none",
           "& > *": {
