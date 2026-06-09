@@ -180,10 +180,11 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   return (
     <Box
       sx={{
-        backgroundColor: theme.palette.background.default,
+        background: theme.palette.background.paper,
+        border: `1px solid ${theme.palette.divider}`,
         overflow: "hidden",
         borderRadius: 2,
-        boxShadow: "0 4px 24px rgba(0,0,0,0.28)",
+        boxShadow: theme.shadows[8],
       }}
     >
       {/* Custom header: primary color, site name left, X right */}

@@ -53,11 +53,23 @@ body,
 }
 
 .gm-style .gm-style-iw-c {
-  padding: 0;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+}
+
+.gm-style .gm-style-iw-t::after {
+  display: none !important;
+}
+
+.gm-style .gm-style-iw-d {
+  overflow: visible !important;
+  max-height: none !important;
 }
 
 .gm-style-iw-chr {
-  background-color: #80affa;
+  display: none !important;
 }
 
 .MuiBox-root .css-1tywhkr {

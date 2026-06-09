@@ -73,7 +73,7 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
   const canAdd = !hasEmptyRow && !allSelected;
 
   return (
-    <Box sx={{ p: 1, backgroundColor: theme.palette.background.default }}>
+    <Box sx={{ p: 1 }}>
       <Typography
         variant="overline"
         sx={{

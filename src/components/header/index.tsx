@@ -13,8 +13,9 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import BrightnessHighIcon from "@mui/icons-material/BrightnessHigh";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import type { IIdentity } from "../../interfaces";
-import { ColorModeContext } from "../../contexts";
+import { ColorModeContext, useSiteContext } from "../../contexts";
 
 interface IOptions {
   label: string;
@@ -30,6 +31,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
   const colorModeContext = useContext(ColorModeContext);
   const mode = colorModeContext?.mode;
   const toggleMode = colorModeContext?.toggleMode;
+  const { selectedSite } = useSiteContext();
 
   const changeLanguage = useSetLocale();
   const locale = useGetLocale();
@@ -80,9 +82,32 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
           <HamburgerMenu />
         </Box>
 
+        {selectedSite?.name && (
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap="6px"
+            sx={{
+              flex: 1,
+              overflow: "hidden",
+              mr: 2,
+            }}
+          >
+            <LocationOnIcon sx={{ fontSize: "1rem", color: "primary.main", flexShrink: 0 }} />
+            <Typography
+              variant="body2"
+              fontWeight={600}
+              noWrap
+              sx={{ color: "text.primary" }}
+            >
+              {selectedSite.name}
+            </Typography>
+          </Stack>
+        )}
+
         <Stack
           direction="row"
-          width="100%"
+          width={selectedSite?.name ? "auto" : "100%"}
           justifyContent="end"
           alignItems="center"
           gap={{

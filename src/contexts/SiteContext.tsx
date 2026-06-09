@@ -9,11 +9,12 @@ import React, {
 interface SiteCoordinates {
   longitude: number;
   latitude: number;
+  name?: string;
 }
 
 interface SiteContextType {
   selectedSite: SiteCoordinates | undefined;
-  setSelectedSite: (longitude: number, latitude: number) => void;
+  setSelectedSite: (longitude: number, latitude: number, name?: string) => void;
 }
 
 const SiteContext = createContext<SiteContextType | undefined>(undefined);
@@ -32,8 +33,8 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({
     SiteCoordinates | undefined
   >(undefined);
 
-  const setSelectedSite = useCallback((longitude: number, latitude: number) => {
-    setSelectedSiteState({ longitude, latitude });
+  const setSelectedSite = useCallback((longitude: number, latitude: number, name?: string) => {
+    setSelectedSiteState({ longitude, latitude, name });
   }, []);
 
   const value = useMemo(
