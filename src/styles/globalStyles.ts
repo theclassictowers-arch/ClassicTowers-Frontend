@@ -47,6 +47,15 @@ export const appGlobalStyles = {
     "100%": { opacity: 1, transform: "perspective(900px) translateX(0) translateY(0) rotateY(0deg)", filter: "blur(0)" },
   },
 
+  /* Google Maps InfoWindow — hide scrollbar, remove extra padding */
+  ".gm-style-iw-d": {
+    overflow: "hidden !important",
+    scrollbarWidth: "none",
+  },
+  ".gm-style-iw-d::-webkit-scrollbar": { display: "none" },
+  ".gm-style-iw": { padding: "0 !important" },
+  ".gm-style-iw-c": { padding: "0 !important" },
+
   ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.MuiSwitch-switchBase):not(.MuiSlider-thumb):not(.Mui-disabled)": {
     transform: "perspective(700px) translateZ(0)",
     transformStyle: "preserve-3d",

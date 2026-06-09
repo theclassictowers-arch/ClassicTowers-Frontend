@@ -169,47 +169,6 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ borderRadius: 1, bgcolor: "background.paper" }}>
-        {/* Blue header with site name */}
-        <Box
-          sx={{
-            bgcolor: theme.palette.primary.main,
-            borderRadius: "8px 8px 0 0",
-            px: 1.5,
-            py: 0.85,
-            display: "flex",
-            alignItems: "center",
-            gap: 0.75,
-            pr: 5,
-          }}
-        >
-          <Box
-            sx={{
-              width: 7,
-              height: 7,
-              borderRadius: "50%",
-              bgcolor: "white",
-              flexShrink: 0,
-              opacity: 0.85,
-            }}
-          />
-          <Tooltip title={siteName} arrow placement="bottom-start">
-            <Typography
-              sx={{
-                fontSize: "0.82rem",
-                fontWeight: 700,
-                color: "white",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                letterSpacing: 0.2,
-              }}
-            >
-              {siteName}
-            </Typography>
-          </Tooltip>
-        </Box>
-
-        {/* Content area */}
         <Box sx={{ p: 1 }}>
           {/* Applied filter chip */}
           {isFilterApplied && (
