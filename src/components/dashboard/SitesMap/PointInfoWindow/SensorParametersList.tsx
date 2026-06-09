@@ -1,12 +1,17 @@
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 import {
   Box,
   Typography,
   Button,
   Stack,
-  Checkbox,
-  FormControlLabel,
+  Select,
+  MenuItem,
+  IconButton,
+  FormControl,
+  useTheme,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface SensorParametersListProps {
   status: Record<string, any>;
@@ -33,33 +38,42 @@ const labelMapping: Record<string, string> = {
 export const SensorParametersList: FC<SensorParametersListProps> = ({
   status,
   onStatusClick,
-  appliedFilter,
 }) => {
-  const [selectedParameters, setSelectedParameters] = useState<string[]>([]);
+  const theme = useTheme();
+  const [rows, setRows] = useState<string[]>([""]);
 
-  const handleParameterSelect = (key: string) => {
-    setSelectedParameters((prev) => {
-      if (prev.includes(key)) return prev.filter((k) => k !== key);
-      if (prev.length >= 3) return prev;
-      return [...prev, key];
+  const availableKeys = Object.keys(status);
+
+  const handleRowChange = (index: number, value: string) => {
+    setRows((prev) => prev.map((r, i) => (i === index ? value : r)));
+  };
+
+  const handleAdd = () => {
+    setRows((prev) => [...prev, ""]);
+  };
+
+  const handleRemove = (index: number) => {
+    setRows((prev) => {
+      const next = prev.filter((_, i) => i !== index);
+      return next.length === 0 ? [""] : next;
     });
   };
 
   const handleConfirm = () => {
-    if (selectedParameters.length > 0) {
-      onStatusClick(selectedParameters);
-      setSelectedParameters([]);
+    const selected = rows.filter((r) => r !== "");
+    if (selected.length > 0) {
+      onStatusClick(selected);
+      setRows([""]);
     }
   };
 
+  const selectedKeys = rows.filter((r) => r !== "");
+  const allSelected = availableKeys.every((k) => rows.includes(k));
+  const hasEmptyRow = rows.some((r) => r === "");
+  const canAdd = !hasEmptyRow && !allSelected;
+
   return (
-    <Box
-      sx={{
-        p: 1,
-        borderRadius: 1,
-        bgcolor: "background.default",
-      }}
-    >
+    <Box sx={{ p: 1, backgroundColor: theme.palette.background.default }}>
       <Typography
         variant="overline"
         sx={{
@@ -74,134 +88,80 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
         PARAMETERS
       </Typography>
 
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
-          gap: 0.5,
-        }}
-      >
-        {Object.entries(status).map(([key]) => {
-          const isMultiCheckbox = [
-            "vibrationAngle",
-            "vibrationDisplacement",
-            "vibrationFrequency",
-            "vibrationSpeed",
-          ].includes(key);
+      <Stack spacing={0.75}>
+        {rows.map((row, index) => (
+          <Stack key={index} direction="row" spacing={0.5} alignItems="center">
+            <FormControl fullWidth size="small">
+              <Select
+                value={row}
+                onChange={(e) => handleRowChange(index, e.target.value as string)}
+                displayEmpty
+                sx={{
+                  fontSize: "0.75rem",
+                  "& .MuiSelect-select": { py: 0.6 },
+                }}
+              >
+                <MenuItem value="" disabled sx={{ fontSize: "0.75rem", color: "text.disabled" }}>
+                  Select parameter…
+                </MenuItem>
+                {availableKeys
+                  .filter((k) => !rows.includes(k) || k === row)
+                  .map((k) => (
+                    <MenuItem key={k} value={k} sx={{ fontSize: "0.75rem" }}>
+                      {labelMapping[k] ?? k}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
 
-          return (
-            <Box
-              key={key}
+            <IconButton
+              size="small"
+              onClick={() => handleRemove(index)}
+              disabled={rows.length === 1 && row === ""}
               sx={{
-                border: 1,
-                borderColor:
-                  selectedParameters.includes(key) ? "primary.main" : "divider",
-                borderRadius: 1,
-                overflow: "hidden",
-                transition: "all 0.2s ease",
+                flexShrink: 0,
+                color: "text.secondary",
+                "&:hover": { color: "error.main" },
               }}
             >
-              <Box
-                onClick={() => handleParameterSelect(key)}
-                sx={{
-                  bgcolor:
-                    selectedParameters.includes(key)
-                      ? "action.selected"
-                      : "transparent",
-                  color:
-                    selectedParameters.includes(key) ? "primary.main" : "text.primary",
-                  p: 0.5,
-                  textAlign: "center",
-                  cursor: "pointer",
-                  fontSize: "0.6rem",
-                  fontWeight: selectedParameters.includes(key) ? 600 : 400,
-                  borderBottom: 1,
-                  borderColor: "divider",
-                }}
-              >
-                {labelMapping[key] ?? key}
-              </Box>
+              <CloseIcon sx={{ fontSize: "0.9rem" }} />
+            </IconButton>
+          </Stack>
+        ))}
+      </Stack>
 
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  py: 0.25,
-                }}
-              >
-                {isMultiCheckbox ? (
-                  ["x", "y", "z"].map((axis) => (
-                    <FormControlLabel
-                      key={axis}
-                      control={
-                        <Checkbox
-                          size="small"
-                          checked={selectedParameters.includes(key)}
-                          sx={{
-                            p: 0,
-                            mx: 0.25,
-                            color: "action.disabled",
-                            "&.Mui-checked": {
-                              color: "primary.main",
-                            },
-                          }}
-                        />
-                      }
-                      label={axis}
-                      sx={{
-                        m: 0,
-                        "& .MuiFormControlLabel-label": {
-                          fontSize: "0.6rem",
-                          color: "text.secondary",
-                        },
-                      }}
-                    />
-                  ))
-                ) : (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        checked={selectedParameters.includes(key)}
-                        sx={{
-                          p: 0,
-                          mx: 0.25,
-                          color: "action.disabled",
-                          "&.Mui-checked": {
-                            color: "primary.main",
-                          },
-                        }}
-                      />
-                    }
-                    label="value"
-                    sx={{
-                      m: 0,
-                      "& .MuiFormControlLabel-label": {
-                        fontSize: "0.6rem",
-                        color: "text.secondary",
-                      },
-                    }}
-                  />
-                )}
-              </Box>
-            </Box>
-          );
-        })}
-      </Box>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ mt: 1 }}
+      >
+        <Button
+          size="small"
+          startIcon={<AddIcon sx={{ fontSize: "0.85rem !important" }} />}
+          onClick={handleAdd}
+          disabled={!canAdd}
+          sx={{
+            fontSize: "0.7rem",
+            textTransform: "none",
+            color: theme.palette.primary.main,
+            px: 0.5,
+          }}
+        >
+          Add
+        </Button>
 
-      <Stack direction="row" justifyContent="flex-end" sx={{ mt: 0.5 }}>
         <Button
           variant="contained"
           size="small"
           onClick={handleConfirm}
-          disabled={selectedParameters.length === 0}
+          disabled={selectedKeys.length === 0}
           disableElevation
           sx={{
             textTransform: "none",
             px: 1.5,
-            py: 0.5,
-            fontSize: "0.65rem",
+            py: 0.4,
+            fontSize: "0.7rem",
             minWidth: 0,
           }}
         >

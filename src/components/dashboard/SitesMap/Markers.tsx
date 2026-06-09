@@ -314,6 +314,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
                 point={selectedPoint}
                 coordinates={selectedSite}
                 onModalStateChange={handleModalStateChange}
+                onClose={() => setSelectedPoint(null)}
               />
             )}
           </div>

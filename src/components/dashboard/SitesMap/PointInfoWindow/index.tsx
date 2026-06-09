@@ -1,5 +1,7 @@
 import { Dispatch, FC, useState, useEffect } from "react";
-import { Box, Divider, useTheme } from "@mui/material";
+import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useList } from "@refinedev/core";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -8,14 +10,15 @@ import { InfoWindowContentProps } from "./types";
 import { SensorFilterPanel } from "./SensorFilterPanel";
 import { SensorParametersList } from "./SensorParametersList";
 
-// Update the interface to include the onModalStateChange callback
 interface ExtendedInfoWindowContentProps extends InfoWindowContentProps {
   onModalStateChange?: Dispatch<boolean>;
+  onClose?: () => void;
 }
 
 const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   point,
   onModalStateChange,
+  onClose,
 }) => {
   const theme = useTheme();
   const [sensorParameters, setSensorParameters] = useState<string[]>([]);
@@ -185,6 +188,36 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         overflow: "hidden",
       }}
     >
+      {/* Header: primary color, location icon + site name, close button */}
+      <Box
+        sx={{
+          bgcolor: "primary.main",
+          display: "flex",
+          alignItems: "center",
+          px: 1.5,
+          py: 0.75,
+          gap: 0.75,
+        }}
+      >
+        <LocationOnIcon sx={{ color: "#fff", fontSize: "1rem", flexShrink: 0 }} />
+        <Typography
+          sx={{
+            flex: 1,
+            color: "#fff",
+            fontSize: "0.82rem",
+            fontWeight: 700,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {point.display_name}
+        </Typography>
+        <IconButton size="small" onClick={onClose} sx={{ color: "#fff", p: 0.25, flexShrink: 0 }}>
+          <CloseIcon sx={{ fontSize: "1rem" }} />
+        </IconButton>
+      </Box>
+
       <SensorFilterPanel
         startDate={startDate}
         startTime={startTime}
@@ -202,6 +235,8 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         siteName={point.display_name}
         region={point.region}
         infrastructureId={point.infrastructure_id}
+        lat={point.location?.lat}
+        lng={point.location?.lng}
       />
 
       <Divider sx={{ borderColor: theme.palette.grey[300] }} />
