@@ -137,11 +137,23 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
         position: point.location,
         title: point.display_name || point.key,
       });
-      const listener = marker.addListener("click", () => {
+
+      // Deduplicate: gmp-click and click can both fire for the same user action
+      let lastFired = 0;
+      const onMarkerClick = () => {
+        const now = Date.now();
+        if (now - lastFired < 300) return;
+        lastFired = now;
         markerJustClickedRef.current = true;
         handleMarkerClick(point);
-      });
-      markerListenersRef.current.push(listener);
+      };
+
+      // gmp-click is the AdvancedMarkerElement preferred event (newer GM versions)
+      const l1 = (marker as any).addListener("gmp-click", onMarkerClick);
+      // click for backwards compatibility (older GM versions)
+      const l2 = marker.addListener("click", onMarkerClick);
+      markerListenersRef.current.push(l1, l2);
+
       return marker;
     });
 
