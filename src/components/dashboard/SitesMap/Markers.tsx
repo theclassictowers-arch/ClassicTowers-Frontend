@@ -306,12 +306,11 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
         ))}
 
 
-{selectedPoint && infoWindowPosition && (
+{selectedPoint && (
         <InfoWindow
-          position={infoWindowPosition}
+          position={infoWindowPosition ?? selectedPoint.location}
           onCloseClick={() => setSelectedPoint(null)}
           disableAutoPan={false}
-          pixelOffset={[0, -20]}
         >
           <ThemeProvider theme={theme}>
             <div
@@ -325,7 +324,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
                   ? "grabbing"
                   : "grab",
                 userSelect: "none",
-                backgroundColor: theme.palette.background.default,
+                backgroundColor: "transparent",
               }}
               onMouseDown={handleDragStart}
               onClick={(e) => e.stopPropagation()}
