@@ -281,7 +281,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
     if (!selectedPoint) { cleanup(); return; }
 
     const primaryColor = theme.palette.primary.main;
-    const paperColor = theme.palette.background.paper;
+    const paperColor = theme.palette.background.default;
 
     const apply = () => {
       const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
@@ -335,7 +335,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
       const t = setTimeout(apply, 200);
       return () => clearTimeout(t);
     }
-  }, [selectedPoint, theme.palette.primary.main, theme.palette.background.paper]);
+  }, [selectedPoint, theme.palette.primary.main, theme.palette.background.default]);
 
   // Early return if no points
   if (!points.length) return null;

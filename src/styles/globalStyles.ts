@@ -52,11 +52,12 @@ export const appGlobalStyles = {
     overflow: "hidden !important",
     scrollbarWidth: "none",
     background: "transparent",
+    padding: "0 !important",
   },
   ".gm-style-iw-d::-webkit-scrollbar": { display: "none" },
   ".gm-style-iw-c": { padding: "0 !important", background: "transparent !important" },
   ".gm-style-iw": { padding: "0 !important", background: "transparent !important" },
-  ".gm-style-iw-chr": { borderRadius: "0" },
+  ".gm-style-iw-chr": { borderRadius: "0", margin: "0 !important" },
 
   ".MuiButtonBase-root:not(.MuiListItemButton-root):not(.MuiSwitch-switchBase):not(.MuiSlider-thumb):not(.Mui-disabled)": {
     transform: "perspective(700px) translateZ(0)",

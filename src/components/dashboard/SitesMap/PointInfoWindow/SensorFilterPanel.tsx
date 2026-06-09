@@ -168,7 +168,7 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ borderRadius: 1, bgcolor: "background.paper" }}>
+      <Box sx={{ bgcolor: "background.default" }}>
         <Box sx={{ p: 1 }}>
           {/* Applied filter chip */}
           {isFilterApplied && (
