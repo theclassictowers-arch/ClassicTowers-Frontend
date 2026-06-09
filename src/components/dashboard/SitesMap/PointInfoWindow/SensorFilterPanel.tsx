@@ -163,22 +163,7 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ borderRadius: 1, bgcolor: "background.paper", p: 1 }}>
-        {/* Infrastructure ID - top */}
-        {infrastructureId && (
-          <Typography
-            variant="caption"
-            sx={{
-              display: "block",
-              color: theme.palette.text.secondary,
-              fontSize: "0.7rem",
-              mb: 0.5,
-            }}
-          >
-            ID: <strong>{infrastructureId}</strong>
-          </Typography>
-        )}
-
-        {/* Header with location */}
+        {/* Header with location — always first/topmost row */}
         <Box
           sx={{
             display: "flex",
@@ -277,6 +262,21 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
             )}
           </Stack>
         </Box>
+
+        {/* Infrastructure ID — below header */}
+        {infrastructureId && (
+          <Typography
+            variant="caption"
+            sx={{
+              display: "block",
+              color: theme.palette.text.secondary,
+              fontSize: "0.7rem",
+              mb: 0.5,
+            }}
+          >
+            ID: <strong>{infrastructureId}</strong>
+          </Typography>
+        )}
 
         {/* Region */}
         {region && (
