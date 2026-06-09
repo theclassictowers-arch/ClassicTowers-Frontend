@@ -1,10 +1,6 @@
 import { useState, memo, FC, useEffect, useCallback, useMemo, useRef } from "react";
-import { createPortal } from "react-dom";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { InfoWindow, useMap } from "@vis.gl/react-google-maps";
-import { Box, Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSiteContext } from "../../../contexts";
 import { Point } from "../../../interfaces";
 import PinMarker from "./PinMarker";
@@ -35,8 +31,6 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   const { selectedSite, setSelectedSite } = useSiteContext();
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [badgeContainer, setBadgeContainer] = useState<HTMLDivElement | null>(null);
-  const theme = useTheme();
 
   const map = useMap();
   const [infoWindowPosition, setInfoWindowPosition] =
@@ -273,56 +267,6 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
     };
   }, [handleDrag, handleDragEnd]);
 
-  // Inject site name badge into Google Maps native .gm-style-iw-chr header
-  useEffect(() => {
-    // Always remove old containers first so portal unmounts cleanly
-    document.querySelectorAll(".site-badge-portal").forEach((el) => el.remove());
-    setBadgeContainer(null);
-
-    if (!selectedPoint) {
-      const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
-      if (chr) chr.style.background = "";
-      return;
-    }
-
-    const primaryColor = theme.palette.primary.main;
-
-    const inject = () => {
-      const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
-      if (!chr) return false;
-
-      Object.assign(chr.style, {
-        background: primaryColor,
-        display: "flex",
-        alignItems: "center",
-        padding: "4px 4px 4px 10px",
-        borderRadius: "8px 8px 0 0",
-        minHeight: "36px",
-      });
-
-      const closeBtn = chr.querySelector("button") as HTMLButtonElement | null;
-      if (closeBtn) {
-        closeBtn.style.filter = "brightness(0) invert(1)";
-        closeBtn.style.opacity = "0.85";
-        closeBtn.style.flexShrink = "0";
-      }
-
-      // Always create fresh container so React portal re-mounts
-      const container = document.createElement("div");
-      container.className = "site-badge-portal";
-      container.style.flex = "1";
-      container.style.minWidth = "0";
-      container.style.overflow = "hidden";
-      chr.insertBefore(container, chr.firstChild);
-      setBadgeContainer(container);
-      return true;
-    };
-
-    if (!inject()) {
-      const timer = setTimeout(inject, 200);
-      return () => clearTimeout(timer);
-    }
-  }, [selectedPoint, theme.palette.primary.main]);
 
   // Early return if no points
   if (!points.length) return null;
@@ -338,40 +282,8 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
           />
         ))}
 
-      {badgeContainer && selectedPoint && createPortal(
-        <Box
-          key={selectedPoint.key}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            border: "1.5px solid rgba(255,255,255,0.70)",
-            borderRadius: "20px",
-            px: 1,
-            py: 0.25,
-            overflow: "hidden",
-            maxWidth: 260,
-          }}
-        >
-          <LocationOnIcon sx={{ color: "white", fontSize: "0.9rem", flexShrink: 0 }} />
-          <Typography
-            sx={{
-              fontSize: "0.78rem",
-              fontWeight: 700,
-              color: "white",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              letterSpacing: 0.2,
-            }}
-          >
-            {selectedPoint.display_name}
-          </Typography>
-        </Box>,
-        badgeContainer
-      )}
 
-      {selectedPoint && infoWindowPosition && (
+{selectedPoint && infoWindowPosition && (
         <InfoWindow
           position={infoWindowPosition}
           onCloseClick={() => setSelectedPoint(null)}
