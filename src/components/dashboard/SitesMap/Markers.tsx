@@ -293,6 +293,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
           onCloseClick={() => setSelectedPoint(null)}
           disableAutoPan={false}
           pixelOffset={[0, -20]}
+          headerDisabled
         >
           <div
             style={{

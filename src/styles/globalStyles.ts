@@ -327,4 +327,9 @@ export const appGlobalStyles = {
     ".MuiDrawer-docked a": { textDecoration: "none" },
   },
 
+  /* Google Maps InfoWindow — transparent wrapper, headerDisabled removes native chrome */
+  ".gm-style-iw-c": { padding: "0 !important", background: "transparent !important", boxShadow: "none !important" },
+  ".gm-style-iw": { padding: "0 !important" },
+  ".gm-style-iw-d": { overflow: "hidden !important" },
+  ".gm-style-iw-t": { display: "none !important" },
 };

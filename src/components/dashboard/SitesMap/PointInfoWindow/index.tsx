@@ -181,10 +181,12 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   return (
     <Box
       sx={{
-        backgroundColor: "background.paper",
+        background: "color-mix(in srgb, var(--app-bg-color, #f5f7fb) 60%, transparent)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
         borderRadius: 2,
-        border: `1px solid ${theme.palette.grey[300]}`,
-        boxShadow: "0 18px 40px rgba(15, 23, 42, 0.16)",
+        border: `1px solid rgba(148, 163, 184, 0.22)`,
+        boxShadow: "0 18px 40px rgba(15, 23, 42, 0.22)",
         overflow: "hidden",
       }}
     >
