@@ -36,13 +36,13 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
           "& .MuiButtonBase-root": {
             backgroundColor:
               theme.palette.mode === "dark"
-                ? "rgba(255, 255, 255, 0.12)"
-                : "rgba(0, 0, 0, 0.10)",
+                ? "rgba(255, 255, 255, 0.60)"
+                : "rgba(0, 0, 0, 0.60)",
             "&:hover": {
               backgroundColor:
                 theme.palette.mode === "dark"
-                  ? "rgba(255, 255, 255, 0.20)"
-                  : "rgba(0, 0, 0, 0.16)",
+                  ? "rgba(255, 255, 255, 0.72)"
+                  : "rgba(0, 0, 0, 0.72)",
             },
           },
         }}
