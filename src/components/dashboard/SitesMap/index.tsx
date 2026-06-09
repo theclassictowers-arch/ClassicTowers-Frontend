@@ -305,8 +305,8 @@ export const SitesMap = ({ siteData, isLoading, onExpandChange }: any) => {
               spacing={1}
               sx={{
                 position: "absolute",
-                right: 16,
-                top: 16,
+                right: 6,
+                top: 6,
                 zIndex: 5,
               }}
             >

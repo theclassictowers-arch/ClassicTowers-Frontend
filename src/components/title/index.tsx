@@ -33,6 +33,18 @@ export const Title: React.FC<TitleProps> = ({ collapsed }) => {
           alignItems: "center",
           justifyContent: "center",
           color: theme.palette.mode === "light" ? "#0b70c2" : "#fff",
+          "& .MuiButtonBase-root": {
+            backgroundColor:
+              theme.palette.mode === "dark"
+                ? "rgba(255, 255, 255, 0.12)"
+                : "rgba(0, 0, 0, 0.10)",
+            "&:hover": {
+              backgroundColor:
+                theme.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.20)"
+                  : "rgba(0, 0, 0, 0.16)",
+            },
+          },
         }}
       >
         <HamburgerMenu />
