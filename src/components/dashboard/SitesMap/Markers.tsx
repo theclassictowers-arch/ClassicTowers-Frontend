@@ -1,6 +1,10 @@
 import { useState, memo, FC, useEffect, useCallback, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { InfoWindow, useMap } from "@vis.gl/react-google-maps";
+import { Box, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSiteContext } from "../../../contexts";
 import { Point } from "../../../interfaces";
 import PinMarker from "./PinMarker";
@@ -31,6 +35,8 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   const { selectedSite, setSelectedSite } = useSiteContext();
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [badgeContainer, setBadgeContainer] = useState<HTMLDivElement | null>(null);
+  const theme = useTheme();
 
   const map = useMap();
   const [infoWindowPosition, setInfoWindowPosition] =
@@ -267,6 +273,49 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
     };
   }, [handleDrag, handleDragEnd]);
 
+  // Inject site name badge into Google Maps native .gm-style-iw-chr header
+  useEffect(() => {
+    if (!selectedPoint) {
+      document.querySelector(".site-badge-portal")?.remove();
+      setBadgeContainer(null);
+      const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
+      if (chr) chr.style.background = "";
+      return;
+    }
+
+    const inject = () => {
+      const chr = document.querySelector(".gm-style-iw-chr") as HTMLElement | null;
+      if (!chr) return false;
+
+      chr.style.background = theme.palette.primary.main;
+      chr.style.display = "flex";
+      chr.style.alignItems = "center";
+      chr.style.padding = "4px 4px 4px 10px";
+      chr.style.borderRadius = "8px 8px 0 0";
+
+      const closeBtn = chr.querySelector("button") as HTMLButtonElement | null;
+      if (closeBtn) {
+        closeBtn.style.filter = "brightness(0) invert(1)";
+        closeBtn.style.opacity = "0.9";
+      }
+
+      let container = chr.querySelector(".site-badge-portal") as HTMLDivElement | null;
+      if (!container) {
+        container = document.createElement("div");
+        container.className = "site-badge-portal";
+        container.style.flex = "1";
+        chr.insertBefore(container, chr.firstChild);
+      }
+      setBadgeContainer(container);
+      return true;
+    };
+
+    if (!inject()) {
+      const timer = setTimeout(inject, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedPoint, theme.palette.primary.main]);
+
   // Early return if no points
   if (!points.length) return null;
 
@@ -280,6 +329,16 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
             onClick={() => handleMarkerClick(point)}
           />
         ))}
+
+      {badgeContainer && selectedPoint && createPortal(
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, border: "1.5px solid rgba(255,255,255,0.75)", borderRadius: "20px", px: 1, py: 0.3, overflow: "hidden", maxWidth: 240 }}>
+          <LocationOnIcon sx={{ color: "white", fontSize: "0.95rem", flexShrink: 0 }} />
+          <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "white", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            {selectedPoint.display_name}
+          </Typography>
+        </Box>,
+        badgeContainer
+      )}
 
       {selectedPoint && infoWindowPosition && (
         <InfoWindow

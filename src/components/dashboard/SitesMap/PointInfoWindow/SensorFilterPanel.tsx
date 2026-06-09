@@ -12,7 +12,6 @@ import {
   IconButton,
   Chip,
 } from "@mui/material";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CloseIcon from "@mui/icons-material/Close";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -163,53 +162,6 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ borderRadius: 1, bgcolor: "background.paper" }}>
-        {/* Blue header bar */}
-        <Box
-          sx={{
-            bgcolor: theme.palette.primary.main,
-            borderRadius: "8px 8px 0 0",
-            px: 1.5,
-            py: 0.85,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-            pr: 5,
-          }}
-        >
-          <Tooltip title={siteName} arrow placement="bottom-end">
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.5,
-                bgcolor: "transparent",
-                border: "1.5px solid rgba(255,255,255,0.75)",
-                borderRadius: "20px",
-                px: 1,
-                py: 0.3,
-                maxWidth: 260,
-                overflow: "hidden",
-              }}
-            >
-              <LocationOnIcon
-                sx={{ color: "white", fontSize: "0.95rem", flexShrink: 0 }}
-              />
-              <Typography
-                sx={{
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  color: "white",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {siteName}
-              </Typography>
-            </Box>
-          </Tooltip>
-        </Box>
-
         {/* Content area */}
         <Box sx={{ p: 1 }}>
           {/* Applied filter chip */}
