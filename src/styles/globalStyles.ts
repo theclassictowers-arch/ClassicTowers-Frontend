@@ -47,19 +47,27 @@ export const appGlobalStyles = {
     "100%": { opacity: 1, transform: "perspective(900px) translateX(0) translateY(0) rotateY(0deg)", filter: "blur(0)" },
   },
 
-  /* Google Maps InfoWindow — all native chrome stripped, React owns all visuals */
-  ".gm-style-iw-chr": { display: "none !important" },
-  ".gm-style-iw, .gm-style-iw-c": {
+  /* Google Maps InfoWindow — transparent containers, React content handles all visuals */
+  ".gm-style-iw-chr": {
+    height: "0 !important",
+    minHeight: "0 !important",
+    overflow: "hidden !important",
+    padding: "0 !important",
+    margin: "0 !important",
+  },
+  ".gm-style-iw": {
+    padding: "0 !important",
+    background: "transparent !important",
+  },
+  ".gm-style-iw-c": {
     padding: "0 !important",
     background: "transparent !important",
     boxShadow: "none !important",
-    overflow: "hidden !important",
   },
   ".gm-style-iw-d": {
     overflow: "hidden !important",
     padding: "0 !important",
     background: "transparent !important",
-    maxHeight: "none !important",
   },
   ".gm-style-iw-d > div": { overflow: "hidden !important" },
   ".gm-style-iw-t": { display: "none !important" },
