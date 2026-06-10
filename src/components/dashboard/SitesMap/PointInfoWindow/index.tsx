@@ -181,7 +181,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   return (
     <Box
       sx={{
-        backgroundColor: "background.paper",
+        backgroundColor: "background.default",
         borderRadius: 2,
         overflow: "hidden",
       }}

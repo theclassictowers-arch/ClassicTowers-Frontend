@@ -67,7 +67,10 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
       const t = setTimeout(() => {
         [".gm-style-iw-d", ".gm-style-iw", ".gm-style-iw-c"].forEach((sel) => {
           const el = document.querySelector(sel) as HTMLElement | null;
-          if (el) el.style.overflow = "hidden";
+          if (el) {
+            el.style.overflow = "hidden";
+            el.style.backgroundColor = "transparent";
+          }
         });
       }, 80);
       return () => clearTimeout(t);

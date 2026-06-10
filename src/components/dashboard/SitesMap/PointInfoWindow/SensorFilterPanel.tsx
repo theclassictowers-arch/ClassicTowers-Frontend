@@ -215,6 +215,10 @@ export const SensorFilterPanel: FC<SensorFilterPanelProps> = ({
               py: 0.4,
               borderColor: theme.palette.divider,
               color: activePreset ? "inherit" : theme.palette.text.primary,
+              backgroundColor: activePreset ? undefined : theme.palette.background.paper,
+              "&:hover": {
+                backgroundColor: activePreset ? undefined : theme.palette.action.hover,
+              },
               justifyContent: "flex-start",
               gap: 0.5,
             }}
