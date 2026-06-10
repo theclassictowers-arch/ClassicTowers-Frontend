@@ -65,8 +65,10 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
       // Hide scrollbar after InfoWindow DOM is ready — JS inline style is
       // safe here (unlike CSS overrides which break GM's initialization)
       const t = setTimeout(() => {
-        const el = document.querySelector(".gm-style-iw-d") as HTMLElement | null;
-        if (el) el.style.overflow = "hidden";
+        [".gm-style-iw-d", ".gm-style-iw", ".gm-style-iw-c"].forEach((sel) => {
+          const el = document.querySelector(sel) as HTMLElement | null;
+          if (el) el.style.overflow = "hidden";
+        });
       }, 80);
       return () => clearTimeout(t);
     } else {
@@ -307,6 +309,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
               width: "408px",
               maxWidth: "calc(100vw - 48px)",
               height: "100%",
+              overflow: "hidden",
               cursor: modalOpen
                 ? "default"
                 : isDraggingRef.current
