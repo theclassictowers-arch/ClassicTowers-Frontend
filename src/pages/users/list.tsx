@@ -8,7 +8,7 @@ import {
   CreateButton,
 } from "@refinedev/mui";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
-import { Box, Typography } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 import { useAuthContext } from "../../contexts";
 import {
   APP_ROLES,
@@ -39,6 +39,9 @@ export const UserList = () => {
   const { dataGridProps } = useDataGrid({
     dataProviderName: "users",
     resource: "users",
+    queryOptions: {
+      refetchInterval: 10000,
+    },
     pagination: {
       mode: "client",
       pageSize: 10,
@@ -92,19 +95,35 @@ export const UserList = () => {
       },
       {
         field: "isApproved",
-        headerName: "Approved",
+        headerName: "Status",
         flex: 0.8,
-        valueGetter: (params) => (params.value ? "Yes" : "No"),
+        valueGetter: (params) => params.row.approvalStatus || (params.value ? "approved" : "not_approved"),
         renderCell: (params) => (
-          <Typography
-            variant="body2"
+          <Chip
+            size="small"
+            label={
+              params.value === "approved"
+                ? "Approved"
+                : params.value === "pending"
+                  ? "Pending"
+                  : "Not Approved"
+            }
             sx={{
-              color: params.value === "Yes" ? "success.main" : "error.main",
               fontWeight: "bold",
+              bgcolor:
+                params.value === "approved"
+                  ? "success.light"
+                  : params.value === "pending"
+                    ? "warning.light"
+                    : "error.light",
+              color:
+                params.value === "approved"
+                  ? "success.dark"
+                  : params.value === "pending"
+                    ? "warning.dark"
+                    : "error.dark",
             }}
-          >
-            {params.value}
-          </Typography>
+          />
         ),
       },
       {
@@ -117,6 +136,7 @@ export const UserList = () => {
         headerAlign: "center",
         minWidth: 80,
         renderCell: ({ row }) => {
+          if (row.accountSource === "pending_user") return null;
           if (!canManageUsers && role !== "team_lead") return null;
           return <ActionsCell row={row} />;
         },
