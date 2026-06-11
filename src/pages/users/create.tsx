@@ -187,6 +187,7 @@ export const UserCreate: React.FC = () => {
         email: data.email,
         password: data.password,
         role: data.userType,
+        loginUrl: `${window.location.origin}/login`,
       };
 
       // Add organization limits if creating organization
