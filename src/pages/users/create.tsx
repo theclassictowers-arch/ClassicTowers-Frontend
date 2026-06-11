@@ -16,7 +16,12 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 import { useAuthContext } from "../../contexts";
-import { axiosInstance } from "../../utils";
+import {
+  axiosInstance,
+  getAllowedCreatableUserRoles,
+  normalizeRole,
+  ROLE_LABELS,
+} from "../../utils";
 import { useNotification } from "@refinedev/core";
 import { useNavigate } from "react-router-dom";
 import { formStyles } from "../auth/styles";
@@ -85,9 +90,10 @@ export const UserCreate: React.FC = () => {
   const [loadingTeamLeads, setLoadingTeamLeads] = useState(false);
 
   // Check if current user is Organization or Team Lead (they don't need dropdowns)
-  const isOrganization = role === "organization";
-  const isTeamLead = role === "team_lead";
-  const isAdmin = role === "admin";
+  const currentRole = normalizeRole(role);
+  const isOrganization = currentRole === "organization";
+  const isTeamLead = currentRole === "team_lead";
+  const isAdmin = currentRole === "admin";
 
   const {
     register,
@@ -119,25 +125,11 @@ export const UserCreate: React.FC = () => {
   const watchedOrganization = watch("organization");
 
   // Get available roles based on current user role
-  const getAvailableRoles = () => {
-    switch (role) {
-      case "admin":
-        return [
-          { value: "organization", label: "Organization" },
-          { value: "team_lead", label: "Team Lead" },
-          { value: "operator", label: "Operator" },
-        ];
-      case "organization":
-        return [
-          { value: "team_lead", label: "Team Lead" },
-          { value: "operator", label: "Operator" },
-        ];
-      case "team_lead":
-        return [{ value: "operator", label: "Operator" }];
-      default:
-        return [];
-    }
-  };
+  const getAvailableRoles = () =>
+    getAllowedCreatableUserRoles(currentRole).map((value) => ({
+      value,
+      label: ROLE_LABELS[value],
+    }));
 
   // Fetch organizations when needed (ONLY for Admin - Organization/TeamLead don't need this)
   useEffect(() => {
@@ -233,12 +225,16 @@ export const UserCreate: React.FC = () => {
         payload.assignedTowerLimit = parseInt(data.assignedTowerLimit) || 0;
       }
 
-      await axiosInstance.post("/signup", payload);
+      const response = await axiosInstance.post("/signup", payload);
+      const successMessage =
+        typeof response.data === "string"
+          ? response.data
+          : response.data?.message || `${data.userType.replace("_", " ")} has been added`;
 
       open?.({
         type: "success",
-        message: "User created successfully!",
-        description: `${data.userType.replace("_", " ")} has been added`,
+        message: "User request sent successfully!",
+        description: successMessage,
       });
 
       reset();

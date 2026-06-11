@@ -3,13 +3,17 @@ import PeopleAltTwoToneIcon from "@mui/icons-material/PeopleAltTwoTone";
 import RoomTwoToneIcon from "@mui/icons-material/RoomTwoTone";
 import AdjustIcon from "@mui/icons-material/Adjust";
 import SettingsIcon from "@mui/icons-material/Settings";
+import {
+  canAccessSettings,
+  canCreateSites,
+  canEditSensors,
+  canViewSensors,
+  normalizeRole,
+} from "./access";
 
 export const getResources = (role: string) => {
-  const isAdmin = role === "admin";
-  const isTeamLead = role === "team_lead";
-
-  const isOrganization = role === "organization";
-  const canManageSettings = isAdmin || isOrganization;
+  const currentRole = normalizeRole(role);
+  const canManageSites = canCreateSites(currentRole);
 
   const baseResources = [
     {
@@ -20,7 +24,7 @@ export const getResources = (role: string) => {
         icon: <Dashboard />,
       },
     },
-    ...(!isAdmin && !isOrganization
+    ...(!canManageSites
       ? [
           {
             name: "sites",
@@ -35,7 +39,7 @@ export const getResources = (role: string) => {
       : []),
   ];
 
-  const adminResources = isAdmin
+  const adminResources = currentRole === "admin"
     ? [
         {
           name: "sites",
@@ -51,8 +55,12 @@ export const getResources = (role: string) => {
         {
           name: "limits",
           list: "/limits",
-          create: "/limits/create",
-          edit: "/limits/edit/:id",
+          ...(canEditSensors(currentRole)
+            ? {
+                create: "/limits/create",
+                edit: "/limits/edit/:id",
+              }
+            : {}),
           show: "/limits/show/:id",
           meta: {
             label: "Sensors",
@@ -73,7 +81,7 @@ export const getResources = (role: string) => {
       ]
     : [];
 
-  const teamLeadResources = isTeamLead
+  const teamLeadResources = currentRole === "team_lead"
     ? [
         {
           name: "users",
@@ -99,7 +107,7 @@ export const getResources = (role: string) => {
     : [];
 
   const organizationResources =
-    role === "organization"
+    currentRole === "organization"
       ? [
           {
             name: "sites",
@@ -125,7 +133,7 @@ export const getResources = (role: string) => {
         ]
       : [];
 
-  const settingsResources = canManageSettings
+  const settingsResources = canAccessSettings(currentRole)
     ? [
         {
           name: "settings",
@@ -141,7 +149,7 @@ export const getResources = (role: string) => {
   return [
     ...baseResources,
     ...adminResources,
-    ...teamLeadResources,
+    ...(canViewSensors(currentRole) ? teamLeadResources : []),
     ...organizationResources,
     ...settingsResources,
   ];

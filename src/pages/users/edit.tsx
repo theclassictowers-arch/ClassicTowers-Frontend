@@ -18,7 +18,13 @@ import { PhotoCamera } from "@mui/icons-material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useNotification } from "@refinedev/core";
 import { useNavigate, useParams } from "react-router-dom";
-import { axiosInstance } from "../../utils";
+import {
+  axiosInstance,
+  getAllowedEditableUserRoles,
+  normalizeRole,
+  ROLE_LABELS,
+  type AppRole,
+} from "../../utils";
 import { useAuthContext } from "../../contexts";
 import AssignSite from "../../components/site-assign/assignSite";
 import { formStyles } from "../auth/styles";
@@ -36,19 +42,6 @@ type UserEditFormValues = {
   profilePicture: File | string | null;
   assignedTowerLimit: number;
   towerLimit: number;
-};
-
-const getAllowedRoles = (currentUserRole?: string | null) => {
-  switch (currentUserRole) {
-    case "admin":
-      return ["admin", "organization", "team_lead", "operator"];
-    case "organization":
-      return ["team_lead", "operator"];
-    case "team_lead":
-      return ["operator"];
-    default:
-      return [];
-  }
 };
 
 export const UsersEdit: React.FC = () => {
@@ -86,8 +79,11 @@ export const UsersEdit: React.FC = () => {
   const watchedRole = watch("role");
 
   const roleOptions = useMemo(() => {
-    const allowed = getAllowedRoles(currentUserRole);
-    const withCurrent = watchedRole ? [...allowed, watchedRole] : allowed;
+    const allowed = getAllowedEditableUserRoles(currentUserRole);
+    const normalizedWatchedRole = normalizeRole(watchedRole);
+    const withCurrent = normalizedWatchedRole
+      ? [...allowed, normalizedWatchedRole]
+      : allowed;
     return Array.from(new Set(withCurrent));
   }, [currentUserRole, watchedRole]);
 
@@ -290,10 +286,7 @@ export const UsersEdit: React.FC = () => {
                   <Select {...field} labelId="user-edit-role-label" label="Role">
                     {roleOptions.map((option) => (
                       <MenuItem key={option} value={option}>
-                        {option
-                          .split("_")
-                          .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-                          .join(" ")}
+                        {ROLE_LABELS[option as AppRole]}
                       </MenuItem>
                     ))}
                   </Select>

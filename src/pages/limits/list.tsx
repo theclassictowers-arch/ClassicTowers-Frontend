@@ -15,6 +15,7 @@ import {
 } from "../../components/map-table-page";
 import { useAuthContext } from "../../contexts";
 import { TableSkeleton } from "../../components/table-skeleton";
+import { canEditSensors } from "../../utils";
 
 const ActionsCell = ({ row, canEdit }: { row: any; canEdit: boolean }) => (
   <>
@@ -25,7 +26,7 @@ const ActionsCell = ({ row, canEdit }: { row: any; canEdit: boolean }) => (
 
 export const LimitsList = () => {
   const { role } = useAuthContext();
-  const canEdit = role === "admin";
+  const canEdit = canEditSensors(role);
   const { dataGridProps } = useDataGrid({
     syncWithLocation: true,
     pagination: {

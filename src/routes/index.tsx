@@ -27,6 +27,14 @@ import {
 } from "@refinedev/react-router-v6";
 import { Title, CustomSider } from "../components";
 import { PersistentDashboardMap } from "../components";
+import {
+  canAccessSettings,
+  canCreateSites,
+  canCreateUsers,
+  canViewSensors,
+  canViewUsers,
+  canEditSensors,
+} from "../utils";
 
 const SettingsPage = lazy(() =>
   import("../pages/settings").then((module) => ({
@@ -50,10 +58,8 @@ const RouteFallback = () => (
 
 const AppRoutes: React.FC = () => {
   const { role } = useAuthContext();
-  const isAdmin = role === "admin";
-  const isTeamLead = role === "team_lead";
-  const isOrganization = role === "organization";
-  const canAddUsers = isAdmin || isOrganization || isTeamLead;
+  const canManageSites = canCreateSites(role);
+  const canAddUsers = canCreateUsers(role);
 
   return (
     <Routes>
@@ -76,7 +82,7 @@ const AppRoutes: React.FC = () => {
         }
       >
         <Route index element={<DashboardPage />} />
-        {(isAdmin || isOrganization) && (
+        {canAccessSettings(role) && (
           <Route
             path="/settings"
             element={
@@ -89,7 +95,7 @@ const AppRoutes: React.FC = () => {
 
         <Route path="/sites">
           <Route index element={<SiteList />} />
-          {(isAdmin || isOrganization) && (
+          {canManageSites && (
             <>
               <Route path="create" element={<SiteCreate />} />
               <Route
@@ -114,7 +120,7 @@ const AppRoutes: React.FC = () => {
           )}
         </Route>
 
-        {isAdmin || isTeamLead ? (
+        {canViewSensors(role) ? (
           <Route path="/limits">
             <Route index element={<LimitsList />} />
             <Route
@@ -126,7 +132,7 @@ const AppRoutes: React.FC = () => {
                 </>
               }
             />
-            {isAdmin && (
+            {canEditSensors(role) && (
               <>
                 <Route path="create" element={<LimitsCreate />} />
                 <Route
@@ -143,7 +149,7 @@ const AppRoutes: React.FC = () => {
           </Route>
         ) : null}
 
-        {isAdmin || isTeamLead || isOrganization ? (
+        {canViewUsers(role) ? (
           <Route path="/users">
             <Route index element={<UserList />} />
             {canAddUsers && <Route path="create" element={<UserCreate />} />}

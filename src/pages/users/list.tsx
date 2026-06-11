@@ -11,6 +11,12 @@ import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { Box, Typography } from "@mui/material";
 import { useAuthContext } from "../../contexts";
 import {
+  APP_ROLES,
+  ROLE_LABELS,
+  canCreateUsers,
+  canManageUsers as canManageUsersByRole,
+} from "../../utils";
+import {
   MapTablePage,
   TableBottomActions,
   TableCenterLogo,
@@ -27,11 +33,8 @@ const ActionsCell = ({ row }: any) => (
 
 export const UserList = () => {
   const { role } = useAuthContext();
-  // Permission check based on role
-  const canAddUsers =
-    role === "admin" || role === "organization" || role === "team_lead";
-  // Action check based on Site list logic (only Admin/Organization can edit/delete)
-  const canManageUsers = role === "admin" || role === "organization";
+  const canAddUsers = canCreateUsers(role);
+  const canManageUsers = canManageUsersByRole(role);
 
   const { dataGridProps } = useDataGrid({
     dataProviderName: "users",
@@ -68,15 +71,9 @@ export const UserList = () => {
         flex: 1,
         filterable: true,
         type: "singleSelect",
-        valueOptions: ["admin", "organization", "team_lead", "operator"],
+        valueOptions: [...APP_ROLES],
         renderCell: ({ row }) => {
-          const roleLabels: Record<string, string> = {
-            admin: "Admin",
-            organization: "Organization",
-            team_lead: "Team Lead",
-            operator: "Operator",
-          };
-          return roleLabels[row.role] || row.role;
+          return ROLE_LABELS[row.role as keyof typeof ROLE_LABELS] || row.role;
         },
       },
       {
