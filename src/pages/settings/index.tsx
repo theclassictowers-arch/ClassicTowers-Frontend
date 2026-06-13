@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -15,7 +14,6 @@ import {
   Tab,
   Tabs,
   TextField,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
@@ -613,39 +611,19 @@ export const SettingsPage: React.FC = () => {
         >
           <Box
             sx={{
-              display: "grid",
-              gridTemplateColumns: "auto 1fr auto",
+              display: "flex",
               alignItems: "center",
+              justifyContent: "space-between",
               gap: 1,
               mb: 1.5,
             }}
           >
-            <Tooltip title="Back">
-              <IconButton
-                size="small"
-                onClick={() => navigate(-1)}
-                sx={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: "7px",
-                  color: theme.palette.primary.main,
-                  border: `1px solid ${alpha(theme.palette.primary.main, 0.42)}`,
-                  backgroundColor: alpha(theme.palette.background.paper, 0.72),
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                  },
-                }}
-              >
-                <ArrowBackIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-
-            <Typography variant="h5" sx={{ ...formStyles.title, textAlign: "center", mb: 0 }}>
+            <Typography variant="h5" sx={{ ...formStyles.title, mb: 0 }}>
               Settings
             </Typography>
 
             {role === "admin" ? (
-              <FormControl size="small" sx={{ minWidth: 140, maxWidth: 200 }}>
+              <FormControl size="small" sx={{ minWidth: 140, maxWidth: 200, flexShrink: 0 }}>
                 <InputLabel id="settings-target-label">Target</InputLabel>
                 <Select
                   labelId="settings-target-label"
@@ -665,7 +643,7 @@ export const SettingsPage: React.FC = () => {
                 </Select>
               </FormControl>
             ) : (
-              <Typography sx={{ color: "text.secondary", fontSize: "0.85rem" }}>
+              <Typography sx={{ color: "text.secondary", fontSize: "0.85rem", flexShrink: 0 }}>
                 My Account
               </Typography>
             )}
@@ -1244,20 +1222,30 @@ export const SettingsPage: React.FC = () => {
               )}
             </Stack>
           )}
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={isSaving}
-            sx={{
-              ...formStyles.submitButton,
-              mt: 2,
-              opacity: isSaving ? 0.6 : 1,
-            }}
-          >
-            {isSaving ? <CircularProgress size={22} color="inherit" /> : "Save"}
-          </Button>
+          <Box sx={{ display: "flex", gap: 1.5, mt: 2 }}>
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon fontSize="small" />}
+              onClick={() => navigate(-1)}
+              sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}
+            >
+              Back
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={isSaving}
+              sx={{
+                ...formStyles.submitButton,
+                mt: 0,
+                px: 4,
+                opacity: isSaving ? 0.6 : 1,
+              }}
+            >
+              {isSaving ? <CircularProgress size={22} color="inherit" /> : "Save"}
+            </Button>
+          </Box>
           <ShowPageLogo />
         </Box>
       </Box>
