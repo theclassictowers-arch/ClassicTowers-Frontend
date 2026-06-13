@@ -227,7 +227,7 @@ export const ShowPageLogo = () => {
       sx={{
         display: "flex",
         justifyContent: "center",
-        mt: 2,
+        mt: 3,
         mb: 0.5,
         px: 0.75,
         py: 0.35,

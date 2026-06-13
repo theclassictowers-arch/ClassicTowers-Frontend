@@ -613,19 +613,39 @@ export const SettingsPage: React.FC = () => {
         >
           <Box
             sx={{
-              display: "flex",
+              display: "grid",
+              gridTemplateColumns: "auto 1fr auto",
               alignItems: "center",
-              justifyContent: "space-between",
-              flexWrap: "nowrap",
               gap: 1,
               mb: 1.5,
             }}
           >
-            <Typography variant="h5" sx={{ ...formStyles.title, textAlign: "left", mb: 0 }}>
+            <Tooltip title="Back">
+              <IconButton
+                size="small"
+                onClick={() => navigate(-1)}
+                sx={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: "7px",
+                  color: theme.palette.primary.main,
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.42)}`,
+                  backgroundColor: alpha(theme.palette.background.paper, 0.72),
+                  "&:hover": {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                  },
+                }}
+              >
+                <ArrowBackIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+
+            <Typography variant="h5" sx={{ ...formStyles.title, textAlign: "center", mb: 0 }}>
               Settings
             </Typography>
+
             {role === "admin" ? (
-              <FormControl size="small" sx={{ minWidth: 160, maxWidth: 220, flexShrink: 0 }}>
+              <FormControl size="small" sx={{ minWidth: 140, maxWidth: 200 }}>
                 <InputLabel id="settings-target-label">Target</InputLabel>
                 <Select
                   labelId="settings-target-label"
@@ -645,7 +665,7 @@ export const SettingsPage: React.FC = () => {
                 </Select>
               </FormControl>
             ) : (
-              <Typography sx={{ color: "text.secondary", flexShrink: 0 }}>
+              <Typography sx={{ color: "text.secondary", fontSize: "0.85rem" }}>
                 My Account
               </Typography>
             )}
@@ -1224,62 +1244,20 @@ export const SettingsPage: React.FC = () => {
               )}
             </Stack>
           )}
-          <Stack
-            direction="row"
-            alignItems="center"
-            gap={0.75}
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={isSaving}
             sx={{
+              ...formStyles.submitButton,
               mt: 2,
-              px: 0.5,
-              py: 0.35,
-              border: `1px solid ${alpha(theme.palette.divider, 0.22)}`,
-              borderRadius: "8px",
-              backgroundColor: alpha(theme.palette.background.paper, 0.66),
-              backdropFilter: "blur(8px)",
-              width: "fit-content",
-              flexWrap: "nowrap",
-              flexShrink: 0,
+              opacity: isSaving ? 0.6 : 1,
             }}
           >
-            <Tooltip title="Back">
-              <IconButton
-                size="small"
-                aria-label="Back"
-                onClick={() => navigate(-1)}
-                sx={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: "7px",
-                  color: theme.palette.primary.main,
-                  border: `1px solid ${alpha(theme.palette.primary.main, 0.42)}`,
-                  backgroundColor: alpha(theme.palette.background.paper, 0.72),
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                  },
-                }}
-              >
-                <ArrowBackIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="small"
-              disabled={isSaving}
-              sx={{
-                height: 30,
-                minHeight: "30px !important",
-                px: "12px !important",
-                borderRadius: "7px",
-                textTransform: "none",
-                fontWeight: 700,
-                opacity: isSaving ? 0.6 : 1,
-              }}
-            >
-              {isSaving ? <CircularProgress size={16} color="inherit" /> : "Save"}
-            </Button>
-          </Stack>
+            {isSaving ? <CircularProgress size={22} color="inherit" /> : "Save"}
+          </Button>
           <ShowPageLogo />
         </Box>
       </Box>
