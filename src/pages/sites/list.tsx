@@ -119,7 +119,7 @@ export const SiteList = () => {
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
-          <Box>
+          <Box sx={{ position: "relative" }}>
             <DataGrid
             {...dataGridProps}
             rows={rows}
@@ -154,18 +154,14 @@ export const SiteList = () => {
             }}
             getRowId={(row) => row._id}
             />
-            <Box sx={{ display: "flex", alignItems: "center", mt: 1, gap: 1 }}>
-              <TableBottomActions
-                createButton={
-                  role === "admin" || role === "organization" ? (
-                    <CreateButton />
-                  ) : null
-                }
-              />
-              <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-                <TableCenterLogo />
-              </Box>
-            </Box>
+            <TableBottomActions
+              createButton={
+                role === "admin" || role === "organization" ? (
+                  <CreateButton />
+                ) : null
+              }
+            />
+            <TableCenterLogo />
           </Box>
         )}
       </List>

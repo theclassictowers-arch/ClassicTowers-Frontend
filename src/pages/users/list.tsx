@@ -155,7 +155,7 @@ export const UserList = () => {
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
-          <Box>
+          <Box sx={{ position: "relative" }}>
             <DataGrid
             {...dataGridProps}
             rows={rows}
@@ -190,14 +190,10 @@ export const UserList = () => {
             }}
             getRowId={(row) => row._id}
             />
-            <Box sx={{ display: "flex", alignItems: "center", mt: 1, gap: 1 }}>
-              <TableBottomActions
-                createButton={canAddUsers ? <CreateButton /> : null}
-              />
-              <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-                <TableCenterLogo />
-              </Box>
-            </Box>
+            <TableBottomActions
+              createButton={canAddUsers ? <CreateButton /> : null}
+            />
+            <TableCenterLogo />
           </Box>
         )}
       </List>

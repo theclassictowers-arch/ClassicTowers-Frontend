@@ -100,7 +100,7 @@ export const LimitsList = () => {
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
-          <Box>
+          <Box sx={{ position: "relative" }}>
             <DataGrid
             {...dataGridProps}
             rows={rows}
@@ -133,14 +133,10 @@ export const LimitsList = () => {
             }}
             getRowId={(row) => row._id}
             />
-            <Box sx={{ display: "flex", alignItems: "center", mt: 1, gap: 1 }}>
-              <TableBottomActions
-                createButton={canEdit ? <CreateButton /> : null}
-              />
-              <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-                <TableCenterLogo />
-              </Box>
-            </Box>
+            <TableBottomActions
+              createButton={canEdit ? <CreateButton /> : null}
+            />
+            <TableCenterLogo />
           </Box>
         )}
       </List>
