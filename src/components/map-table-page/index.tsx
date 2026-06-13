@@ -195,7 +195,7 @@ export const TableCenterLogo = () => {
     <Box
       sx={{
         position: "absolute",
-        bottom: 8,
+        bottom: 2,
         left: "50%",
         transform: "translateX(-50%)",
         px: 0.75,
