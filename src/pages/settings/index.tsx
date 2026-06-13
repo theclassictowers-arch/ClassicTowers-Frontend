@@ -25,7 +25,7 @@ import ColorizeOutlinedIcon from "@mui/icons-material/ColorizeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import DevicesOutlinedIcon from "@mui/icons-material/DevicesOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
-import { alpha, useTheme } from "@mui/material/styles";
+import { alpha } from "@mui/material/styles";
 import { useNotification } from "@refinedev/core";
 import { useNavigate } from "react-router-dom";
 import {
@@ -119,7 +119,6 @@ const normalizeAppearanceMode = (value?: string | null): AppearanceMode =>
     : "device";
 
 export const SettingsPage: React.FC = () => {
-  const theme = useTheme();
   const { role } = useAuthContext();
   const {
     dashboardTheme,
@@ -596,7 +595,7 @@ export const SettingsPage: React.FC = () => {
             px: { xs: 1.5, sm: 2, md: 2.5 },
             py: { xs: 1.5, sm: 2 },
             borderRadius: { xs: 1.5, sm: 2 },
-            overflow: "visible",
+            overflow: "hidden",
           }}
           onSubmit={(event) => {
             event.preventDefault();
