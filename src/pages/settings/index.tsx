@@ -28,7 +28,6 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import { alpha } from "@mui/material/styles";
 import { useNotification } from "@refinedev/core";
 import { useNavigate } from "react-router-dom";
-import IconButton from "@mui/material/IconButton";
 import {
   useAuthContext,
   useBrandingContext,
@@ -133,7 +132,8 @@ export const SettingsPage: React.FC = () => {
   const { open } = useNotification();
   const navigate = useNavigate();
   const currentUserId = localStorage.getItem("userId");
-  const canManageSettings = role === "admin" || role === "organization";
+  const canManageSettings = Boolean(role);
+  const canManageLogo = role === "admin";
 
   const [organizations, setOrganizations] = useState<OrganizationUser[]>([]);
   const [loadingOrganizations, setLoadingOrganizations] = useState(false);
@@ -195,6 +195,12 @@ export const SettingsPage: React.FC = () => {
     fetchOrganizations();
   }, [canManageSettings, open, role]);
 
+  useEffect(() => {
+    if (!canManageLogo && activeSection === "logo") {
+      setActiveSection("colors");
+    }
+  }, [activeSection, canManageLogo]);
+
   const targetUserId = useMemo(() => {
     if (!currentUserId) return "";
     return role === "organization" ? currentUserId : selectedTargetUserId;
@@ -250,12 +256,12 @@ export const SettingsPage: React.FC = () => {
           sidebarWidth: clampNumber(
             response.data?.dashboardBranding?.sidebarWidth,
             150,
-            360,
+            250,
             DEFAULT_DASHBOARD_BRANDING.sidebarWidth
           ),
           sidebarHeight: clampNumber(
             response.data?.dashboardBranding?.sidebarHeight,
-            40,
+            50,
             100,
             DEFAULT_DASHBOARD_BRANDING.sidebarHeight
           ),
@@ -431,6 +437,7 @@ export const SettingsPage: React.FC = () => {
   };
 
   const handleSaveBranding = async () => {
+    if (!canManageLogo) return;
     if (!targetUserId) return;
     const logoText = normalizeLogoText(brandingInput.logoText);
     const logoTextSize = clampNumber(
@@ -448,12 +455,12 @@ export const SettingsPage: React.FC = () => {
     const sidebarWidth = clampNumber(
       brandingInput.sidebarWidth,
       150,
-      360,
+      250,
       DEFAULT_DASHBOARD_BRANDING.sidebarWidth
     );
     const sidebarHeight = clampNumber(
       brandingInput.sidebarHeight,
-      40,
+      50,
       100,
       DEFAULT_DASHBOARD_BRANDING.sidebarHeight
     );
@@ -596,40 +603,37 @@ export const SettingsPage: React.FC = () => {
               handleSaveColors();
             } else if (activeSection === "fonts") {
               handleSaveFontSettings();
-            } else {
+            } else if (canManageLogo) {
               handleSaveBranding();
             }
           }}
         >
           <Box
+            sx={{ position: "relative", mb: 1.5 }}
+          >
+            <Button
+              size="small"
+              startIcon={<ArrowBackIcon fontSize="small" />}
+              onClick={() => navigate(-1)}
+              sx={{ position: "absolute", left: 0, top: 0 }}
+            >
+              Back
+            </Button>
+            <Typography variant="h5" gutterBottom sx={formStyles.title}>
+              Settings
+            </Typography>
+          </Box>
+
+          <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "1fr minmax(220px, 360px) 1fr",
-              },
-              alignItems: "center",
-              gap: 1,
+              gridTemplateColumns: role === "admin" ? "1fr" : "auto",
+              justifyContent: "center",
+              mb: 1,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              <IconButton
-                onClick={() => navigate(-1)}
-                size="small"
-                sx={{ borderRadius: "10px" }}
-              >
-                <ArrowBackIcon fontSize="small" />
-              </IconButton>
-              <Typography
-                variant="h5"
-                sx={{ fontWeight: 700, color: "text.primary" }}
-              >
-                Settings
-              </Typography>
-            </Box>
-
             {role === "admin" ? (
-              <FormControl fullWidth size="small">
+              <FormControl fullWidth size="small" sx={{ maxWidth: 360 }}>
                 <InputLabel id="settings-target-label">Target</InputLabel>
                 <Select
                   labelId="settings-target-label"
@@ -650,23 +654,9 @@ export const SettingsPage: React.FC = () => {
               </FormControl>
             ) : (
               <Typography sx={{ textAlign: "center", color: "text.secondary" }}>
-                My Organization
+                My Account
               </Typography>
             )}
-
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={isSaving}
-              sx={{
-                justifySelf: { xs: "stretch", sm: "end" },
-                minWidth: 90,
-                textTransform: "none",
-                fontWeight: 700,
-              }}
-            >
-              Save
-            </Button>
           </Box>
 
           {loadingTheme ? (
@@ -706,12 +696,14 @@ export const SettingsPage: React.FC = () => {
                   iconPosition="start"
                   label="Font"
                 />
-                <Tab
-                  value="logo"
-                  icon={<ImageOutlinedIcon />}
-                  iconPosition="start"
-                  label="Logo"
-                />
+                {canManageLogo && (
+                  <Tab
+                    value="logo"
+                    icon={<ImageOutlinedIcon />}
+                    iconPosition="start"
+                    label="Logo"
+                  />
+                )}
               </Tabs>
 
               {activeSection === "colors" && (
@@ -1229,7 +1221,7 @@ export const SettingsPage: React.FC = () => {
                 />
               )}
 
-              {activeSection === "logo" && (
+              {canManageLogo && activeSection === "logo" && (
                 <SettingsLogoSection
                   brandingInput={brandingInput}
                   logoIconFile={logoIconFile}
@@ -1240,6 +1232,20 @@ export const SettingsPage: React.FC = () => {
               )}
             </Stack>
           )}
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{
+              ...formStyles.submitButton,
+              mt: 2,
+              opacity: isSaving ? 0.6 : 1,
+            }}
+            disabled={isSaving}
+          >
+            {isSaving ? <CircularProgress size={24} color="inherit" /> : "Save"}
+          </Button>
           <ShowPageLogo />
         </Box>
       </Box>

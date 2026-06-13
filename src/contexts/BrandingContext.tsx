@@ -67,12 +67,12 @@ const normalizeBranding = (
   sidebarWidth:
     Number.isFinite(Number(branding?.sidebarWidth)) &&
     Number(branding?.sidebarWidth) >= 150 &&
-    Number(branding?.sidebarWidth) <= 360
+    Number(branding?.sidebarWidth) <= 250
       ? Number(branding?.sidebarWidth)
       : 240,
   sidebarHeight:
     Number.isFinite(Number(branding?.sidebarHeight)) &&
-    Number(branding?.sidebarHeight) >= 40 &&
+    Number(branding?.sidebarHeight) >= 50 &&
     Number(branding?.sidebarHeight) <= 100
       ? Number(branding?.sidebarHeight)
       : 100,

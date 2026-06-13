@@ -60,7 +60,7 @@ export const getAllowedEditableUserRoles = (
 };
 
 export const canAccessSettings = (role?: string | null) =>
-  hasRole(role, ["admin", "organization"]);
+  hasRole(role, ["admin", "organization", "team_lead", "operator"]);
 
 export const canCreateSites = (role?: string | null) =>
   hasRole(role, ["admin", "organization"]);

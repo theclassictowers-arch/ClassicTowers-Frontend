@@ -94,12 +94,12 @@ export const SettingsLogoSection = ({
             <Slider
               value={brandingInput.sidebarWidth}
               min={150}
-              max={360}
+              max={250}
               step={10}
               marks={[
                 { value: 150, label: "Small" },
-                { value: 280, label: "Medium" },
-                { value: 360, label: "Large" },
+                { value: 200, label: "Medium" },
+                { value: 250, label: "Large" },
               ]}
               onChange={(_, value) =>
                 onBrandingInputChange((prev) => ({
@@ -116,12 +116,12 @@ export const SettingsLogoSection = ({
             </Typography>
             <Slider
               value={brandingInput.sidebarHeight}
-              min={40}
+              min={50}
               max={100}
               step={5}
               marks={[
-                { value: 40, label: "Short" },
-                { value: 70, label: "Medium" },
+                { value: 50, label: "Half" },
+                { value: 75, label: "Medium" },
                 { value: 100, label: "Full" },
               ]}
               onChange={(_, value) =>
