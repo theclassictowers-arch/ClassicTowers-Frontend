@@ -206,7 +206,7 @@ export const SettingsPage: React.FC = () => {
 
   const targetUserId = useMemo(() => {
     if (!currentUserId) return "";
-    return role === "organization" ? currentUserId : selectedTargetUserId;
+    return role === "admin" ? selectedTargetUserId : currentUserId;
   }, [currentUserId, role, selectedTargetUserId]);
 
   useEffect(() => {
