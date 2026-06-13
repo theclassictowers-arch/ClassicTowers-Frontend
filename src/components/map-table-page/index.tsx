@@ -214,7 +214,7 @@ export const TableCenterLogo = () => {
         component="img"
         src="/images/classic-electronics-brand-transparent.png"
         alt="Classic Electronics"
-        sx={{ height: 22, width: "auto", display: "block" }}
+        sx={{ height: 40, width: "auto", display: "block" }}
       />
     </Box>
   );
