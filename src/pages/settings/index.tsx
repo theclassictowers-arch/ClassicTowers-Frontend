@@ -591,11 +591,13 @@ export const SettingsPage: React.FC = () => {
             my: 0,
             width: "100%",
             maxWidth: 660,
+            maxHeight: "calc(100dvh - 20px)",
             boxSizing: "border-box",
             px: { xs: 1.5, sm: 2, md: 2.5 },
-            py: { xs: 1.5, sm: 2 },
+            py: { xs: 1.25, sm: 1.5 },
             borderRadius: { xs: 1.5, sm: 2 },
-            overflow: "hidden",
+            overflowY: "auto",
+            overscrollBehavior: "contain",
           }}
           onSubmit={(event) => {
             event.preventDefault();
@@ -614,7 +616,7 @@ export const SettingsPage: React.FC = () => {
               alignItems: "center",
               justifyContent: "space-between",
               gap: 1,
-              mb: 1.5,
+              mb: { xs: 1, sm: 1.25 },
             }}
           >
             <Typography variant="h5" sx={{ ...formStyles.title, mb: 0 }}>
@@ -653,7 +655,7 @@ export const SettingsPage: React.FC = () => {
               <CircularProgress size={24} />
             </Box>
           ) : (
-            <Stack spacing={1.5} sx={{ mt: 1.5 }}>
+            <Stack spacing={{ xs: 1, sm: 1.25 }} sx={{ mt: { xs: 1, sm: 1.25 } }}>
               <Tabs
                 value={activeSection}
                 onChange={(_, value: "colors" | "fonts" | "logo") =>
@@ -701,7 +703,7 @@ export const SettingsPage: React.FC = () => {
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: 1.5,
+                    gap: { xs: 1, sm: 1.25 },
                     transformOrigin: "center top",
                     animation:
                       "settingsTabEnter 420ms cubic-bezier(0.16, 1, 0.3, 1) both",
@@ -711,7 +713,7 @@ export const SettingsPage: React.FC = () => {
                     <Typography
                       variant="subtitle2"
                       sx={{
-                        mb: 1,
+                        mb: 0.75,
                         fontWeight: 700,
                         color: "text.primary",
                         textAlign: "center",
@@ -760,7 +762,7 @@ export const SettingsPage: React.FC = () => {
                                 ? "primary.contrastText"
                                 : "text.primary",
                               fontWeight: 800,
-                              minHeight: 44,
+                              minHeight: { xs: 38, sm: 42 },
                               px: { xs: 1, sm: 2 },
                               textTransform: "none",
                               bgcolor: isSelected
@@ -784,7 +786,7 @@ export const SettingsPage: React.FC = () => {
                     sx={{
                       alignItems: "start",
                       display: "grid",
-                      gap: 2,
+                      gap: { xs: 1, sm: 1.25 },
                       gridTemplateColumns: {
                         xs: "1fr",
                         md: "max-content",
@@ -809,11 +811,11 @@ export const SettingsPage: React.FC = () => {
                     <Box
                       sx={{
                         display: "grid",
-                        gap: 1.5,
+                        gap: { xs: 1, sm: 1.25 },
                         gridTemplateColumns: {
-                          xs: "repeat(2, 108px)",
-                          sm: "repeat(4, 108px)",
-                          md: "repeat(4, 108px)",
+                          xs: "repeat(2, 96px)",
+                          sm: "repeat(4, 96px)",
+                          md: "repeat(4, 96px)",
                         },
                         justifyContent: "center",
                         mx: "auto",
@@ -855,8 +857,8 @@ export const SettingsPage: React.FC = () => {
                               border: "1px solid",
                               borderColor: alpha("#000000", 0.14),
                               borderRadius: "50%",
-                              height: 64,
-                              width: 64,
+                              height: { xs: 54, sm: 56 },
+                              width: { xs: 54, sm: 56 },
                             }}
                           />
                           {isSelected && (
@@ -869,12 +871,12 @@ export const SettingsPage: React.FC = () => {
                                 borderRadius: "50%",
                                 color: "primary.contrastText",
                                 display: "flex",
-                                height: 30,
+                                height: 26,
                                 justifyContent: "center",
                                 position: "absolute",
-                                right: 12,
-                                top: 12,
-                                width: 30,
+                                right: 9,
+                                top: 9,
+                                width: 26,
                               }}
                             >
                               <CheckIcon fontSize="small" />
@@ -921,12 +923,12 @@ export const SettingsPage: React.FC = () => {
                             borderRadius: "50%",
                             color: "primary.contrastText",
                             display: "flex",
-                            height: 30,
+                            height: 26,
                             justifyContent: "center",
                             position: "absolute",
-                            right: 12,
-                            top: 12,
-                            width: 30,
+                            right: 9,
+                            top: 9,
+                            width: 26,
                           }}
                         >
                           <CheckIcon fontSize="small" />
@@ -1221,7 +1223,20 @@ export const SettingsPage: React.FC = () => {
               )}
             </Stack>
           )}
-          <Box sx={{ display: "flex", gap: 1.5, mt: 2 }}>
+          <Box
+            sx={{
+              position: "sticky",
+              bottom: -1,
+              zIndex: 2,
+              display: "flex",
+              gap: 1,
+              mt: { xs: 1.25, sm: 1.5 },
+              pt: 1,
+              pb: 0.25,
+              bgcolor: (theme) => alpha(theme.palette.background.paper, 0.72),
+              backdropFilter: "blur(8px)",
+            }}
+          >
             <Button
               variant="outlined"
               startIcon={<ArrowBackIcon fontSize="small" />}
