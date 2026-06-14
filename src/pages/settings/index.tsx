@@ -1257,7 +1257,7 @@ export const SettingsPage: React.FC = () => {
                 <IconButton
                   size="small"
                   aria-label="Back"
-                  onClick={() => navigate(-1)}
+                  onClick={() => navigate("/")}
                   sx={{
                     width: 30,
                     height: 30,

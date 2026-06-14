@@ -9,8 +9,10 @@ import {
   Tab,
   Tabs,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
@@ -18,6 +20,7 @@ import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
 import { useNotification } from "@refinedev/core";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { alpha } from "@mui/material/styles";
 import { MapBackgroundPage } from "../../components/map-background-page";
 import { ShowPageLogo } from "../../components/map-table-page";
 import { useAuthContext } from "../../contexts";
@@ -215,9 +218,43 @@ export const ProfilePage: React.FC = () => {
             overflowY: "auto",
           }}
         >
-          <Typography variant="h5" sx={{ ...formStyles.title, mb: 1 }}>
-            Profile Settings
-          </Typography>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "34px minmax(0, 1fr) 34px",
+              alignItems: "center",
+              gap: 1,
+              mb: 1,
+            }}
+          >
+            <Tooltip title="Back to Dashboard">
+              <IconButton
+                size="small"
+                aria-label="Back to Dashboard"
+                onClick={() => navigate("/")}
+                sx={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: "7px",
+                  color: "primary.main",
+                  border: (theme) =>
+                    `1px solid ${alpha(theme.palette.primary.main, 0.42)}`,
+                  backgroundColor: (theme) =>
+                    alpha(theme.palette.background.paper, 0.72),
+                  "&:hover": {
+                    backgroundColor: (theme) =>
+                      alpha(theme.palette.primary.main, 0.1),
+                  },
+                }}
+              >
+                <ArrowBackIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Typography variant="h5" sx={{ ...formStyles.title, mb: 0 }}>
+              Profile Settings
+            </Typography>
+            <Box />
+          </Box>
 
           {isInitialLoading ? (
             <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
