@@ -14,10 +14,11 @@ import {
 
 export interface RealTimeLineChartProps {
   sensorData: any[];
-  dataKeys: { key: string }[];
+  dataKeys: { key: string; color?: string; label?: string }[];
   sensorParameter: string;
   yAxisLabel: string;
   limits: any;
+  compact?: boolean;
 }
 
 // Utility function to format time or date
@@ -47,9 +48,8 @@ const CustomSwitch = styled(Switch, {
 export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
   sensorData,
   dataKeys,
-  sensorParameter,
   yAxisLabel,
-  limits,
+  compact = false,
 }) => {
   const theme = useTheme();
   const [brushRange, setBrushRange] = useState<{
@@ -70,6 +70,9 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
 
   // Set line color based on data keys
   const getLineColor = (key: string) => {
+    const configuredColor = dataKeys.find((item) => item.key === key)?.color;
+    if (configuredColor) return configuredColor;
+
     switch (key) {
       case "x":
         return "#90EE90";
@@ -163,44 +166,50 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
         display: "flex",
         flexDirection: "row",
         overflow: "hidden",
-        padding: "0 15px 0 5px",
+        padding: compact ? "0 8px 0 0" : "0 15px 0 5px",
       }}
     >
       {/* Custom Legend on the left with Switch Buttons - Reduced width */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          width: "20px", // Set fixed narrow width
-          marginBottom: "130px", // Increased for better spacing
-        }}
-      >
-        {dataKeys.map(({ key }) => (
-          <div
-            key={key}
-            style={{
-              marginBottom: "12px", // Increased for better spacing between items
-            }}
-          >
-            {/* Vertical switch */}
-            <div style={{ transform: "rotate(270deg)" }}>
-              <CustomSwitch
-                lineColor={getLineColor(key)}
-                checked={visibleLines[key]}
-                onChange={() => handleLegendClick({ dataKey: key })}
-                size="small"
-              />
+      {!compact && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            width: "20px", // Set fixed narrow width
+            marginBottom: "130px", // Increased for better spacing
+          }}
+        >
+          {dataKeys.map(({ key }) => (
+            <div
+              key={key}
+              style={{
+                marginBottom: "12px", // Increased for better spacing between items
+              }}
+            >
+              {/* Vertical switch */}
+              <div style={{ transform: "rotate(270deg)" }}>
+                <CustomSwitch
+                  lineColor={getLineColor(key)}
+                  checked={visibleLines[key]}
+                  onChange={() => handleLegendClick({ dataKey: key })}
+                  size="small"
+                />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Chart Container */}
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={sensorData}
-          margin={{ top: 20, right: 30, left: 10, bottom: 30 }}
+          margin={
+            compact
+              ? { top: 8, right: 10, left: -14, bottom: 8 }
+              : { top: 20, right: 30, left: 10, bottom: 30 }
+          }
         >
           <CartesianGrid
             strokeDasharray="3 3"
@@ -217,6 +226,7 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
               fill: theme.palette.grey[700],
               fontFamily: "monospace",
             }}
+            height={compact ? 22 : undefined}
           />
 
           <YAxis
@@ -230,7 +240,10 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
               value: yAxisLabel,
               angle: -90,
               position: "insideLeft",
-              style: { fill: theme.palette.grey[700] },
+              style: {
+                fill: theme.palette.grey[700],
+                fontSize: compact ? 10 : undefined,
+              },
             }}
           />
 
@@ -256,17 +269,19 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
             />
           ))}
 
-          <Brush
-            dataKey="time"
-            height={10}
-            stroke={theme.palette.grey[400]}
-            fill={theme.palette.grey[200]}
-            travellerWidth={8}
-            onChange={handleBrushChange}
-            startIndex={brushRange?.start}
-            endIndex={brushRange?.end}
-            style={{ fontFamily: "monospace", fontSize: 10 }}
-          />
+          {!compact && (
+            <Brush
+              dataKey="time"
+              height={10}
+              stroke={theme.palette.grey[400]}
+              fill={theme.palette.grey[200]}
+              travellerWidth={8}
+              onChange={handleBrushChange}
+              startIndex={brushRange?.start}
+              endIndex={brushRange?.end}
+              style={{ fontFamily: "monospace", fontSize: 10 }}
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
     </div>
