@@ -104,6 +104,8 @@ export const CustomSider: React.FC = () => {
             {/* Branding + Logout at the bottom — wrapper gets marginTop:auto from globalStyles */}
             <Box>
               <Box
+                component={Link as React.ElementType}
+                to="/profile"
                 sx={{
                   mx: siderCollapsed ? 0.75 : 1,
                   mb: 0.75,
@@ -117,7 +119,17 @@ export const CustomSider: React.FC = () => {
                   border: "1px solid",
                   borderColor: "divider",
                   bgcolor: "background.paper",
+                  color: "text.primary",
+                  textDecoration: "none",
+                  cursor: "pointer",
                   minWidth: 0,
+                  transition:
+                    "background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
+                  "&:hover": {
+                    bgcolor: "action.hover",
+                    boxShadow: "0 8px 18px rgba(15, 23, 42, 0.12)",
+                    transform: "translateY(-1px)",
+                  },
                 }}
               >
                 <Avatar

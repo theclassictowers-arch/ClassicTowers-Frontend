@@ -19,6 +19,7 @@ import {
   LimitsCreate,
   LimitsEdit,
   LimitsShow,
+  ProfilePage,
 } from "../pages";
 import { ThemedLayoutV2 } from "@refinedev/mui";
 import {
@@ -82,6 +83,7 @@ const AppRoutes: React.FC = () => {
         }
       >
         <Route index element={<DashboardPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         {canAccessSettings(role) && (
           <Route
             path="/settings"

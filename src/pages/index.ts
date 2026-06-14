@@ -4,3 +4,4 @@ export * from "./sites";
 export * from "./limits";
 export * from "./users";
 export * from "./settings";
+export * from "./profile";
