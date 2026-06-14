@@ -23,7 +23,6 @@ const labelMapping: Record<string, string> = {
   vibrationRollAngle: "Vibration Roll Angle",
   vibrationPitchAngle: "Vibration Pitch Angle",
   vibrationSpeed: "Vibration Speed",
-  windDirection: "Wind Direction",
   windSpeed: "Wind Speed",
   windHumidity: "Humidity",
   windTemperature: "Temperature",
@@ -49,7 +48,7 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
     // Safe date parsing: Use createdAt if available, otherwise construct from date/time
     const timestamp = data.createdAt || `${data.date}T${data.time}Z`;
     const dateObj = new Date(timestamp);
-    const formattedTime = dateObj.toLocaleTimeString('en-GB', { hour12: false });
+    const formattedTime = dateObj.toLocaleTimeString("en-GB", { hour12: false });
 
     return {
       ...data,
@@ -156,12 +155,12 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
         siteName={siteName}
       />
       <Box sx={{ flex: 1, p: 2, display: "flex", flexDirection: "column" }}>
-        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold', color: 'text.secondary' }}>
+        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: "bold", color: "text.secondary" }}>
           Unified Trend Analysis: {sensorParameters.map(p => labelMapping[p] || p).join(" vs ")}
         </Typography>
         
         {unifiedChartData.length > 0 ? (
-          <Box sx={{ flex: 1, width: '100%', minHeight: '400px' }}>
+          <Box sx={{ flex: 1, width: "100%", minHeight: "400px" }}>
             <RealTimeLineChart
               sensorData={unifiedChartData}
               dataKeys={unifiedDataKeys}
@@ -177,7 +176,7 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
             justifyContent="center"
             flex={1}
           >
-            <Typography variant="h6" color="text.disabled" sx={{ fontStyle: 'italic' }}>
+            <Typography variant="h6" color="text.disabled" sx={{ fontStyle: "italic" }}>
               No correlated data found for the selected time range.
             </Typography>
           </Box>

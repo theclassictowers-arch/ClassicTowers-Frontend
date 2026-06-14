@@ -15,6 +15,12 @@ interface ExtendedInfoWindowContentProps extends InfoWindowContentProps {
   onClose?: () => void;
 }
 
+const DEFAULT_TREND_PARAMETERS = [
+  "vibrationPitchAngle",
+  "vibrationRollAngle",
+  "windTemperature",
+];
+
 const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   point,
   onModalStateChange,
@@ -37,6 +43,28 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
     startDateTime: null,
     endDateTime: null,
   });
+
+  useEffect(() => {
+    const defaultTrendParameters = DEFAULT_TREND_PARAMETERS.filter(
+      (parameter) => point.status?.[parameter]
+    );
+
+    if (defaultTrendParameters.length === 0) return;
+
+    const end = dayjs();
+    const start = end.subtract(1, "hour");
+
+    setStartDate(start);
+    setStartTime(start);
+    setEndDate(end);
+    setEndTime(end);
+    setAppliedFilter({
+      startDateTime: start.toISOString(),
+      endDateTime: end.toISOString(),
+    });
+    setSensorParameters(defaultTrendParameters);
+    setIsModalOpen(true);
+  }, [point.key, point.status]);
 
   const filters = [
     { field: "imei", operator: "eq", value: Array.isArray(point.imei) ? String(point.imei[0]) : String(point.imei || "") },
