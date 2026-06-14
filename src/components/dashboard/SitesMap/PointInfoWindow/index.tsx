@@ -181,9 +181,13 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   return (
     <Box
       sx={{
+        background:
+          "color-mix(in srgb, var(--app-bg-color, #f5f7fb) 88%, transparent)",
         backgroundColor: "background.default",
         borderRadius: 2,
         overflow: "hidden",
+        maxWidth: "100%",
+        boxShadow: "0 10px 28px rgba(15, 23, 42, 0.16)",
       }}
     >
       {/* Header: primary color, location icon + site name, close button */}

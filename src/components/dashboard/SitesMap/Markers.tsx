@@ -65,11 +65,17 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
       // Hide scrollbar after InfoWindow DOM is ready — JS inline style is
       // safe here (unlike CSS overrides which break GM's initialization)
       const t = setTimeout(() => {
-        [".gm-style-iw-d", ".gm-style-iw", ".gm-style-iw-c"].forEach((sel) => {
+        [
+          ".gm-style-iw-d",
+          ".gm-style-iw",
+          ".gm-style-iw-c",
+          ".gm-style-iw-t",
+        ].forEach((sel) => {
           const el = document.querySelector(sel) as HTMLElement | null;
           if (el) {
             el.style.overflow = "hidden";
             el.style.backgroundColor = "transparent";
+            el.style.maxHeight = "none";
           }
         });
       }, 80);
@@ -308,10 +314,11 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
           headerDisabled
         >
           <div
+            className="dashboard-site-info-window"
             style={{
               width: "408px",
               maxWidth: "calc(100vw - 48px)",
-              height: "100%",
+              height: "auto",
               overflow: "hidden",
               cursor: modalOpen
                 ? "default"

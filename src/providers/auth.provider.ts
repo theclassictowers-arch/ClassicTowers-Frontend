@@ -314,8 +314,9 @@ export const useAuthProvider = (confirm: () => Promise<boolean>): AuthProvider =
         window.setDashboardBranding?.(data?.dashboardBranding);
 
         const name = data.name || "N/A";
-        const avatar =
-          `${VITE_API_BASE_URL}${data.profilePicture}` || getRandomAvatar();
+        const avatar = data.profilePicture
+          ? `${VITE_API_BASE_URL}${data.profilePicture}`
+          : getRandomAvatar();
 
         return {
           id: 1,
