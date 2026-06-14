@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -14,6 +15,7 @@ import {
   Tab,
   Tabs,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
@@ -36,7 +38,6 @@ import {
 import { axiosInstance } from "../../utils";
 import { formStyles } from "../auth/styles";
 import { MapBackgroundPage } from "../../components/map-background-page";
-import { ShowPageLogo } from "../../components/map-table-page";
 import {
   DARK_DASHBOARD_THEME_PRESETS,
   DEFAULT_APP_FONT,
@@ -1228,39 +1229,100 @@ export const SettingsPage: React.FC = () => {
               position: "sticky",
               bottom: -1,
               zIndex: 2,
-              display: "flex",
-              gap: 1,
               mt: { xs: 1.25, sm: 1.5 },
-              pt: 1,
-              pb: 0.25,
+              minHeight: 48,
               bgcolor: (theme) => alpha(theme.palette.background.paper, 0.72),
               backdropFilter: "blur(8px)",
             }}
           >
-            <Button
-              variant="outlined"
-              startIcon={<ArrowBackIcon fontSize="small" />}
-              onClick={() => navigate(-1)}
-              sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}
-            >
-              Back
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={isSaving}
+            <Stack
+              direction="row"
+              alignItems="center"
+              gap={0.75}
               sx={{
-                ...formStyles.submitButton,
-                mt: 0,
-                px: 4,
-                opacity: isSaving ? 0.6 : 1,
+                position: "absolute",
+                left: 0,
+                bottom: 4,
+                px: 0.5,
+                py: 0.35,
+                border: (theme) =>
+                  `1px solid ${alpha(theme.palette.divider, 0.22)}`,
+                borderRadius: "8px",
+                backgroundColor: (theme) =>
+                  alpha(theme.palette.background.paper, 0.66),
+                backdropFilter: "blur(8px)",
               }}
             >
-              {isSaving ? <CircularProgress size={22} color="inherit" /> : "Save"}
-            </Button>
+              <Tooltip title="Back">
+                <IconButton
+                  size="small"
+                  aria-label="Back"
+                  onClick={() => navigate(-1)}
+                  sx={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: "7px",
+                    color: "primary.main",
+                    border: (theme) =>
+                      `1px solid ${alpha(theme.palette.primary.main, 0.42)}`,
+                    backgroundColor: (theme) =>
+                      alpha(theme.palette.background.paper, 0.72),
+                    "&:hover": {
+                      backgroundColor: (theme) =>
+                        alpha(theme.palette.primary.main, 0.1),
+                    },
+                  }}
+                >
+                  <ArrowBackIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={isSaving}
+                sx={{
+                  minWidth: "auto !important",
+                  height: 30,
+                  minHeight: "30px !important",
+                  px: "12px !important",
+                  borderRadius: "7px",
+                  textTransform: "none",
+                  fontWeight: 700,
+                  opacity: isSaving ? 0.6 : 1,
+                }}
+              >
+                {isSaving ? <CircularProgress size={18} color="inherit" /> : "Save"}
+              </Button>
+            </Stack>
+
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 2,
+                left: "50%",
+                transform: "translateX(-50%)",
+                px: 0.75,
+                py: 0.35,
+                border: (theme) =>
+                  `1px solid ${alpha(theme.palette.divider, 0.22)}`,
+                borderRadius: "8px",
+                backgroundColor: (theme) =>
+                  alpha(theme.palette.background.paper, 0.66),
+                backdropFilter: "blur(8px)",
+                display: "flex",
+                alignItems: "center",
+                pointerEvents: "none",
+              }}
+            >
+              <Box
+                component="img"
+                src="/images/classic-electronics-brand-transparent.png"
+                alt="Classic Electronics"
+                sx={{ height: 40, width: "auto", display: "block" }}
+              />
+            </Box>
           </Box>
-          <ShowPageLogo />
         </Box>
       </Box>
     </MapBackgroundPage>
