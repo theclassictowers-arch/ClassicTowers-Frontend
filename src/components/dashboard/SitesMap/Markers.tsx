@@ -51,6 +51,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   const previousPointsHashRef = useRef<string>("");
   const clustererRef = useRef<MarkerClusterer | null>(null);
   const markerListenersRef = useRef<google.maps.MapsEventListener[]>([]);
+  const ignoreMapClickUntilRef = useRef(0);
 
   const canUseClusteredMarkers =
     !!map &&
@@ -90,6 +91,8 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
     if (!map) return;
 
     const handleMapClick = () => {
+      if (Date.now() < ignoreMapClickUntilRef.current) return;
+
       if (!isDraggingRef.current) {
         setSelectedPoint(null);
       }
@@ -120,6 +123,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
   // Handle marker click
   const handleMarkerClick = useCallback(
     (point: Point) => {
+      ignoreMapClickUntilRef.current = Date.now() + 250;
       setSelectedPoint((prev) => (prev?.key === point.key ? null : point));
       setSelectedSite(point.location.lng, point.location.lat);
     },
