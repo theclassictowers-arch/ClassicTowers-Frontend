@@ -1,8 +1,6 @@
 import { FC, useMemo } from "react";
-import { PLCDialog } from "./PLCDialog";
-import { useTheme } from "@mui/material/styles";
 import { DataVisualizationHeader } from "./RealTimeDataVisualization/DataVisualizationHeader";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, Portal, Typography } from "@mui/material";
 import { RealTimeLineChart } from "./RealTimeDataVisualization/RealTimeLineChart";
 
 interface SensorDataModalProps {
@@ -28,6 +26,8 @@ const labelMapping: Record<string, string> = {
   windTemperature: "Temperature",
 };
 
+const trendColors = ["#2563eb", "#16a34a", "#f97316"];
+
 export const SensorDataModal: FC<SensorDataModalProps> = ({
   open,
   onClose,
@@ -40,15 +40,16 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
 }) => {
   const rawDataArray = Array.isArray(sensorData) ? sensorData : [sensorData];
   const limits = rawDataArray[0]?.limits;
-  const allProcessedData = rawDataArray.flatMap(item => item?.processedSensorData || []);
-
-  const theme = useTheme();
+  const allProcessedData = rawDataArray.flatMap(
+    (item) => item?.processedSensorData || []
+  );
 
   const sensorDataForGraphs = allProcessedData?.map((data: any) => {
-    // Safe date parsing: Use createdAt if available, otherwise construct from date/time
     const timestamp = data.createdAt || `${data.date}T${data.time}Z`;
     const dateObj = new Date(timestamp);
-    const formattedTime = dateObj.toLocaleTimeString("en-GB", { hour12: false });
+    const formattedTime = dateObj.toLocaleTimeString("en-GB", {
+      hour12: false,
+    });
 
     return {
       ...data,
@@ -57,7 +58,6 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
     };
   });
 
-  // Professional Unified Data Aggregation
   const unifiedChartData = useMemo(() => {
     const timeMap: Record<string, any> = {};
 
@@ -68,7 +68,6 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
       }
 
       const paramKey = item.parameter || "unknown";
-      // Map values using parameter name as prefix to allow overlapping keys (x,y,z)
       if (item.value !== undefined) {
         timeMap[timeKey][paramKey] = parseFloat(item.value);
       } else {
@@ -78,45 +77,18 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
       }
     });
 
-    return Object.values(timeMap).sort((a: any, b: any) => 
+    return Object.values(timeMap).sort((a: any, b: any) =>
       `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)
     );
   }, [sensorDataForGraphs]);
 
-  // Dynamic Multi-Line Key Generation
-  const unifiedDataKeys = useMemo(() => {
-    const distinctPalette = [
-      "#3bf68cff", // Bright Blue
-      "#9aef44ff", // Bright Red
-      "#10b981", // Emerald Green
-      "#42f50bff", // Amber
-    ];
-
-    return sensorParameters.flatMap((param, index) => {
-      const sample = sensorDataForGraphs?.find((d: any) => d.parameter === param);
-      if (!sample) return [];
-
-      const baseColor = distinctPalette[index % distinctPalette.length];
-      const label = labelMapping[param] || param;
-
-      if (sample.value !== undefined) {
-        return [{ key: param, color: baseColor, label: label }];
-      } else {
-        // For multi-axis parameters, we use distinct shades
-        return [
-          { key: `${param}_x`, color: "#f87171", label: `${label} (X)` },
-          { key: `${param}_y`, color: "#fbbf24", label: `${label} (Y)` },
-          { key: `${param}_z`, color: "#34d399", label: `${label} (Z)` },
-        ];
-      }
-    });
-  }, [sensorParameters, sensorDataForGraphs, theme]);
-
   const splitChartConfigs = useMemo(() => {
     return sensorParameters.map((param, index) => {
-      const sample = sensorDataForGraphs?.find((d: any) => d.parameter === param);
+      const sample = sensorDataForGraphs?.find(
+        (data: any) => data.parameter === param
+      );
       const label = labelMapping[param] || param;
-      const baseColor = ["#2563eb", "#16a34a", "#f97316"][index % 3];
+      const baseColor = trendColors[index % trendColors.length];
 
       const dataKeys =
         sample && sample.value !== undefined
@@ -135,137 +107,149 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
     });
   }, [sensorDataForGraphs, sensorParameters]);
 
-  const shouldShowSplitCharts = sensorParameters.length > 1;
+  if (!open) return null;
 
-  if (isSensorDataLoading) {
-    return (
-      <PLCDialog open={open} onClose={onClose}>
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          height="100%"
-          width="100%"
-        >
+  const panelSx = {
+    position: "fixed",
+    top: { xs: 72, md: 64 },
+    right: { xs: 8, md: 12 },
+    bottom: { xs: 8, md: 12 },
+    width: { xs: "calc(100vw - 16px)", sm: 360, md: 390 },
+    zIndex: 1301,
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden",
+    border: "1px solid",
+    borderColor: "divider",
+    borderRadius: 2,
+    bgcolor: "background.default",
+    boxShadow: "0 18px 42px rgba(15, 23, 42, 0.28)",
+    pointerEvents: "auto",
+  } as const;
+
+  const bodySx = {
+    flex: 1,
+    minHeight: 0,
+    p: 1,
+    display: "flex",
+    flexDirection: "column",
+  } as const;
+
+  const renderBody = () => {
+    if (isSensorDataLoading) {
+      return (
+        <Box display="flex" alignItems="center" justifyContent="center" flex={1}>
           <CircularProgress />
         </Box>
-      </PLCDialog>
-    );
-  }
+      );
+    }
 
-  if (sensorDataError) {
-    return (
-      <PLCDialog open={open} onClose={onClose}>
+    if (sensorDataError) {
+      return (
         <Box
           display="flex"
           alignItems="center"
           justifyContent="center"
-          height="100%"
-          width="100%"
+          flex={1}
+          px={2}
         >
           <Typography variant="body1" fontFamily="monospace" color="error">
             SYSTEM ERROR: Check connection
           </Typography>
         </Box>
-      </PLCDialog>
-    );
-  }
+      );
+    }
 
-  return (
-    <PLCDialog open={open} onClose={onClose}>
-      <DataVisualizationHeader
-        isLoading={isSensorDataLoading}
-        refetchLatestData={refetchLatestData}
-        onClose={onClose}
-        siteName={siteName}
-      />
-      <Box sx={{ flex: 1, p: 1.5, display: "flex", flexDirection: "column", minHeight: 0 }}>
-        <Typography variant="subtitle2" sx={{ mb: 1.25, fontWeight: "bold", color: "text.secondary" }}>
-          {shouldShowSplitCharts
-            ? "Last 1 Hour Trends"
-            : `Trend Analysis: ${sensorParameters.map(p => labelMapping[p] || p).join(" vs ")}`}
+    if (unifiedChartData.length === 0) {
+      return (
+        <Box display="flex" alignItems="center" justifyContent="center" flex={1}>
+          <Typography
+            variant="body2"
+            color="text.disabled"
+            sx={{ fontStyle: "italic", textAlign: "center" }}
+          >
+            No correlated data found for the selected time range.
+          </Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <>
+        <Typography
+          variant="subtitle2"
+          sx={{ mb: 0.75, fontWeight: "bold", color: "text.secondary" }}
+        >
+          Last 1 Hour Trends
         </Typography>
-        
-        {unifiedChartData.length > 0 ? (
-          shouldShowSplitCharts ? (
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            display: "grid",
+            gridTemplateRows: `repeat(${Math.max(
+              splitChartConfigs.length,
+              1
+            )}, minmax(0, 1fr))`,
+            gap: 0.75,
+          }}
+        >
+          {splitChartConfigs.map((chart) => (
             <Box
+              key={chart.param}
               sx={{
-                flex: 1,
                 minHeight: 0,
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  md: "repeat(3, minmax(0, 1fr))",
-                },
-                gap: 1,
+                minWidth: 0,
+                display: "flex",
+                flexDirection: "column",
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 1.25,
+                bgcolor: "background.paper",
+                overflow: "hidden",
               }}
             >
-              {splitChartConfigs.map((chart) => (
-                <Box
-                  key={chart.param}
-                  sx={{
-                    minHeight: { xs: 190, md: 0 },
-                    height: { xs: 210, md: "100%" },
-                    minWidth: 0,
-                    display: "flex",
-                    flexDirection: "column",
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 1.5,
-                    bgcolor: "background.paper",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      px: 1,
-                      py: 0.65,
-                      fontSize: "0.78rem",
-                      fontWeight: 700,
-                      color: "text.primary",
-                      borderBottom: "1px solid",
-                      borderColor: "divider",
-                    }}
-                  >
-                    {chart.label}
-                  </Typography>
-                  <Box sx={{ flex: 1, minHeight: 0, p: 0.5 }}>
-                    <RealTimeLineChart
-                      sensorData={unifiedChartData}
-                      dataKeys={chart.dataKeys}
-                      sensorParameter={chart.param}
-                      yAxisLabel={chart.label}
-                      limits={limits}
-                      compact
-                    />
-                  </Box>
-                </Box>
-              ))}
+              <Typography
+                sx={{
+                  px: 1,
+                  py: 0.45,
+                  fontSize: "0.72rem",
+                  fontWeight: 700,
+                  color: "text.primary",
+                  borderBottom: "1px solid",
+                  borderColor: "divider",
+                }}
+              >
+                {chart.label}
+              </Typography>
+              <Box sx={{ flex: 1, minHeight: 0, p: 0.35 }}>
+                <RealTimeLineChart
+                  sensorData={unifiedChartData}
+                  dataKeys={chart.dataKeys}
+                  sensorParameter={chart.param}
+                  yAxisLabel={chart.label}
+                  limits={limits}
+                  compact
+                />
+              </Box>
             </Box>
-          ) : (
-            <Box sx={{ flex: 1, width: "100%", minHeight: "400px" }}>
-              <RealTimeLineChart
-                sensorData={unifiedChartData}
-                dataKeys={unifiedDataKeys}
-                sensorParameter="unified_view"
-                yAxisLabel={sensorParameters.map(p => labelMapping[p] || p).join(" / ")}
-                limits={limits}
-              />
-            </Box>
-          )
-        ) : (
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            flex={1}
-          >
-            <Typography variant="h6" color="text.disabled" sx={{ fontStyle: "italic" }}>
-              No correlated data found for the selected time range.
-            </Typography>
-          </Box>
-        )}
+          ))}
+        </Box>
+      </>
+    );
+  };
+
+  return (
+    <Portal>
+      <Box sx={panelSx}>
+        <DataVisualizationHeader
+          isLoading={isSensorDataLoading}
+          refetchLatestData={refetchLatestData}
+          onClose={onClose}
+          siteName={siteName}
+        />
+        <Box sx={bodySx}>{renderBody()}</Box>
       </Box>
-    </PLCDialog>
+    </Portal>
   );
 };

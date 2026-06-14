@@ -320,7 +320,7 @@ const Markers: FC<MarkerProps> = memo(({ points = [] }) => {
           <div
             className="dashboard-site-info-window"
             style={{
-              width: "408px",
+              width: "330px",
               maxWidth: "calc(100vw - 48px)",
               height: "auto",
               overflow: "hidden",
