@@ -146,6 +146,12 @@ export const appGlobalStyles = {
       left: "calc(var(--sidebar-width, 240px) + 12px) !important",
       width: "calc(100% - var(--sidebar-width, 240px) - 12px) !important",
     },
+    ".dashboard-alert-shell .MuiTableCell-root": {
+      minWidth: "132px",
+    },
+    ".dashboard-alert-shell .MuiTableCell-root:nth-of-type(2)": {
+      minWidth: "360px",
+    },
     "nav:has([data-sidebar-collapsed='true']) .MuiDrawer-paper": {
       width: "52px !important",
       height: "56px !important",

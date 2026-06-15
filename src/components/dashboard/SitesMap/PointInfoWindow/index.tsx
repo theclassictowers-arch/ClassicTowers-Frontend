@@ -1,8 +1,9 @@
-import { Dispatch, FC, useState, useEffect } from "react";
-import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import { Dispatch, FC, useContext, useState, useEffect } from "react";
+import { Box, Divider, IconButton, Portal, Typography, useTheme } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useList } from "@refinedev/core";
+import { ThemedLayoutContext } from "@refinedev/mui";
 import dayjs, { Dayjs } from "dayjs";
 
 import { SensorDataModal } from "./SensorDataModal";
@@ -29,6 +30,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   onClose,
 }) => {
   const theme = useTheme();
+  const { siderCollapsed } = useContext(ThemedLayoutContext);
   const [sensorParameters, setSensorParameters] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<SensorViewMode>("graph");
@@ -227,14 +229,27 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   };
 
   return (
+    <Portal>
     <Box
+      className="dashboard-parameter-panel"
+      onMouseDown={(event) => event.stopPropagation()}
+      onPointerDown={(event) => event.stopPropagation()}
       sx={{
+        position: "fixed",
+        top: { xs: 72, md: 76 },
+        left: {
+          xs: 8,
+          md: siderCollapsed ? 64 : "calc(var(--sidebar-width, 240px) + 12px)",
+        },
+        width: { xs: "calc(100vw - 16px)", sm: 330 },
+        maxHeight: { xs: "calc(100dvh - 88px)", md: "calc(100dvh - 92px)" },
+        zIndex: 1302,
         background:
           "color-mix(in srgb, var(--app-bg-color, #f5f7fb) 88%, transparent)",
         backgroundColor: "background.default",
         borderRadius: 2,
-        overflow: "hidden",
-        maxWidth: "100%",
+        overflow: "auto",
+        maxWidth: { xs: "calc(100vw - 16px)", sm: 330 },
         boxShadow: "0 10px 28px rgba(15, 23, 42, 0.16)",
       }}
     >
@@ -314,6 +329,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         />
       )}
     </Box>
+    </Portal>
   );
 };
 
