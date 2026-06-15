@@ -2,6 +2,7 @@ import { FC, useMemo } from "react";
 import { DataVisualizationHeader } from "./RealTimeDataVisualization/DataVisualizationHeader";
 import { Box, CircularProgress, Portal, Typography } from "@mui/material";
 import { RealTimeLineChart } from "./RealTimeDataVisualization/RealTimeLineChart";
+import { Tower3DView } from "./Tower3DView";
 
 interface SensorDataModalProps {
   open: boolean;
@@ -12,10 +13,11 @@ interface SensorDataModalProps {
   sensorParameters: string[];
   refetchLatestData: () => void;
   siteName: string;
+  viewMode: "graph" | "3d";
 }
 
 const labelMapping: Record<string, string> = {
-  vibrationAngle: "Vibration Angle",
+  vibrationAngle: "Yaw Angle",
   vibrationDisplacement: "Vibration Displacement",
   vibrationFrequency: "Vibration Frequency",
   vibrationRollAngle: "Vibration Roll Angle",
@@ -26,7 +28,18 @@ const labelMapping: Record<string, string> = {
   windTemperature: "Temperature",
 };
 
-const trendColors = ["#2563eb", "#16a34a", "#f97316"];
+const trendColors = [
+  "#2563eb",
+  "#16a34a",
+  "#f97316",
+  "#dc2626",
+  "#7c3aed",
+  "#0891b2",
+  "#ca8a04",
+  "#db2777",
+  "#4f46e5",
+  "#059669",
+];
 
 export const SensorDataModal: FC<SensorDataModalProps> = ({
   open,
@@ -37,6 +50,7 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
   sensorParameters,
   refetchLatestData,
   siteName,
+  viewMode,
 }) => {
   const rawDataArray = Array.isArray(sensorData) ? sensorData : [sensorData];
   const limits = rawDataArray[0]?.limits;
@@ -82,30 +96,43 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
     );
   }, [sensorDataForGraphs]);
 
-  const splitChartConfigs = useMemo(() => {
-    return sensorParameters.map((param, index) => {
+  const selectedTrendKeys = useMemo(() => {
+    let colorIndex = 0;
+
+    return sensorParameters.flatMap((param) => {
       const sample = sensorDataForGraphs?.find(
         (data: any) => data.parameter === param
       );
       const label = labelMapping[param] || param;
-      const baseColor = trendColors[index % trendColors.length];
+      const getNextColor = () => trendColors[colorIndex++ % trendColors.length];
 
-      const dataKeys =
-        sample && sample.value !== undefined
-          ? [{ key: param, color: baseColor, label }]
-          : [
-              { key: `${param}_x`, color: "#f87171", label: `${label} (X)` },
-              { key: `${param}_y`, color: "#fbbf24", label: `${label} (Y)` },
-              { key: `${param}_z`, color: "#34d399", label: `${label} (Z)` },
-            ];
+      if (!sample || sample.value !== undefined) {
+        return [{ key: param, color: getNextColor(), label }];
+      }
 
-      return {
-        param,
-        label,
-        dataKeys,
-      };
+      return [
+        { key: `${param}_x`, color: getNextColor(), label: `${label} (X)` },
+        { key: `${param}_y`, color: getNextColor(), label: `${label} (Y)` },
+        { key: `${param}_z`, color: getNextColor(), label: `${label} (Z)` },
+      ];
     });
   }, [sensorDataForGraphs, sensorParameters]);
+
+  const latestAngles = useMemo(() => {
+    const latest = [...unifiedChartData]
+      .reverse()
+      .find((item: any) =>
+        ["vibrationRollAngle", "vibrationPitchAngle", "vibrationAngle"].some(
+          (key) => typeof item[key] === "number"
+        )
+      ) as any;
+
+    return {
+      roll: latest?.vibrationRollAngle,
+      pitch: latest?.vibrationPitchAngle,
+      yaw: latest?.vibrationAngle,
+    };
+  }, [unifiedChartData]);
 
   if (!open) return null;
 
@@ -160,6 +187,10 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
       );
     }
 
+    if (viewMode === "3d") {
+      return <Tower3DView {...latestAngles} />;
+    }
+
     if (unifiedChartData.length === 0) {
       return (
         <Box display="flex" alignItems="center" justifyContent="center" flex={1}>
@@ -180,60 +211,32 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
           variant="subtitle2"
           sx={{ mb: 0.75, fontWeight: "bold", color: "text.secondary" }}
         >
-          Last 1 Hour Trends
+          Selected Trends
         </Typography>
         <Box
           sx={{
             flex: 1,
             minHeight: 0,
-            display: "grid",
-            gridTemplateRows: `repeat(${Math.max(
-              splitChartConfigs.length,
-              1
-            )}, minmax(0, 1fr))`,
-            gap: 0.75,
+            minWidth: 0,
+            display: "flex",
+            flexDirection: "column",
+            border: "1px solid",
+            borderColor: "divider",
+            borderRadius: 1.25,
+            bgcolor: "background.paper",
+            overflow: "hidden",
           }}
         >
-          {splitChartConfigs.map((chart) => (
-            <Box
-              key={chart.param}
-              sx={{
-                minHeight: 0,
-                minWidth: 0,
-                display: "flex",
-                flexDirection: "column",
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 1.25,
-                bgcolor: "background.paper",
-                overflow: "hidden",
-              }}
-            >
-              <Typography
-                sx={{
-                  px: 1,
-                  py: 0.45,
-                  fontSize: "0.72rem",
-                  fontWeight: 700,
-                  color: "text.primary",
-                  borderBottom: "1px solid",
-                  borderColor: "divider",
-                }}
-              >
-                {chart.label}
-              </Typography>
-              <Box sx={{ flex: 1, minHeight: 0, p: 0.35 }}>
-                <RealTimeLineChart
-                  sensorData={unifiedChartData}
-                  dataKeys={chart.dataKeys}
-                  sensorParameter={chart.param}
-                  yAxisLabel={chart.label}
-                  limits={limits}
-                  compact
-                />
-              </Box>
-            </Box>
-          ))}
+          <Box sx={{ flex: 1, minHeight: 0, p: 0.35 }}>
+            <RealTimeLineChart
+              sensorData={unifiedChartData}
+              dataKeys={selectedTrendKeys}
+              sensorParameter={sensorParameters.join(",")}
+              yAxisLabel="Value"
+              limits={limits}
+              compact
+            />
+          </Box>
         </Box>
       </>
     );

@@ -4,14 +4,17 @@ import { Box, Button, Typography, useTheme } from "@mui/material";
 interface SensorParametersListProps {
   status: Record<string, any>;
   onStatusClick: Dispatch<string[]>;
+  onViewChange?: Dispatch<"graph" | "3d">;
   appliedFilter?: {
     startDateTime: string | null;
     endDateTime: string | null;
   };
+  selectedParameters?: string[];
+  activeView?: "graph" | "3d";
 }
 
 const labelMapping: Record<string, string> = {
-  vibrationAngle: "Vibration Angle",
+  vibrationAngle: "Yaw Angle",
   vibrationDisplacement: "Vibration Displacement",
   vibrationFrequency: "Vibration Frequency",
   vibrationRollAngle: "Vibration Roll Angle",
@@ -27,6 +30,9 @@ const hiddenParameters = new Set(["windDirection"]);
 export const SensorParametersList: FC<SensorParametersListProps> = ({
   status,
   onStatusClick,
+  onViewChange,
+  selectedParameters = [],
+  activeView = "graph",
 }) => {
   const theme = useTheme();
   const availableKeys = Object.keys(status).filter(
@@ -56,36 +62,50 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
           gap: 0.6,
         }}
       >
-        {availableKeys.map((key) => (
-          <Button
-            key={key}
-            size="small"
-            variant="outlined"
-            onClick={() => onStatusClick([key])}
-            sx={{
-              minWidth: 0,
-              justifyContent: "flex-start",
-              textAlign: "left",
-              textTransform: "none",
-              fontSize: "0.68rem",
-              lineHeight: 1.1,
-              px: 0.75,
-              py: 0.55,
-              borderColor: theme.palette.divider,
-              color: "text.secondary",
-              bgcolor: "background.paper",
-              whiteSpace: "normal",
-              wordBreak: "break-word",
-              "&:hover": {
-                borderColor: theme.palette.primary.main,
-                color: theme.palette.primary.main,
-                bgcolor: theme.palette.action.hover,
-              },
-            }}
-          >
-            {labelMapping[key] ?? key}
-          </Button>
-        ))}
+        {availableKeys.map((key) => {
+          const isSelected = selectedParameters.includes(key);
+
+          return (
+            <Button
+              key={key}
+              size="small"
+              variant={isSelected ? "contained" : "outlined"}
+              onClick={() => onStatusClick([key])}
+              sx={{
+                minWidth: 0,
+                justifyContent: "flex-start",
+                textAlign: "left",
+                textTransform: "none",
+                fontSize: "0.68rem",
+                lineHeight: 1.1,
+                px: 0.75,
+                py: 0.55,
+                borderColor: isSelected
+                  ? theme.palette.primary.main
+                  : theme.palette.divider,
+                color: isSelected
+                  ? theme.palette.primary.contrastText
+                  : "text.secondary",
+                bgcolor: isSelected
+                  ? theme.palette.primary.main
+                  : "background.paper",
+                whiteSpace: "normal",
+                wordBreak: "break-word",
+                "&:hover": {
+                  borderColor: theme.palette.primary.main,
+                  color: isSelected
+                    ? theme.palette.primary.contrastText
+                    : theme.palette.primary.main,
+                  bgcolor: isSelected
+                    ? theme.palette.primary.dark
+                    : theme.palette.action.hover,
+                },
+              }}
+            >
+              {labelMapping[key] ?? key}
+            </Button>
+          );
+        })}
 
         {availableKeys.length === 0 && (
           <Typography
@@ -100,6 +120,53 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
             No parameters available
           </Typography>
         )}
+      </Box>
+
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+          gap: 0.6,
+          mt: 0.8,
+        }}
+      >
+        {(["graph", "3d"] as const).map((mode) => {
+          const isActive = activeView === mode;
+
+          return (
+            <Button
+              key={mode}
+              size="small"
+              variant={isActive ? "contained" : "outlined"}
+              onClick={() => onViewChange?.(mode)}
+              disabled={selectedParameters.length === 0}
+              sx={{
+                textTransform: "lowercase",
+                fontSize: "0.72rem",
+                fontWeight: 700,
+                py: 0.25,
+                borderRadius: 0.75,
+                borderColor: isActive
+                  ? theme.palette.success.main
+                  : theme.palette.success.main,
+                color: isActive
+                  ? theme.palette.success.contrastText
+                  : theme.palette.success.main,
+                bgcolor: isActive
+                  ? theme.palette.success.main
+                  : "background.paper",
+                "&:hover": {
+                  borderColor: theme.palette.success.dark,
+                  bgcolor: isActive
+                    ? theme.palette.success.dark
+                    : theme.palette.action.hover,
+                },
+              }}
+            >
+              {mode}
+            </Button>
+          );
+        })}
       </Box>
     </Box>
   );

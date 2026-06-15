@@ -15,10 +15,12 @@ interface ExtendedInfoWindowContentProps extends InfoWindowContentProps {
   onClose?: () => void;
 }
 
-const DEFAULT_TREND_PARAMETERS = [
-  "vibrationPitchAngle",
+type SensorViewMode = "graph" | "3d";
+
+const DEFAULT_TOWER_PARAMETERS = [
   "vibrationRollAngle",
-  "windTemperature",
+  "vibrationPitchAngle",
+  "vibrationAngle",
 ];
 
 const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
@@ -29,6 +31,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   const theme = useTheme();
   const [sensorParameters, setSensorParameters] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<SensorViewMode>("graph");
 
   // Date and time state for filters - without default values
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -45,11 +48,9 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   });
 
   useEffect(() => {
-    const defaultTrendParameters = DEFAULT_TREND_PARAMETERS.filter(
+    const defaultParameters = DEFAULT_TOWER_PARAMETERS.filter(
       (parameter) => point.status?.[parameter]
     );
-
-    if (defaultTrendParameters.length === 0) return;
 
     const end = dayjs();
     const start = end.subtract(1, "hour");
@@ -62,8 +63,9 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
       startDateTime: start.toISOString(),
       endDateTime: end.toISOString(),
     });
-    setSensorParameters(defaultTrendParameters);
-    setIsModalOpen(true);
+    setSensorParameters(defaultParameters);
+    setViewMode("graph");
+    setIsModalOpen(defaultParameters.length > 0);
   }, [point.key, point.status]);
 
   const filters = [
@@ -107,11 +109,29 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
     },
   });
 
-  // This function is now called after parameter selection and OK button click
   const handleParameterSelected = (keys: string[]) => {
     setFilterError(null);
-    setSensorParameters(keys);
-    setIsModalOpen(true);
+    setSensorParameters((currentKeys) => {
+      const nextKeys = new Set(currentKeys);
+
+      keys.forEach((key) => {
+        if (nextKeys.has(key)) {
+          nextKeys.delete(key);
+        } else {
+          nextKeys.add(key);
+        }
+      });
+
+      const selectedKeys = Array.from(nextKeys);
+      setViewMode("graph");
+      setIsModalOpen(selectedKeys.length > 0);
+      return selectedKeys;
+    });
+  };
+
+  const handleViewModeChange = (mode: SensorViewMode) => {
+    setViewMode(mode);
+    setIsModalOpen(sensorParameters.length > 0);
   };
 
   const handleCloseModal = () => {
@@ -274,6 +294,9 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
       <SensorParametersList
         status={point.status}
         onStatusClick={handleParameterSelected}
+        selectedParameters={sensorParameters}
+        activeView={viewMode}
+        onViewChange={handleViewModeChange}
         appliedFilter={appliedFilter}
       />
 
@@ -287,6 +310,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
           sensorParameters={sensorParameters}
           refetchLatestData={refetchLatestData}
           siteName={point.display_name}
+          viewMode={viewMode}
         />
       )}
     </Box>

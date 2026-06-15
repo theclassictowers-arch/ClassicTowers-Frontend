@@ -68,6 +68,18 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
   const prevDataLengthRef = useRef<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setVisibleLines((previousLines) => {
+      const nextLines: Record<string, boolean> = {};
+
+      dataKeys.forEach(({ key }) => {
+        nextLines[key] = previousLines[key] ?? true;
+      });
+
+      return nextLines;
+    });
+  }, [dataKeys]);
+
   // Set line color based on data keys
   const getLineColor = (key: string) => {
     const configuredColor = dataKeys.find((item) => item.key === key)?.color;
@@ -164,11 +176,58 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
       style={{
         height: "100%",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: compact ? "column" : "row",
         overflow: "hidden",
-        padding: compact ? "0 8px 0 0" : "0 15px 0 5px",
+        padding: compact ? "2px 8px 0 4px" : "0 15px 0 5px",
       }}
     >
+      {compact && (
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "6px 10px",
+            padding: "0 4px 4px 4px",
+            flexShrink: 0,
+          }}
+        >
+          {dataKeys.map(({ key, label }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => handleLegendClick({ dataKey: key })}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                border: 0,
+                padding: 0,
+                background: "transparent",
+                color:
+                  visibleLines[key] ?? true
+                    ? theme.palette.text.secondary
+                    : theme.palette.text.disabled,
+                fontSize: "0.68rem",
+                lineHeight: 1.1,
+                cursor: "pointer",
+              }}
+            >
+              <span
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  backgroundColor: getLineColor(key),
+                  opacity: visibleLines[key] ?? true ? 1 : 0.35,
+                  flexShrink: 0,
+                }}
+              />
+              <span>{label ?? key}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Custom Legend on the left with Switch Buttons - Reduced width */}
       {!compact && (
         <div
@@ -191,7 +250,7 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
               <div style={{ transform: "rotate(270deg)" }}>
                 <CustomSwitch
                   lineColor={getLineColor(key)}
-                  checked={visibleLines[key]}
+                  checked={visibleLines[key] ?? true}
                   onChange={() => handleLegendClick({ dataKey: key })}
                   size="small"
                 />
@@ -202,6 +261,7 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
       )}
 
       {/* Chart Container */}
+      <div style={{ flex: 1, minHeight: 0, minWidth: 0 }}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={sensorData}
@@ -265,7 +325,7 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
               strokeWidth={1.5}
               dot={false}
               animationDuration={300}
-              hide={!visibleLines[key]}
+              hide={!(visibleLines[key] ?? true)}
             />
           ))}
 
@@ -284,6 +344,7 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
           )}
         </LineChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 };
