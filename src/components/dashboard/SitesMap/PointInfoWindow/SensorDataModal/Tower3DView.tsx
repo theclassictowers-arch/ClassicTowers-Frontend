@@ -138,81 +138,209 @@ const Beam = ({
   );
 };
 
-const BuildingTower = ({ statusColor }: { statusColor: string }) => {
-  const windowRows = Array.from({ length: 12 }, (_, row) => row);
-  const sideWindows = Array.from({ length: 9 }, (_, row) => row);
+const PanelAntenna = ({
+  position,
+  rotationY,
+  statusColor,
+}: {
+  position: [number, number, number];
+  rotationY: number;
+  statusColor: string;
+}) => (
+  <group position={position} rotation={[0, rotationY, 0]}>
+    <mesh castShadow>
+      <boxGeometry args={[0.15, 0.92, 0.08]} />
+      <meshStandardMaterial color="#f8fafc" metalness={0.18} roughness={0.3} />
+    </mesh>
+    <mesh position={[0, 0, 0.048]}>
+      <boxGeometry args={[0.11, 0.72, 0.012]} />
+      <meshStandardMaterial
+        color={statusColor}
+        emissive={statusColor}
+        emissiveIntensity={0.18}
+        roughness={0.35}
+      />
+    </mesh>
+    <Beam start={point(0, -0.22, -0.04)} end={point(0, -0.22, -0.48)} radius={0.012} color="#64748b" />
+  </group>
+);
+
+const MicrowaveDish = ({
+  position,
+  rotation,
+}: {
+  position: [number, number, number];
+  rotation: [number, number, number];
+}) => (
+  <group position={position} rotation={rotation}>
+    <mesh castShadow>
+      <cylinderGeometry args={[0.35, 0.22, 0.08, 32]} />
+      <meshStandardMaterial color="#eef2f7" metalness={0.32} roughness={0.22} />
+    </mesh>
+    <mesh position={[0, 0, 0.06]}>
+      <sphereGeometry args={[0.06, 16, 16]} />
+      <meshStandardMaterial color="#64748b" metalness={0.45} roughness={0.25} />
+    </mesh>
+    <Beam start={point(0, 0, -0.02)} end={point(0, 0, -0.42)} radius={0.014} color="#475569" />
+  </group>
+);
+
+const Platform = ({ y, width }: { y: number; width: number }) => (
+  <group>
+    <mesh position={[0, y, 0]} receiveShadow>
+      <boxGeometry args={[width, 0.035, width]} />
+      <meshStandardMaterial color="#5b6b7c" metalness={0.7} roughness={0.34} />
+    </mesh>
+    {[
+      [0, width / 2],
+      [0, -width / 2],
+      [width / 2, 0],
+      [-width / 2, 0],
+    ].map(([x, z], index) => (
+      <Beam
+        key={index}
+        start={point(x, y + 0.02, z)}
+        end={point(x, y + 0.22, z)}
+        radius={0.012}
+        color="#334155"
+      />
+    ))}
+  </group>
+);
+
+const TelecomTower = ({ statusColor }: { statusColor: string }) => {
+  const levels = useMemo(() => {
+    const height = 5.9;
+
+    return Array.from({ length: 10 }, (_, index) => {
+      const y = index * (height / 9);
+      const half = 0.82 - index * 0.058;
+
+      return {
+        y,
+        corners: [
+          point(-half, y, -half),
+          point(half, y, -half),
+          point(half, y, half),
+          point(-half, y, half),
+        ],
+      };
+    });
+  }, []);
 
   return (
-    <group position={[0, -2.15, 0]}>
-      <mesh position={[0, 1.8, 0]} castShadow receiveShadow>
-        <boxGeometry args={[1.55, 7.1, 1.3]} />
-        <meshStandardMaterial color="#d8dde5" metalness={0.18} roughness={0.42} />
-      </mesh>
-      <mesh position={[0, 1.82, 0.662]} castShadow>
-        <boxGeometry args={[1.66, 7.18, 0.035]} />
-        <meshStandardMaterial color="#253244" metalness={0.22} roughness={0.28} />
+    <group position={[0, -2.65, 0]}>
+      <mesh position={[0, -0.08, 0]} receiveShadow>
+        <cylinderGeometry args={[1.28, 1.42, 0.18, 4]} />
+        <meshStandardMaterial color="#8d98a6" metalness={0.36} roughness={0.46} />
       </mesh>
 
-      {windowRows.map((row) =>
-        [-0.46, 0, 0.46].map((x) => (
-          <mesh key={`${row}-${x}`} position={[x, -1.1 + row * 0.46, 0.69]}>
-            <boxGeometry args={[0.26, 0.22, 0.018]} />
-            <meshStandardMaterial
-              color={row % 3 === 0 ? "#bae6fd" : "#f8fafc"}
-              emissive={row % 4 === 0 ? "#38bdf8" : "#ffffff"}
-              emissiveIntensity={row % 4 === 0 ? 0.22 : 0.05}
-              roughness={0.18}
-            />
-          </mesh>
-        ))
-      )}
+      {levels.slice(0, -1).map((level, index) => {
+        const next = levels[index + 1];
 
-      {sideWindows.map((row) =>
-        [-0.62, -0.22, 0.22, 0.62].map((z) => (
-          <mesh key={`side-${row}-${z}`} position={[0.79, -0.86 + row * 0.56, z]} rotation={[0, Math.PI / 2, 0]}>
-            <boxGeometry args={[0.2, 0.24, 0.018]} />
-            <meshStandardMaterial color="#e0f2fe" emissive="#93c5fd" emissiveIntensity={0.08} roughness={0.2} />
-          </mesh>
-        ))
-      )}
+        return (
+          <group key={level.y}>
+            {level.corners.map((corner, cornerIndex) => (
+              <Beam
+                key={`leg-${cornerIndex}`}
+                start={corner}
+                end={next.corners[cornerIndex]}
+                radius={0.036}
+                color="#334155"
+              />
+            ))}
+            {level.corners.map((corner, cornerIndex) => (
+              <Beam
+                key={`brace-a-${cornerIndex}`}
+                start={corner}
+                end={next.corners[(cornerIndex + 1) % 4]}
+                radius={0.017}
+                color="#94a3b8"
+              />
+            ))}
+            {level.corners.map((corner, cornerIndex) => (
+              <Beam
+                key={`brace-b-${cornerIndex}`}
+                start={level.corners[(cornerIndex + 1) % 4]}
+                end={next.corners[cornerIndex]}
+                radius={0.014}
+                color="#7c8ca0"
+              />
+            ))}
+            {level.corners.map((corner, cornerIndex) => (
+              <Beam
+                key={`ring-${cornerIndex}`}
+                start={corner}
+                end={level.corners[(cornerIndex + 1) % 4]}
+                radius={0.016}
+                color="#64748b"
+              />
+            ))}
+          </group>
+        );
+      })}
 
-      <mesh position={[0, 5.47, 0]} castShadow receiveShadow>
-        <boxGeometry args={[1.9, 0.24, 1.6]} />
-        <meshStandardMaterial color="#727f8e" metalness={0.32} roughness={0.36} />
+      <Platform y={2.1} width={1.42} />
+      <Platform y={3.78} width={1.1} />
+      <Platform y={5.35} width={0.82} />
+
+      <Beam start={point(0, 5.88, 0)} end={point(0, 6.85, 0)} radius={0.036} color="#334155" />
+      <mesh position={[0, 7.02, 0]}>
+        <sphereGeometry args={[0.085, 18, 18]} />
+        <meshStandardMaterial color={statusColor} emissive={statusColor} emissiveIntensity={1.15} />
       </mesh>
-      <mesh position={[0, 5.76, 0]} castShadow receiveShadow>
-        <boxGeometry args={[1.2, 0.36, 1]} />
-        <meshStandardMaterial color="#a8b0ba" metalness={0.28} roughness={0.38} />
-      </mesh>
 
-      <Beam start={point(0, 5.86, 0)} end={point(0, 7.2, 0)} radius={0.035} color="#334155" />
-      {[0, Math.PI / 2, Math.PI, Math.PI * 1.5].map((rotation) => (
-        <group key={rotation} position={[Math.sin(rotation) * 0.43, 6.55, Math.cos(rotation) * 0.43]} rotation={[0, rotation, 0]}>
-          <mesh castShadow>
-            <boxGeometry args={[0.12, 0.72, 0.06]} />
-            <meshStandardMaterial color="#f8fafc" metalness={0.22} roughness={0.28} />
-          </mesh>
-          <mesh position={[0, 0, 0.04]}>
-            <boxGeometry args={[0.09, 0.52, 0.01]} />
-            <meshStandardMaterial color={statusColor} emissive={statusColor} emissiveIntensity={0.18} roughness={0.3} />
-          </mesh>
-        </group>
+      {[0, Math.PI / 2, Math.PI, Math.PI * 1.5].map((rotation, index) => (
+        <PanelAntenna
+          key={`upper-panel-${index}`}
+          position={[Math.sin(rotation) * 0.6, 5.48, Math.cos(rotation) * 0.6]}
+          rotationY={rotation}
+          statusColor={statusColor}
+        />
       ))}
 
-      {[1.05, 1.55, 2.08].map((scale) => (
-        <mesh key={scale} position={[0, 6.55, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[scale, 0.008, 8, 86]} />
-          <meshStandardMaterial color="#38bdf8" emissive="#0ea5e9" emissiveIntensity={0.45} transparent opacity={0.3} />
+      {[Math.PI / 4, Math.PI * 0.75, Math.PI * 1.25, Math.PI * 1.75].map((rotation, index) => (
+        <PanelAntenna
+          key={`mid-panel-${index}`}
+          position={[Math.sin(rotation) * 0.82, 3.78, Math.cos(rotation) * 0.82]}
+          rotationY={rotation}
+          statusColor={index % 2 === 0 ? "#38bdf8" : statusColor}
+        />
+      ))}
+
+      <MicrowaveDish position={[0.76, 4.55, 0.14]} rotation={[Math.PI / 2, 0, -0.35]} />
+      <MicrowaveDish position={[-0.76, 3.2, -0.14]} rotation={[Math.PI / 2, 0, Math.PI + 0.45]} />
+
+      {[1.25, 1.86, 2.48].map((scale) => (
+        <mesh key={scale} position={[0, 5.48, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[scale, 0.007, 8, 86]} />
+          <meshStandardMaterial
+            color="#38bdf8"
+            emissive="#0ea5e9"
+            emissiveIntensity={0.45}
+            transparent
+            opacity={0.28}
+          />
         </mesh>
       ))}
 
-      <mesh position={[0, 7.34, 0]}>
-        <sphereGeometry args={[0.08, 18, 18]} />
-        <meshStandardMaterial color={statusColor} emissive={statusColor} emissiveIntensity={1.1} />
-      </mesh>
+      {[
+        point(-1.9, -0.04, -1.9),
+        point(1.9, -0.04, -1.9),
+        point(1.9, -0.04, 1.9),
+        point(-1.9, -0.04, 1.9),
+      ].map((anchor, index) => (
+        <Beam
+          key={`guy-${index}`}
+          start={point(0, 5, 0)}
+          end={anchor}
+          radius={0.008}
+          color="#94a3b8"
+        />
+      ))}
 
-      <Text position={[0, 0.8, 0.735]} fontSize={0.16} color="#ffffff" anchorX="center" anchorY="middle">
-        TheClassicTower
+      <Text position={[0, 0.85, 1.05]} fontSize={0.16} color="#334155" anchorX="center" anchorY="middle">
+        Telecom Tower
       </Text>
     </group>
   );
@@ -398,7 +526,7 @@ export const Tower3DView = ({
           <directionalLight position={[4, 7, 5]} intensity={1.5} castShadow shadow-mapSize={[1024, 1024]} />
           <spotLight position={[-4, 4.5, 4]} intensity={0.62} angle={0.42} penumbra={0.7} />
           <group rotation={tiltRotation}>
-            <BuildingTower statusColor={status.color} />
+            <TelecomTower statusColor={status.color} />
           </group>
           <WindArrow direction={telemetry.windDirection} speed={telemetry.windSpeed} statusColor={status.color} />
           <mesh position={[0, -2.32, 0]} receiveShadow>
@@ -419,7 +547,7 @@ export const Tower3DView = ({
         </Canvas>
 
         <div style={{ position: "absolute", left: 10, top: 10, display: "flex", gap: 6, flexWrap: "wrap" }}>
-          <Chip size="small" label={siteName || "TheClassicTower 3D"} sx={{ height: 23, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.15), color: "primary.main", fontSize: "0.66rem", fontWeight: 800 }} />
+          <Chip size="small" label={siteName || "Telecom Tower 3D"} sx={{ height: 23, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.15), color: "primary.main", fontSize: "0.66rem", fontWeight: 800 }} />
           <Chip size="small" label={hasRealTelemetry ? "Live data" : "Demo mode"} sx={{ height: 23, borderRadius: 1, bgcolor: status.tint, color: status.textColor, fontSize: "0.66rem", fontWeight: 800 }} />
           <Chip size="small" label={status.label} sx={{ height: 23, borderRadius: 1, bgcolor: status.color, color: "#fff", fontSize: "0.66rem", fontWeight: 800 }} />
         </div>
