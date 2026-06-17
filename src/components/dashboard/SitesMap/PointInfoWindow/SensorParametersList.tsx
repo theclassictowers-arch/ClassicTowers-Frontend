@@ -1,6 +1,8 @@
 ﻿// @ts-nocheck
 import { Dispatch, FC } from "react";
 import { Button, Typography, useTheme } from "@mui/material";
+import ShowChartIcon from "@mui/icons-material/ShowChart";
+import ThreeDRotationIcon from "@mui/icons-material/ThreeDRotation";
 
 interface SensorParametersListProps {
   status: Record<string, any>;
@@ -134,7 +136,8 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
         {(["graph", "3d"] as const).map((mode) => {
           const isActive = activeView === mode;
           const isGraphMode = mode === "graph";
-          const label = isGraphMode ? "Graph" : "Tower 3D";
+          const label = isGraphMode ? "Graph" : "3D Tower";
+          const Icon = isGraphMode ? ShowChartIcon : ThreeDRotationIcon;
 
           return (
             <Button
@@ -144,6 +147,9 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
               onClick={() => onViewChange?.(mode)}
               disabled={isGraphMode && selectedParameters.length === 0}
               sx={{
+                alignItems: "center",
+                display: "inline-flex",
+                gap: 0.5,
                 textTransform: "none",
                 fontSize: "0.7rem",
                 fontWeight: 700,
@@ -166,6 +172,7 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
                 },
               }}
             >
+              <Icon sx={{ fontSize: "0.92rem" }} />
               {label}
             </Button>
           );

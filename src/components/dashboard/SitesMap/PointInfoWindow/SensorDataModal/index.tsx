@@ -1,7 +1,7 @@
 ﻿// @ts-nocheck
 import { CSSProperties, FC, useMemo } from "react";
 import { DataVisualizationHeader } from "./RealTimeDataVisualization/DataVisualizationHeader";
-import { Box, CircularProgress, Portal, Typography } from "@mui/material";
+import { CircularProgress, Portal, Typography } from "@mui/material";
 import { RealTimeLineChart } from "./RealTimeDataVisualization/RealTimeLineChart";
 import { Tower3DView } from "./Tower3DView";
 
@@ -147,15 +147,37 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
     const latest = [...unifiedChartData]
       .reverse()
       .find((item: any) =>
-        ["vibrationRollAngle", "vibrationPitchAngle", "vibrationAngle"].some(
+        [
+          "vibrationRollAngle",
+          "vibrationPitchAngle",
+          "vibrationAngle",
+          "windSpeed",
+          "windDirection",
+          "vibrationSpeed_x",
+          "vibrationSpeed_y",
+          "vibrationSpeed_z",
+        ].some(
           (key) => typeof item[key] === "number"
         )
       ) as any;
+
+    const vibrationValues = [
+      latest?.vibrationSpeed_x,
+      latest?.vibrationSpeed_y,
+      latest?.vibrationSpeed_z,
+    ].filter((value) => typeof value === "number");
 
     return {
       roll: latest?.vibrationRollAngle,
       pitch: latest?.vibrationPitchAngle,
       yaw: latest?.vibrationAngle,
+      windSpeed: latest?.windSpeed,
+      windDirection: latest?.windDirection,
+      vibration:
+        vibrationValues.length > 0
+          ? vibrationValues.reduce((total, value) => total + Math.abs(value), 0) /
+            vibrationValues.length
+          : undefined,
     };
   }, [unifiedChartData]);
 
@@ -211,7 +233,13 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
 
   const renderBody = () => {
     if (viewMode === "3d") {
-      return <Tower3DView {...latestAngles} />;
+      return (
+        <Tower3DView
+          {...latestAngles}
+          history={unifiedChartData}
+          siteName={siteName}
+        />
+      );
     }
 
     if (isSensorDataLoading) {

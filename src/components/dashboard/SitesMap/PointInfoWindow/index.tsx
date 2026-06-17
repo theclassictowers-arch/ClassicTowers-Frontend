@@ -1,6 +1,6 @@
 ﻿// @ts-nocheck
 import { CSSProperties, Dispatch, FC, useContext, useState, useEffect } from "react";
-import { Box, Divider, IconButton, Portal, Typography, useTheme } from "@mui/material";
+import { Divider, IconButton, Portal, Typography, useTheme } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useList } from "@refinedev/core";
@@ -23,6 +23,9 @@ const DEFAULT_TOWER_PARAMETERS = [
   "vibrationRollAngle",
   "vibrationPitchAngle",
   "vibrationAngle",
+  "vibrationSpeed",
+  "windSpeed",
+  "windDirection",
 ];
 
 const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
