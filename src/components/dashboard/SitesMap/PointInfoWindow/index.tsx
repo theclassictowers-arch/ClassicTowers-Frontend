@@ -54,10 +54,6 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   });
 
   useEffect(() => {
-    const defaultParameters = DEFAULT_TOWER_PARAMETERS.filter(
-      (parameter) => point.status?.[parameter]
-    );
-
     const end = dayjs();
     const start = end.subtract(1, "hour");
 
@@ -69,9 +65,9 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
       startDateTime: start.toISOString(),
       endDateTime: end.toISOString(),
     });
-    setSensorParameters(defaultParameters);
+    setSensorParameters(DEFAULT_TOWER_PARAMETERS);
     setViewMode("graph");
-    setIsModalOpen(defaultParameters.length > 0);
+    setIsModalOpen(true);
   }, [point.key, point.status]);
 
   const filters = [
