@@ -1,12 +1,10 @@
-﻿// @ts-nocheck
-import { CSSProperties, Dispatch, useMemo, useState } from "react";
-import { Box, Button, Chip, Stack, Typography, alpha, useTheme } from "@mui/material";
+// @ts-nocheck
+import { CSSProperties, useMemo } from "react";
+import { Box, Chip, Stack, Typography, alpha, useTheme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Canvas, ThreeEvent } from "@react-three/fiber";
-import { ContactShadows, Html, OrbitControls } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { ContactShadows, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-
-type UnitStatus = "available" | "reserved" | "sold";
 
 interface Tower3DViewProps {
   roll?: number;
@@ -14,312 +12,258 @@ interface Tower3DViewProps {
   yaw?: number;
 }
 
-interface TowerUnit {
-  id: string;
-  floor: number;
-  type: string;
-  area: string;
-  price: string;
-  status: UnitStatus;
-  wing: "A" | "B" | "C" | "D";
-}
+const steelMaterial = new THREE.MeshStandardMaterial({
+  color: "#9aa7b5",
+  metalness: 0.72,
+  roughness: 0.28,
+});
 
-interface TowerFloor {
-  number: number;
-  label: string;
-  units: TowerUnit[];
-}
+const darkSteelMaterial = new THREE.MeshStandardMaterial({
+  color: "#344256",
+  metalness: 0.82,
+  roughness: 0.24,
+});
 
-const statusMeta: Record<
-  UnitStatus,
-  { label: string; color: string; softColor: string }
-> = {
-  available: {
-    label: "Available",
-    color: "#16a34a",
-    softColor: "rgba(22, 163, 74, 0.18)",
-  },
-  reserved: {
-    label: "Reserved",
-    color: "#f59e0b",
-    softColor: "rgba(245, 158, 11, 0.2)",
-  },
-  sold: {
-    label: "Sold",
-    color: "#64748b",
-    softColor: "rgba(100, 116, 139, 0.2)",
-  },
-};
-
-const glassMaterial = new THREE.MeshPhysicalMaterial({
-  color: "#d9ecff",
+const antennaMaterial = new THREE.MeshStandardMaterial({
+  color: "#f5f7fb",
   metalness: 0.18,
-  roughness: 0.16,
-  transmission: 0.25,
+  roughness: 0.32,
+});
+
+const signalMaterial = new THREE.MeshStandardMaterial({
+  color: "#3b82f6",
+  emissive: "#2563eb",
+  emissiveIntensity: 0.35,
   transparent: true,
-  opacity: 0.58,
+  opacity: 0.38,
 });
 
-const frameMaterial = new THREE.MeshStandardMaterial({
-  color: "#20304a",
-  metalness: 0.42,
-  roughness: 0.36,
-});
+const point = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 
-const balconyMaterial = new THREE.MeshStandardMaterial({
-  color: "#f8fafc",
-  metalness: 0.28,
-  roughness: 0.48,
-});
-
-const makeTowerFloors = (): TowerFloor[] =>
-  Array.from({ length: 18 }, (_, index) => {
-    const floor = index + 1;
-    const units = (["A", "B", "C", "D"] as const).map((wing, unitIndex) => {
-      const statusSeed = (floor + unitIndex * 2) % 7;
-      const status: UnitStatus =
-        statusSeed === 0 || statusSeed === 4
-          ? "sold"
-          : statusSeed === 2
-          ? "reserved"
-          : "available";
-
-      return {
-        id: `${floor}${wing}`,
-        floor,
-        wing,
-        status,
-        type: unitIndex % 2 === 0 ? "2 Bed Luxury" : "3 Bed Corner",
-        area: unitIndex % 2 === 0 ? "1,245 sq ft" : "1,680 sq ft",
-        price: unitIndex % 2 === 0 ? "$420,000" : "$565,000",
-      };
-    });
+const Beam = ({
+  start,
+  end,
+  radius = 0.025,
+  material = steelMaterial,
+}: {
+  start: THREE.Vector3;
+  end: THREE.Vector3;
+  radius?: number;
+  material?: THREE.Material;
+}) => {
+  const { position, quaternion, length } = useMemo(() => {
+    const direction = new THREE.Vector3().subVectors(end, start);
+    const midpoint = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+    const quat = new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      direction.clone().normalize()
+    );
 
     return {
-      number: floor,
-      label: floor === 18 ? "Penthouse" : `Floor ${floor}`,
-      units,
+      position: midpoint,
+      quaternion: quat,
+      length: direction.length(),
     };
-  }).reverse();
-
-const StatusDot = ({ status }: { status: UnitStatus }) => (
-  <Box
-    component="span"
-    sx={{
-      width: 8,
-      height: 8,
-      borderRadius: "50%",
-      bgcolor: statusMeta[status].color,
-      display: "inline-block",
-      flexShrink: 0,
-    }}
-  />
-);
-
-interface TowerUnitMeshProps {
-  unit: TowerUnit;
-  floorIndex: number;
-  unitIndex: number;
-  selected: boolean;
-  active: boolean;
-  onHover: Dispatch<TowerUnit | null>;
-  onSelect: Dispatch<TowerUnit>;
-}
-
-const TowerUnitMesh = ({
-  unit,
-  floorIndex,
-  unitIndex,
-  selected,
-  active,
-  onHover,
-  onSelect,
-}: TowerUnitMeshProps) => {
-  const x = -1.05 + unitIndex * 0.7;
-  const y = floorIndex * 0.22 + 0.22;
-  const statusColor = statusMeta[unit.status].color;
-
-  const handlePointerOver = (event: ThreeEvent<PointerEvent>) => {
-    event.stopPropagation();
-    document.body.style.cursor = "pointer";
-    onHover(unit);
-  };
-
-  const handlePointerOut = (event: ThreeEvent<PointerEvent>) => {
-    event.stopPropagation();
-    document.body.style.cursor = "auto";
-    onHover(null);
-  };
+  }, [start, end]);
 
   return (
-    <group>
-      <mesh
-        position={[x, y, 0.84]}
-        onClick={(event) => {
-          event.stopPropagation();
-          onSelect(unit);
-        }}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-      >
-        <boxGeometry args={[0.48, 0.15, 0.035]} />
-        <meshStandardMaterial
-          color={statusColor}
-          emissive={statusColor}
-          emissiveIntensity={selected || active ? 0.24 : 0.08}
-          opacity={unit.status === "sold" ? 0.5 : 0.86}
-          transparent
-          roughness={0.25}
-        />
-      </mesh>
-
-      <mesh position={[x, y - 0.085, 0.91]}>
-        <boxGeometry args={[0.54, 0.025, 0.2]} />
-        <primitive object={balconyMaterial} attach="material" />
-      </mesh>
-
-      {active && (
-        <Html position={[x, y + 0.16, 1.02]} center distanceFactor={6}>
-          <div
-            style={{
-              padding: "4px 6px",
-              borderRadius: 8,
-              backgroundColor: "rgba(15, 23, 42, 0.88)",
-              color: "#fff",
-              minWidth: 112,
-              boxShadow: "0 8px 24px rgba(15, 23, 42, 0.24)",
-            }}
-          >
-            <Typography sx={{ fontSize: "0.68rem", fontWeight: 800 }}>
-              Unit {unit.id}
-            </Typography>
-            <Typography sx={{ fontSize: "0.62rem", opacity: 0.82 }}>
-              {statusMeta[unit.status].label}
-            </Typography>
-          </div>
-        </Html>
-      )}
-    </group>
+    <mesh position={position} quaternion={quaternion} castShadow receiveShadow>
+      <cylinderGeometry args={[radius, radius, length, 10]} />
+      <primitive object={material} attach="material" />
+    </mesh>
   );
 };
 
-interface TowerModelProps {
-  floors: TowerFloor[];
-  selectedFloor: number;
-  activeUnit: TowerUnit | null;
-  hoveredUnit: TowerUnit | null;
-  onSelectFloor: Dispatch<number>;
-  onSelectUnit: Dispatch<TowerUnit>;
-  onHoverUnit: Dispatch<TowerUnit | null>;
-}
+const PanelAntenna = ({
+  position,
+  rotationY,
+  labelColor = "#2563eb",
+}: {
+  position: [number, number, number];
+  rotationY: number;
+  labelColor?: string;
+}) => (
+  <group position={position} rotation={[0, rotationY, 0]}>
+    <mesh castShadow>
+      <boxGeometry args={[0.14, 0.9, 0.08]} />
+      <primitive object={antennaMaterial} attach="material" />
+    </mesh>
+    <mesh position={[0, 0, 0.048]}>
+      <boxGeometry args={[0.11, 0.72, 0.012]} />
+      <meshStandardMaterial color={labelColor} roughness={0.4} />
+    </mesh>
+    <Beam start={point(0, -0.2, -0.04)} end={point(0, -0.2, -0.45)} radius={0.012} />
+  </group>
+);
 
-const TowerModel = ({
-  floors,
-  selectedFloor,
-  activeUnit,
-  hoveredUnit,
-  onSelectFloor,
-  onSelectUnit,
-  onHoverUnit,
-}: TowerModelProps) => {
-  const ascendingFloors = [...floors].reverse();
+const MicrowaveDish = ({
+  position,
+  rotation,
+}: {
+  position: [number, number, number];
+  rotation: [number, number, number];
+}) => (
+  <group position={position} rotation={rotation}>
+    <mesh castShadow>
+      <cylinderGeometry args={[0.34, 0.22, 0.08, 32]} />
+      <meshStandardMaterial color="#e8edf3" metalness={0.32} roughness={0.22} />
+    </mesh>
+    <mesh position={[0, 0, 0.06]}>
+      <sphereGeometry args={[0.06, 16, 16]} />
+      <meshStandardMaterial color="#64748b" metalness={0.45} roughness={0.25} />
+    </mesh>
+    <Beam start={point(0, 0, -0.02)} end={point(0, 0, -0.42)} radius={0.014} />
+  </group>
+);
+
+const Platform = ({ y, width }: { y: number; width: number }) => (
+  <group>
+    <mesh position={[0, y, 0]} receiveShadow>
+      <boxGeometry args={[width, 0.035, width]} />
+      <meshStandardMaterial color="#5b6b7c" metalness={0.7} roughness={0.34} />
+    </mesh>
+    {[
+      [0, width / 2],
+      [0, -width / 2],
+      [width / 2, 0],
+      [-width / 2, 0],
+    ].map(([x, z], index) => (
+      <Beam
+        key={index}
+        start={point(x, y + 0.02, z)}
+        end={point(x, y + 0.22, z)}
+        radius={0.012}
+        material={darkSteelMaterial}
+      />
+    ))}
+  </group>
+);
+
+const TowerLattice = () => {
+  const levels = useMemo(() => {
+    const height = 5.8;
+    return Array.from({ length: 9 }, (_, index) => {
+      const y = index * (height / 8);
+      const half = 0.78 - index * 0.055;
+      return {
+        y,
+        corners: [
+          point(-half, y, -half),
+          point(half, y, -half),
+          point(half, y, half),
+          point(-half, y, half),
+        ],
+      };
+    });
+  }, []);
 
   return (
-    <group position={[0, -2.05, 0]} rotation={[0, -0.34, 0]}>
-      <mesh position={[0, -0.13, 0]}>
-        <boxGeometry args={[3.55, 0.26, 2.05]} />
-        <meshStandardMaterial color="#d6b66d" metalness={0.18} roughness={0.42} />
+    <group position={[0, -2.65, 0]}>
+      <mesh position={[0, -0.08, 0]} receiveShadow>
+        <cylinderGeometry args={[1.25, 1.35, 0.16, 4]} />
+        <meshStandardMaterial color="#8d98a6" metalness={0.36} roughness={0.46} />
       </mesh>
 
-      <mesh position={[0, 4.28, 0]}>
-        <boxGeometry args={[2.55, 0.24, 1.38]} />
-        <meshStandardMaterial color="#caa95f" metalness={0.24} roughness={0.34} />
-      </mesh>
-
-      {ascendingFloors.map((floor, floorIndex) => {
-        const y = floorIndex * 0.22 + 0.18;
-        const isSelectedFloor = selectedFloor === floor.number;
-
+      {levels.slice(0, -1).map((level, index) => {
+        const next = levels[index + 1];
         return (
-          <group key={floor.number}>
-            <mesh
-              position={[0, y, 0]}
-              onClick={(event) => {
-                event.stopPropagation();
-                onSelectFloor(floor.number);
-              }}
-              onPointerOver={() => {
-                document.body.style.cursor = "pointer";
-              }}
-              onPointerOut={() => {
-                document.body.style.cursor = "auto";
-              }}
-            >
-              <boxGeometry args={[2.72, 0.045, 1.38]} />
-              <meshStandardMaterial
-                color={isSelectedFloor ? "#d6b66d" : "#ecf4ff"}
-                metalness={0.12}
-                roughness={0.32}
-                opacity={isSelectedFloor ? 0.72 : 0.38}
-                transparent
+          <group key={level.y}>
+            {level.corners.map((corner, cornerIndex) => (
+              <Beam
+                key={`leg-${cornerIndex}`}
+                start={corner}
+                end={next.corners[cornerIndex]}
+                radius={0.035}
+                material={darkSteelMaterial}
               />
-            </mesh>
-
-            <mesh position={[0, y + 0.055, 0.72]}>
-              <boxGeometry args={[2.8, 0.035, 0.055]} />
-              <primitive object={frameMaterial} attach="material" />
-            </mesh>
-
-            <mesh position={[0, y + 0.055, -0.72]}>
-              <boxGeometry args={[2.8, 0.035, 0.055]} />
-              <primitive object={frameMaterial} attach="material" />
-            </mesh>
-
-            <mesh position={[-1.42, y + 0.06, 0]}>
-              <boxGeometry args={[0.05, 0.14, 1.42]} />
-              <primitive object={glassMaterial} attach="material" />
-            </mesh>
-
-            <mesh position={[1.42, y + 0.06, 0]}>
-              <boxGeometry args={[0.05, 0.14, 1.42]} />
-              <primitive object={glassMaterial} attach="material" />
-            </mesh>
-
-            {floor.units.map((unit, unitIndex) => (
-              <TowerUnitMesh
-                key={unit.id}
-                unit={unit}
-                floorIndex={floorIndex}
-                unitIndex={unitIndex}
-                selected={activeUnit?.id === unit.id}
-                active={hoveredUnit?.id === unit.id || activeUnit?.id === unit.id}
-                onHover={onHoverUnit}
-                onSelect={(nextUnit) => {
-                  onSelectFloor(nextUnit.floor);
-                  onSelectUnit(nextUnit);
-                }}
+            ))}
+            {level.corners.map((corner, cornerIndex) => (
+              <Beam
+                key={`brace-a-${cornerIndex}`}
+                start={corner}
+                end={next.corners[(cornerIndex + 1) % 4]}
+                radius={0.017}
+              />
+            ))}
+            {level.corners.map((corner, cornerIndex) => (
+              <Beam
+                key={`brace-b-${cornerIndex}`}
+                start={level.corners[(cornerIndex + 1) % 4]}
+                end={next.corners[cornerIndex]}
+                radius={0.014}
+              />
+            ))}
+            {level.corners.map((corner, cornerIndex) => (
+              <Beam
+                key={`ring-${cornerIndex}`}
+                start={corner}
+                end={level.corners[(cornerIndex + 1) % 4]}
+                radius={0.016}
               />
             ))}
           </group>
         );
       })}
 
-      <mesh position={[0, 2.15, -0.74]}>
-        <boxGeometry args={[2.94, 4.1, 0.045]} />
-        <primitive object={glassMaterial} attach="material" />
+      <Platform y={2.15} width={1.38} />
+      <Platform y={3.75} width={1.08} />
+      <Platform y={5.25} width={0.78} />
+
+      <Beam start={point(0, 5.75, 0)} end={point(0, 6.65, 0)} radius={0.035} material={darkSteelMaterial} />
+      <mesh position={[0, 6.78, 0]}>
+        <sphereGeometry args={[0.08, 18, 18]} />
+        <meshStandardMaterial color="#ef4444" emissive="#ef4444" emissiveIntensity={1.1} />
       </mesh>
 
-      {[-0.72, 0, 0.72].map((x) => (
-        <mesh key={x} position={[x, 2.15, 0.78]}>
-          <boxGeometry args={[0.035, 4.2, 0.08]} />
-          <primitive object={frameMaterial} attach="material" />
+      {[0, Math.PI / 2, Math.PI, Math.PI * 1.5].map((rotation, index) => (
+        <PanelAntenna
+          key={`upper-panel-${index}`}
+          position={[
+            Math.sin(rotation) * 0.58,
+            5.35,
+            Math.cos(rotation) * 0.58,
+          ]}
+          rotationY={rotation}
+        />
+      ))}
+
+      {[Math.PI / 4, Math.PI * 0.75, Math.PI * 1.25, Math.PI * 1.75].map((rotation, index) => (
+        <PanelAntenna
+          key={`mid-panel-${index}`}
+          position={[
+            Math.sin(rotation) * 0.78,
+            3.72,
+            Math.cos(rotation) * 0.78,
+          ]}
+          rotationY={rotation}
+          labelColor="#22c55e"
+        />
+      ))}
+
+      <MicrowaveDish position={[0.72, 4.45, 0.12]} rotation={[Math.PI / 2, 0, -0.35]} />
+      <MicrowaveDish position={[-0.72, 3.18, -0.12]} rotation={[Math.PI / 2, 0, Math.PI + 0.45]} />
+
+      {[1.3, 1.95, 2.6].map((scale) => (
+        <mesh key={scale} position={[0, 5.35, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[scale, 0.006, 8, 80]} />
+          <primitive object={signalMaterial} attach="material" />
         </mesh>
       ))}
 
-      <mesh position={[0, 4.55, 0]}>
-        <coneGeometry args={[1.38, 0.42, 4]} />
-        <meshStandardMaterial color="#1e2d46" metalness={0.42} roughness={0.28} />
-      </mesh>
+      {[
+        point(-1.8, -0.04, -1.8),
+        point(1.8, -0.04, -1.8),
+        point(1.8, -0.04, 1.8),
+        point(-1.8, -0.04, 1.8),
+      ].map((anchor, index) => (
+        <Beam
+          key={`guy-${index}`}
+          start={point(0, 4.85, 0)}
+          end={anchor}
+          radius={0.008}
+          material={steelMaterial}
+        />
+      ))}
     </group>
   );
 };
@@ -327,29 +271,15 @@ const TowerModel = ({
 export const Tower3DView = ({ roll, pitch, yaw }: Tower3DViewProps) => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
-  const floors = useMemo(makeTowerFloors, []);
-  const [selectedFloor, setSelectedFloor] = useState(12);
-  const [activeUnit, setActiveUnit] = useState<TowerUnit | null>(
-    floors.find((floor) => floor.number === 12)?.units[0] ?? null
-  );
-  const [hoveredUnit, setHoveredUnit] = useState<TowerUnit | null>(null);
-  const selectedFloorData = floors.find((floor) => floor.number === selectedFloor);
-  const displayUnit = hoveredUnit ?? activeUnit ?? selectedFloorData?.units[0] ?? null;
-
-  const statusCounts = useMemo(
-    () =>
-      floors.flatMap((floor) => floor.units).reduce(
-        (counts, unit) => ({
-          ...counts,
-          [unit.status]: counts[unit.status] + 1,
-        }),
-        { available: 0, reserved: 0, sold: 0 } as Record<UnitStatus, number>
-      ),
-    [floors]
-  );
   const hasLiveAngles = [roll, pitch, yaw].some(
     (value) => typeof value === "number" && Number.isFinite(value)
   );
+  const tiltRotation: [number, number, number] = [
+    THREE.MathUtils.degToRad(pitch || 0) * 0.15,
+    THREE.MathUtils.degToRad(yaw || 0) * 0.08,
+    THREE.MathUtils.degToRad(roll || 0) * 0.15,
+  ];
+
   const rootStyle: CSSProperties = {
     backgroundColor: theme.palette.background.paper,
     border: `1px solid ${theme.palette.divider}`,
@@ -357,107 +287,65 @@ export const Tower3DView = ({ roll, pitch, yaw }: Tower3DViewProps) => {
     display: "grid",
     flex: 1,
     gap: 8,
-    gridTemplateColumns: isDesktop ? "132px minmax(0, 1fr) 156px" : "1fr",
-    gridTemplateRows: isDesktop ? "1fr" : "auto minmax(360px, 1fr) auto",
+    gridTemplateColumns: isDesktop ? "minmax(0, 1fr) 178px" : "1fr",
+    gridTemplateRows: isDesktop ? "1fr" : "minmax(360px, 1fr) auto",
     minHeight: 0,
     overflow: "hidden",
   };
-  const floorRailStyle: CSSProperties = {
-    borderBottom: isDesktop ? 0 : `1px solid ${theme.palette.divider}`,
-    borderRight: isDesktop ? `1px solid ${theme.palette.divider}` : 0,
-    display: "flex",
-    flexDirection: isDesktop ? "column" : "row",
-    gap: 6,
-    overflowX: isDesktop ? "hidden" : "auto",
-    overflowY: isDesktop ? "auto" : "hidden",
-    padding: 8,
-  };
+
   const sceneStyle: CSSProperties = {
     background: `linear-gradient(180deg, ${alpha(
       theme.palette.primary.main,
-      0.08
-    )}, ${alpha("#0f172a", 0.03)} 56%, ${alpha("#d6b66d", 0.1)})`,
-    minHeight: 360,
+      0.1
+    )}, ${alpha("#0f172a", 0.02)} 52%, ${alpha("#22c55e", 0.08)})`,
+    minHeight: 390,
     position: "relative",
   };
+
   const detailsPanelStyle: CSSProperties = {
-    backgroundColor: alpha(theme.palette.background.default, 0.7),
+    backgroundColor: alpha(theme.palette.background.default, 0.74),
     borderLeft: isDesktop ? `1px solid ${theme.palette.divider}` : 0,
     borderTop: isDesktop ? 0 : `1px solid ${theme.palette.divider}`,
     overflowY: "auto",
-    padding: 8,
+    padding: 10,
   };
 
   return (
     <div style={rootStyle}>
-      <div style={floorRailStyle}>
-        {floors.map((floor) => (
-          <Button
-            key={floor.number}
-            size="small"
-            variant={selectedFloor === floor.number ? "contained" : "outlined"}
-            onClick={() => {
-              setSelectedFloor(floor.number);
-              setActiveUnit(floor.units[0] ?? null);
-            }}
-            sx={{
-              justifyContent: "space-between",
-              minWidth: { xs: 92, md: 0 },
-              px: 0.9,
-              py: 0.45,
-              fontSize: "0.68rem",
-              textTransform: "none",
-              borderRadius: 0.75,
-              borderColor: "divider",
-            }}
-          >
-            <span>{floor.label}</span>
-            <span>{floor.units.filter((unit) => unit.status === "available").length}</span>
-          </Button>
-        ))}
-      </div>
-
       <div style={sceneStyle}>
         <Canvas
           shadows
-          dpr={[1, 1.6]}
-          camera={{ position: [4.4, 3.2, 5.6], fov: 42 }}
+          dpr={[1, 1.7]}
+          camera={{ position: [4.2, 3.3, 6.2], fov: 39 }}
           gl={{ antialias: true, alpha: true }}
-          onPointerMissed={() => setHoveredUnit(null)}
         >
-          <ambientLight intensity={0.82} />
+          <ambientLight intensity={0.7} />
           <directionalLight
-            position={[4, 6, 4]}
-            intensity={1.45}
+            position={[4, 7, 5]}
+            intensity={1.55}
             castShadow
             shadow-mapSize={[1024, 1024]}
           />
-          <spotLight position={[-4, 5, 3]} intensity={0.75} angle={0.45} penumbra={0.7} />
-          <TowerModel
-            floors={floors}
-            selectedFloor={selectedFloor}
-            activeUnit={activeUnit}
-            hoveredUnit={hoveredUnit}
-            onSelectFloor={setSelectedFloor}
-            onSelectUnit={setActiveUnit}
-            onHoverUnit={setHoveredUnit}
-          />
+          <spotLight position={[-4, 4.5, 3]} intensity={0.65} angle={0.42} penumbra={0.7} />
+          <group rotation={tiltRotation}>
+            <TowerLattice />
+          </group>
           <ContactShadows
-            position={[0, -2.2, 0]}
-            opacity={0.35}
-            scale={7}
-            blur={2.5}
-            far={2.4}
+            position={[0, -2.75, 0]}
+            opacity={0.34}
+            scale={6.4}
+            blur={2.2}
+            far={2.8}
           />
           <OrbitControls
             makeDefault
             enableDamping
             dampingFactor={0.08}
-            minDistance={4.2}
-            maxDistance={9}
-            minPolarAngle={0.55}
-            maxPolarAngle={1.55}
-            target={[0, 0.9, 0]}
+            minDistance={4.4}
+            maxDistance={9.5}
+            minPolarAngle={0.48}
+            maxPolarAngle={1.5}
+            target={[0, 0.6, 0]}
           />
         </Canvas>
 
@@ -471,40 +359,33 @@ export const Tower3DView = ({ roll, pitch, yaw }: Tower3DViewProps) => {
             flexWrap: "wrap",
           }}
         >
-          {(Object.keys(statusMeta) as UnitStatus[]).map((status) => (
-            <Chip
-              key={status}
-              size="small"
-              label={`${statusMeta[status].label} ${statusCounts[status]}`}
-              sx={{
-                height: 22,
-                borderRadius: 1,
-                bgcolor: statusMeta[status].softColor,
-                color: statusMeta[status].color,
-                fontSize: "0.65rem",
-                fontWeight: 800,
-              }}
-            />
-          ))}
-        </div>
-
-        {hasLiveAngles && (
           <Chip
             size="small"
-            label="Live structure"
+            label="Communication Tower"
             sx={{
-              position: "absolute",
-              right: 10,
-              top: 10,
               height: 22,
               borderRadius: 1,
-              bgcolor: alpha(theme.palette.primary.main, 0.12),
+              bgcolor: alpha(theme.palette.primary.main, 0.14),
               color: "primary.main",
               fontSize: "0.65rem",
               fontWeight: 800,
             }}
           />
-        )}
+          {hasLiveAngles && (
+            <Chip
+              size="small"
+              label="Live tilt"
+              sx={{
+                height: 22,
+                borderRadius: 1,
+                bgcolor: alpha("#22c55e", 0.16),
+                color: "#15803d",
+                fontSize: "0.65rem",
+                fontWeight: 800,
+              }}
+            />
+          )}
+        </div>
       </div>
 
       <div style={detailsPanelStyle}>
@@ -514,109 +395,61 @@ export const Tower3DView = ({ roll, pitch, yaw }: Tower3DViewProps) => {
             fontWeight: 800,
             color: "text.secondary",
             textTransform: "uppercase",
-            letterSpacing: 0.4,
             mb: 0.75,
           }}
         >
-          Unit Details
+          Tower Assets
         </Typography>
 
-        {displayUnit && (
-          <Stack spacing={0.9}>
-            <div>
-              <Typography sx={{ fontSize: "1rem", fontWeight: 900, lineHeight: 1 }}>
-                Unit {displayUnit.id}
-              </Typography>
-              <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", mt: 0.25 }}>
-                {selectedFloorData?.label} | Wing {displayUnit.wing}
-              </Typography>
-            </div>
-
-            <Chip
-              icon={<StatusDot status={displayUnit.status} />}
-              label={statusMeta[displayUnit.status].label}
-              size="small"
-              sx={{
-                alignSelf: "flex-start",
-                height: 24,
-                borderRadius: 1,
-                bgcolor: statusMeta[displayUnit.status].softColor,
-                color: statusMeta[displayUnit.status].color,
-                fontWeight: 800,
-                "& .MuiChip-icon": { ml: 0.75 },
+        <Stack spacing={0.9}>
+          {[
+            ["Structure", "Tapered lattice mast"],
+            ["Antennas", "8 sector panels"],
+            ["Backhaul", "2 microwave dishes"],
+            ["Safety", "Beacon + guy wires"],
+          ].map(([label, value]) => (
+            <div
+              key={label}
+              style={{
+                padding: 8,
+                borderRadius: 8,
+                backgroundColor: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.divider}`,
               }}
-            />
-
-            {[
-              ["Type", displayUnit.type],
-              ["Area", displayUnit.area],
-              ["Price", displayUnit.price],
-              ["View", displayUnit.wing === "A" || displayUnit.wing === "D" ? "Skyline" : "Courtyard"],
-            ].map(([label, value]) => (
-              <div
-                key={label}
-                style={{
-                  padding: 6,
-                  borderRadius: 8,
-                  backgroundColor: theme.palette.background.paper,
-                  border: `1px solid ${theme.palette.divider}`,
-                }}
-              >
-                <Typography sx={{ fontSize: "0.62rem", color: "text.secondary" }}>
-                  {label}
-                </Typography>
-                <Typography sx={{ fontSize: "0.78rem", fontWeight: 800 }}>
-                  {value}
-                </Typography>
-              </div>
-            ))}
-
-            <div>
-              <Typography sx={{ fontSize: "0.66rem", fontWeight: 800, mb: 0.5 }}>
-                Floor Units
+            >
+              <Typography sx={{ fontSize: "0.62rem", color: "text.secondary" }}>
+                {label}
               </Typography>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(2, 1fr)",
-                  gap: 4,
-                }}
-              >
-                {selectedFloorData?.units.map((unit) => (
-                  <Button
-                    key={unit.id}
-                    size="small"
-                    variant={activeUnit?.id === unit.id ? "contained" : "outlined"}
-                    onClick={() => setActiveUnit(unit)}
-                    sx={{
-                      minWidth: 0,
-                      py: 0.35,
-                      fontSize: "0.66rem",
-                      textTransform: "none",
-                      borderColor: statusMeta[unit.status].color,
-                      color:
-                        activeUnit?.id === unit.id
-                          ? "#fff"
-                          : statusMeta[unit.status].color,
-                      bgcolor:
-                        activeUnit?.id === unit.id
-                          ? statusMeta[unit.status].color
-                          : "background.paper",
-                      "&:hover": {
-                        bgcolor:
-                          activeUnit?.id === unit.id
-                            ? statusMeta[unit.status].color
-                            : statusMeta[unit.status].softColor,
-                      },
-                    }}
-                  >
-                    {unit.id}
-                  </Button>
-                ))}
-              </div>
+              <Typography sx={{ fontSize: "0.78rem", fontWeight: 800 }}>
+                {value}
+              </Typography>
             </div>
-          </Stack>
-        )}
+          ))}
+
+          {hasLiveAngles && (
+            <Box
+              sx={{
+                p: 1,
+                borderRadius: 1,
+                bgcolor: alpha(theme.palette.primary.main, 0.08),
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.18)}`,
+              }}
+            >
+              <Typography sx={{ fontSize: "0.66rem", fontWeight: 800, mb: 0.5 }}>
+                Live Orientation
+              </Typography>
+              <Typography sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
+                Roll {Number(roll || 0).toFixed(2)} deg
+              </Typography>
+              <Typography sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
+                Pitch {Number(pitch || 0).toFixed(2)} deg
+              </Typography>
+              <Typography sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
+                Yaw {Number(yaw || 0).toFixed(2)} deg
+              </Typography>
+            </Box>
+          )}
+        </Stack>
       </div>
     </div>
   );
