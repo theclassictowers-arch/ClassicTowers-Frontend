@@ -112,7 +112,7 @@ export const AuthPage: React.FC<{ type: AuthPageType; formProps?: AuthProps["for
     </div>
   );
 
-  // verifyOtp ke liye MUIAuthPage use nahi karna kyunki wo sirf specific types accept karta hai
+  // MUIAuthPage does not support the verifyOtp type, so render a custom layout instead
   if (type === "verifyOtp") {
     return (
       <div style={pageBackgroundStyle}>

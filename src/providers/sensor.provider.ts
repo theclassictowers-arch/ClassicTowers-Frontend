@@ -33,14 +33,16 @@ export const sensorProvider: DataProvider = {
         },
       };
     } catch {
-      // MOCK DATA FOR TESTING - اگر API fail ہو تو mock data دیں
+      // MOCK DATA FOR TESTING - fallback to mock data if API request fails
       const parameterValue = filters?.find(f => (f as any).field === "parameter")?.value || "windSpeed";
-      const parameter = Array.isArray(parameterValue) ? parameterValue[0] : parameterValue;
-      
-      const mockData = generateMockSensorData(parameter, 24).map((d: any) => ({
-        ...d,
-        parameter: parameter, // Trend lines ke liye parameter field lazmi hai
-      }));
+      const parameters = Array.isArray(parameterValue) ? parameterValue : [parameterValue];
+
+      const mockData = parameters.flatMap((parameter) =>
+        generateMockSensorData(parameter, 24).map((d: any) => ({
+          ...d,
+          parameter,
+        }))
+      );
       const mockLimits = generateMockLimits();
 
       return {
@@ -53,7 +55,7 @@ export const sensorProvider: DataProvider = {
         total: 1,
         successNotification: {
           message: "Test data loaded (Mock)",
-          description: `Showing test data for ${parameter}`,
+          description: `Showing test data for ${parameters.join(", ")}`,
           type: "success",
         },
       };

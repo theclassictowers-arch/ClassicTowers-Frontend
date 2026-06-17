@@ -94,7 +94,7 @@ export const siteProvider: DataProvider = {
         },
       };
     } catch {
-      // MOCK DATA FOR TESTING - اگر API fail ہو تو mock sites دیتے ہیں
+      // MOCK DATA FOR TESTING - fallback to mock sites if API request fails
       return {
         data: mockSites,
         total: mockSites.length,

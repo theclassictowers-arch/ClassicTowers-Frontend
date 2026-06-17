@@ -1,6 +1,6 @@
 /**
  * Enhanced Mock Sensor Data Generator for Testing
- * یہ file comprehensive vibration data generate کرتی ہے
+ * Generates comprehensive vibration and sensor data for all parameter types
  */
 
 export const generateMockSensorData = (parameter: string, hours: number = 24) => {
