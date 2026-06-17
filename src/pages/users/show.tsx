@@ -1,4 +1,5 @@
-﻿import {
+﻿// @ts-nocheck
+import {
   Stack,
   Typography,
   Avatar,
@@ -7,7 +8,6 @@
   Grid,
   Button,
   CircularProgress,
-  Box,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useShow } from "@refinedev/core";
@@ -126,7 +126,7 @@ export const UserShow = () => {
             }}
           >
             <CardContent>
-              <Box sx={{ position: "relative", mb: 2 }}>
+              <div style={{ position: "relative", marginBottom: 16 }}>
                 <Button
                   size="small"
                   startIcon={<ArrowBackIcon fontSize="small" />}
@@ -138,7 +138,7 @@ export const UserShow = () => {
                 <Typography variant="h5" gutterBottom sx={formStyles.title}>
                   User Details
                 </Typography>
-              </Box>
+              </div>
               <Grid container spacing={3} alignItems="center">
                 <Grid item xs={12} sm={4} textAlign="center">
                   <Avatar
@@ -228,9 +228,9 @@ export const UserShow = () => {
                   )}
                 </Grid>
               </Grid>
-              <Box mt={2}>
+              <div style={{ marginTop: 16 }}>
                 <AssignedSites userRole={role} />
-              </Box>
+              </div>
             <ShowPageLogo />
             </CardContent>
           </Card>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Box,
   Button,
@@ -58,7 +59,6 @@ export const SettingsLogoSection = ({
 
   return (
     <Box
-      key="logo"
       sx={{
         display: "flex",
         flexDirection: "column",

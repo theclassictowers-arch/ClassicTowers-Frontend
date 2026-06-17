@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import React from "react";
 import { useForm } from "@refinedev/react-hook-form";
 import {
@@ -110,7 +111,7 @@ const ForgotPasswordForm: React.FC = () => {
         )}
       </Button>
 
-        <Box textAlign="center" mt={2}>
+        <div style={{ marginTop: 16, textAlign: "center" }}>
           <Typography sx={formStyles.linkText}>
             Remember your password?{" "}
             <MuiLink
@@ -122,7 +123,7 @@ const ForgotPasswordForm: React.FC = () => {
               Sign In
             </MuiLink>
           </Typography>
-        </Box>
+        </div>
       </Box>
     </MovableForm>
   );

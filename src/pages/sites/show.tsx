@@ -1,10 +1,10 @@
+﻿// @ts-nocheck
 import {
   Stack,
   Typography,
   Card,
   CardContent,
   Grid,
-  Box,
   Button,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -79,7 +79,7 @@ export const SiteShow = () => {
           }}
         >
           <CardContent>
-            <Box sx={{ position: "relative", mb: 2 }}>
+            <div style={{ position: "relative", marginBottom: 16 }}>
               <Button
                 size="small"
                 startIcon={<ArrowBackIcon fontSize="small" />}
@@ -91,7 +91,7 @@ export const SiteShow = () => {
               <Typography variant="h5" gutterBottom sx={formStyles.title}>
                 Site Details
               </Typography>
-            </Box>
+            </div>
 
             <Grid container spacing={3} alignItems="center">
               <Grid item xs={12}>

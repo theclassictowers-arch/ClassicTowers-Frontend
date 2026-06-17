@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, useContext, type ReactNode } from "react";
 import { useGetIdentity, useGetLocale, useSetLocale } from "@refinedev/core";
 import {

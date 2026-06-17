@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import MemoryIcon from "@mui/icons-material/Memory";

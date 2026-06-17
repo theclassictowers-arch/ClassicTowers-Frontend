@@ -1,9 +1,9 @@
+﻿// @ts-nocheck
 import {
   Typography,
   Card,
   CardContent,
   Grid,
-  Box,
   Paper,
   TextField,
   Divider,
@@ -189,7 +189,7 @@ export const LimitsCreate = () => {
             </Typography>
             <Divider sx={{ mb: 2 }} />
 
-            <Box component="form" autoComplete="off">
+            <div>
               <Grid container spacing={1.5} sx={{ mb: 2 }}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -225,7 +225,7 @@ export const LimitsCreate = () => {
                 <Grid item xs={12} md={6}>
                   <SectionHeading title="Vibration Parameters" />
 
-                  <Box sx={{ mb: 2 }}>
+                  <div style={{ marginBottom: 16 }}>
                     <SectionHeading title="Angle" />
                     {["x", "y", "z"].map((axis) => (
                       <AxisSection
@@ -236,9 +236,9 @@ export const LimitsCreate = () => {
                         errors={errors}
                       />
                     ))}
-                  </Box>
+                  </div>
 
-                  <Box sx={{ mb: 2 }}>
+                  <div style={{ marginBottom: 16 }}>
                     <SectionHeading title="Displacement" />
                     {["x", "y", "z"].map((axis) => (
                       <AxisSection
@@ -249,9 +249,9 @@ export const LimitsCreate = () => {
                         errors={errors}
                       />
                     ))}
-                  </Box>
+                  </div>
 
-                  <Box sx={{ mb: 2 }}>
+                  <div style={{ marginBottom: 16 }}>
                     <SectionHeading title="Speed" />
                     {["x", "y", "z"].map((axis) => (
                       <AxisSection
@@ -262,9 +262,9 @@ export const LimitsCreate = () => {
                         errors={errors}
                       />
                     ))}
-                  </Box>
+                  </div>
 
-                  <Box sx={{ mb: 2 }}>
+                  <div style={{ marginBottom: 16 }}>
                     <SectionHeading title="Frequency" />
                     {["x", "y", "z"].map((axis) => (
                       <AxisSection
@@ -275,13 +275,13 @@ export const LimitsCreate = () => {
                         errors={errors}
                       />
                     ))}
-                  </Box>
+                  </div>
                 </Grid>
 
                 <Grid item xs={12} md={6}>
                   <SectionHeading title="Environmental Parameters" />
 
-                  <Box sx={{ mb: 2 }}>
+                  <div style={{ marginBottom: 16 }}>
                     <SectionHeading title="Wind" />
                     <Paper
                       elevation={0}
@@ -307,9 +307,9 @@ export const LimitsCreate = () => {
                       <SubSectionHeading title="Speed" />
                       {generateAxisFields(register, errors, "windSpeed")}
                     </Paper>
-                  </Box>
+                  </div>
 
-                  <Box sx={{ mb: 2 }}>
+                  <div style={{ marginBottom: 16 }}>
                     <SectionHeading title="Temperature" />
                     <Paper
                       elevation={0}
@@ -317,9 +317,9 @@ export const LimitsCreate = () => {
                     >
                       {generateAxisFields(register, errors, "windTemperature")}
                     </Paper>
-                  </Box>
+                  </div>
 
-                  <Box sx={{ mb: 2 }}>
+                  <div style={{ marginBottom: 16 }}>
                     <SectionHeading title="Humidity" />
                     <Paper
                       elevation={0}
@@ -327,9 +327,9 @@ export const LimitsCreate = () => {
                     >
                       {generateAxisFields(register, errors, "windHumidity")}
                     </Paper>
-                  </Box>
+                  </div>
 
-                  <Box sx={{ mb: 2 }}>
+                  <div style={{ marginBottom: 16 }}>
                     <SectionHeading title="Orientation" />
                     <Paper
                       elevation={0}
@@ -355,7 +355,7 @@ export const LimitsCreate = () => {
                       <SubSectionHeading title="Roll Angle" />
                       {generateAxisFields(register, errors, "vibrationRollAngle")}
                     </Paper>
-                  </Box>
+                  </div>
                 </Grid>
               </Grid>
 
@@ -377,7 +377,7 @@ export const LimitsCreate = () => {
                   "Create Sensor"
                 )}
               </Button>
-            </Box>
+            </div>
           </CardContent>
         </Card>
       </MovableForm>

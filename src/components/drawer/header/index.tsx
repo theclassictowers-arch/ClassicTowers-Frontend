@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Close from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";

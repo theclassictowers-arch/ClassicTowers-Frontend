@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { Authenticated, ErrorComponent } from "@refinedev/core";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";

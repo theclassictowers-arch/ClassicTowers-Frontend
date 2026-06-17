@@ -7,7 +7,6 @@ import {
   CreateButton,
 } from "@refinedev/mui";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
-import { Box } from "@mui/material";
 import {
   MapTablePage,
   TableBottomActions,
@@ -100,7 +99,7 @@ export const LimitsList = () => {
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
-          <Box sx={{ position: "relative" }}>
+          <div style={{ position: "relative" }}>
             <DataGrid
             {...dataGridProps}
             rows={rows}
@@ -137,7 +136,7 @@ export const LimitsList = () => {
               createButton={canEdit ? <CreateButton /> : null}
             />
             <TableCenterLogo />
-          </Box>
+          </div>
         )}
       </List>
     </MapTablePage>

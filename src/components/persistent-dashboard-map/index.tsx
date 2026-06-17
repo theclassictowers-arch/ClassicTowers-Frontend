@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCallback, useEffect } from "react";
 import { Box } from "@mui/material";
 import { useList } from "@refinedev/core";

@@ -14,7 +14,6 @@ import {
   TableCenterLogo,
 } from "../../components/map-table-page";
 import { TableSkeleton } from "../../components/table-skeleton";
-import { Box } from "@mui/material";
 
 const ActionsCell = ({ row }: any) => (
   <>
@@ -119,7 +118,7 @@ export const SiteList = () => {
         {dataGridProps.loading ? (
           <TableSkeleton columns={columns.length} />
         ) : (
-          <Box sx={{ position: "relative" }}>
+          <div style={{ position: "relative" }}>
             <DataGrid
             {...dataGridProps}
             rows={rows}
@@ -162,7 +161,7 @@ export const SiteList = () => {
               }
             />
             <TableCenterLogo />
-          </Box>
+          </div>
         )}
       </List>
     </MapTablePage>

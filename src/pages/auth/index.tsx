@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, type CSSProperties } from "react";
 import { AuthPage as MUIAuthPage, type AuthProps } from "@refinedev/mui";
-import { Box } from "@mui/material";
 import SignUpForm from "./signup";
 import SignInForm from "./signin";
 import ForgotPasswordForm from "./forgotpassword";
@@ -31,6 +30,36 @@ const LIGHT_POINTS = [
   { id: "sensor-top", x: 74.1, y: 7.8, width: 1.3, height: 2.9 },
 ] as const;
 
+const pageBackgroundStyle: CSSProperties = {
+  position: "fixed",
+  inset: 0,
+  minHeight: "100dvh",
+  width: "100vw",
+  margin: 0,
+  padding: 0,
+  overflow: "hidden",
+  backgroundImage: "url('/images/login-bg.png')",
+  backgroundSize: "100% 100%",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center center",
+  backgroundAttachment: "fixed",
+  display: "flex",
+  justifyContent: "right",
+  alignItems: "center",
+};
+
+const lightLayerStyle: CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  pointerEvents: "none",
+  zIndex: 1,
+};
+
+const contentLayerStyle: CSSProperties = {
+  position: "relative",
+  zIndex: 2,
+};
+
 export const AuthPage: React.FC<{ type: AuthPageType; formProps?: AuthProps["formProps"] }> = ({ type, formProps }) => {
   const [activeLightIndex, setActiveLightIndex] = useState(0);
 
@@ -60,18 +89,11 @@ export const AuthPage: React.FC<{ type: AuthPageType; formProps?: AuthProps["for
   };
 
   const animatedLights = (
-    <Box
-      sx={{
-        position: "absolute",
-        inset: 0,
-        pointerEvents: "none",
-        zIndex: 1,
-      }}
-    >
+    <div style={lightLayerStyle}>
       {LIGHT_POINTS.map((light, index) => (
-        <Box
+        <div
           key={light.id}
-          sx={{
+          style={{
             position: "absolute",
             left: `${light.x}%`,
             top: `${light.y}%`,
@@ -87,40 +109,32 @@ export const AuthPage: React.FC<{ type: AuthPageType; formProps?: AuthProps["for
           }}
         />
       ))}
-    </Box>
+    </div>
   );
 
   // verifyOtp ke liye MUIAuthPage use nahi karna kyunki wo sirf specific types accept karta hai
   if (type === "verifyOtp") {
     return (
-      <Box
-        sx={{
-          ...formStyles.pageBackground,
-        }}
-      >
+      <div style={pageBackgroundStyle}>
         {animatedLights}
-        <Box sx={{ position: "relative", zIndex: 2 }}>
+        <div style={contentLayerStyle}>
           <VerifyOTPForm />
-        </Box>
-      </Box>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box
-      sx={{
-        ...formStyles.pageBackground,
-      }}
-    >
+    <div style={pageBackgroundStyle}>
       {animatedLights}
-      <Box sx={{ position: "relative", zIndex: 2 }}>
+      <div style={contentLayerStyle}>
         <MUIAuthPage
           type={type}
           renderContent={getRenderContent()}
           formProps={formProps}
         />
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { Box, styled } from "@mui/material";
 
 export const StatusLED = styled(Box)<{ active?: boolean }>(

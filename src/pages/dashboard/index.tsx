@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useList } from "@refinedev/core";
-import { Box } from "@mui/material";
 import { io } from "socket.io-client";
 import { SystemAlertsTable } from "../../components/dashboard";
 import { useAuthContext } from "../../contexts";
@@ -84,12 +83,12 @@ export const DashboardPage: React.FC = () => {
   const latestStatus = getLatestStatus(siteData);
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         height: "100dvh",
         width: "100%",
-        m: 0,
-        p: 0,
+        margin: 0,
+        padding: 0,
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
@@ -97,9 +96,9 @@ export const DashboardPage: React.FC = () => {
         pointerEvents: "none",
       }}
     >
-      <Box
+      <div
         className="dashboard-alert-shell"
-        sx={{
+        style={{
           flexShrink: 0,
           position: isAdmin ? "absolute" : "relative",
           top: isAdmin ? 0 : "auto",
@@ -107,9 +106,6 @@ export const DashboardPage: React.FC = () => {
           right: isAdmin ? 0 : "auto",
           zIndex: 2,
           pointerEvents: "none",
-          "& > *": {
-            pointerEvents: "auto",
-          },
         }}
       >
         <SystemAlertsTable
@@ -117,8 +113,8 @@ export const DashboardPage: React.FC = () => {
           lastUpdateTime={lastUpdateTime}
           allowResize={isAdmin}
         />
-      </Box>
-      <Box sx={{ flex: 1, minHeight: 0 }} />
-    </Box>
+      </div>
+      <div style={{ flex: 1, minHeight: 0 }} />
+    </div>
   );
 };

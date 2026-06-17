@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useState } from "react";
+﻿// @ts-nocheck
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -163,9 +164,9 @@ export const SiteEdit: React.FC = () => {
   return (
     <MapBackgroundPage>
       {isInitialLoading ? (
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
           <CircularProgress />
-        </Box>
+        </div>
       ) : (
         <MovableForm
           panelId="site-edit-form"

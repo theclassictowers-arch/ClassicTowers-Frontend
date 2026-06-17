@@ -1,6 +1,4 @@
-import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
 
 type TableSkeletonProps = {
   columns?: number;
@@ -8,26 +6,26 @@ type TableSkeletonProps = {
 };
 
 export const TableSkeleton = ({ columns = 6, rows = 8 }: TableSkeletonProps) => (
-  <Box sx={{ p: 1.5, width: "100%" }}>
-    <Stack spacing={1}>
+  <div style={{ padding: 12, width: "100%" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <Skeleton height={36} variant="rounded" />
-      <Box
-        sx={{
+      <div
+        style={{
           display: "grid",
-          gap: 1,
+          gap: 8,
           gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
         }}
       >
         {Array.from({ length: columns }).map((_, index) => (
           <Skeleton key={`header-${index}`} height={34} variant="rounded" />
         ))}
-      </Box>
+      </div>
       {Array.from({ length: rows }).map((_, rowIndex) => (
-        <Box
+        <div
           key={`row-${rowIndex}`}
-          sx={{
+          style={{
             display: "grid",
-            gap: 1,
+            gap: 8,
             gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
           }}
         >
@@ -38,10 +36,10 @@ export const TableSkeleton = ({ columns = 6, rows = 8 }: TableSkeletonProps) => 
               variant="rounded"
             />
           ))}
-        </Box>
+        </div>
       ))}
-    </Stack>
-  </Box>
+    </div>
+  </div>
 );
 
 export default TableSkeleton;

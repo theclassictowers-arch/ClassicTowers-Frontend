@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useMemo, useState } from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { Map } from "@vis.gl/react-google-maps";
 import { styles } from "./styles";
 import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
@@ -243,25 +241,23 @@ export const SitesMap = ({ siteData, isLoading, onExpandChange }: any) => {
 
   return (
     <>
-      <Box
-        sx={styles.container}
-      >
+      <div style={styles.container as CSSProperties}>
         {isLoading ? (
-          <Box sx={styles.progressLoader}>
+          <div style={styles.progressLoader as CSSProperties}>
             <CircularProgress />
-          </Box>
+          </div>
         ) : !VITE_MAP_API_KEY ? (
-          <Box sx={styles.progressLoader}>
+          <div style={styles.progressLoader as CSSProperties}>
             <Typography color="error">
               Map API key missing. Please set `VITE_MAP_API_KEY`.
             </Typography>
-          </Box>
+          </div>
         ) : mapLoadError ? (
-          <Box sx={styles.progressLoader}>
+          <div style={styles.progressLoader as CSSProperties}>
             <Typography color="error" sx={{ textAlign: "center", px: 2 }}>
               {mapLoadError}
             </Typography>
-          </Box>
+          </div>
         ) : (
           <APIProvider
             apiKey={VITE_MAP_API_KEY}
@@ -300,10 +296,10 @@ export const SitesMap = ({ siteData, isLoading, onExpandChange }: any) => {
             >
               <Markers points={locations} />
             </Map>
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={{
+            <div
+              style={{
+                display: "flex",
+                gap: 8,
                 position: "absolute",
                 right: 6,
                 top: 6,
@@ -356,10 +352,10 @@ export const SitesMap = ({ siteData, isLoading, onExpandChange }: any) => {
                   {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
                 </IconButton>
               </Tooltip>
-            </Stack>
+            </div>
           </APIProvider>
         )}
-      </Box>
+      </div>
     </>
   );
 };

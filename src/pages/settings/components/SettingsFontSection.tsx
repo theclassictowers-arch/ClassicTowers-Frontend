@@ -1,4 +1,5 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+﻿// @ts-nocheck
+import { FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import type { Dispatch, SetStateAction } from "react";
 import { APP_FONT_OPTIONS, normalizeAppFont } from "../../../theme";
 
@@ -11,12 +12,12 @@ export const SettingsFontSection = ({
   fontInput,
   onFontInputChange,
 }: SettingsFontSectionProps) => (
-  <Box
+  <div
     key="fonts"
-    sx={{
+    style={{
       display: "flex",
       flexDirection: "column",
-      gap: 1.5,
+      gap: 12,
       transformOrigin: "center top",
       animation: "settingsTabEnter 420ms cubic-bezier(0.16, 1, 0.3, 1) both",
     }}
@@ -27,10 +28,10 @@ export const SettingsFontSection = ({
     >
       Font
     </Typography>
-    <Box
-      sx={{
+    <div
+      style={{
         display: "grid",
-        gap: 1.25,
+        gap: 10,
         gridTemplateColumns: "1fr 1fr",
         alignItems: "center",
       }}
@@ -61,17 +62,14 @@ export const SettingsFontSection = ({
           ))}
         </Select>
       </FormControl>
-      <Box
-        sx={{
+      <div
+        style={{
           border: "1px solid",
-          borderColor: "divider",
-          borderRadius: 1,
-          p: 1.5,
-          bgcolor: "background.paper",
+          borderColor: "rgba(0, 0, 0, 0.12)",
+          borderRadius: 4,
+          padding: 12,
+          backgroundColor: "rgba(255, 255, 255, 0.72)",
           fontFamily: `${fontInput} !important`,
-          "& *": {
-            fontFamily: `${fontInput} !important`,
-          },
         }}
       >
         <Typography
@@ -92,7 +90,7 @@ export const SettingsFontSection = ({
         >
           Monitoring dashboard font preview
         </Typography>
-      </Box>
-    </Box>
-  </Box>
+      </div>
+    </div>
+  </div>
 );

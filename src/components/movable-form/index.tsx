@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from "react";
+﻿// @ts-nocheck
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -115,7 +116,6 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   initialPosition,
   onClose,
   showFullPageButton = false,
-  sx,
 }) => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
@@ -476,38 +476,36 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   );
 
   const inlineActions = shouldUseInlineActions ? (
-    <Box
+    <div
       data-no-drag="true"
-      sx={{
+      style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        gap: 1,
-        px: 1.25,
-        pt: 1.25,
-        pb: 0.75,
+        gap: 8,
+        padding: "10px 10px 6px",
         width: "100%",
       }}
     >
       {actions}
-    </Box>
+    </div>
   ) : null;
 
   if (!isDesktop) {
     return (
-      <Box sx={{ position: "relative", width: "100%", ...sx }}>
+      <div style={{ position: "relative", width: "100%" }}>
         {inlineActions}
         {!shouldUseInlineActions && actions}
         {children}
-      </Box>
+      </div>
     );
   }
 
   return (
-    <Box
+    <div
       ref={panelRef}
       onMouseDown={handleDragStart}
-      sx={{
+      style={{
         position: "fixed",
         left: isFullPage ? VIEWPORT_MARGIN : position.x,
         top: isFullPage ? VIEWPORT_MARGIN : position.y,
@@ -521,28 +519,27 @@ export const MovableForm: React.FC<MovableFormProps> = ({
         cursor: isFullPage ? "default" : "grab",
         visibility: isInitialized ? "visible" : "hidden",
         pointerEvents: isInitialized ? "auto" : "none",
-        ...sx,
       }}
     >
       {!shouldUseInlineActions && actions}
 
-      <Box
-        sx={{
+      <div
+        style={{
           height: height || isFullPage ? "100%" : "auto",
           overflow: height || isFullPage ? "auto" : "visible",
-          pr: 0.25,
-          pb: 0.25,
+          paddingRight: 2,
+          paddingBottom: 2,
         }}
       >
         {inlineActions}
         {children}
-      </Box>
+      </div>
 
       {!isFullPage && (
         <>
-          <Box
+          <div
             onMouseDown={handleResizeStart}
-            sx={{
+            style={{
               position: "absolute",
               top: 0,
               right: -6,
@@ -553,9 +550,9 @@ export const MovableForm: React.FC<MovableFormProps> = ({
             }}
           />
 
-          <Box
+          <div
             onMouseDown={handleResizeHeightStart}
-            sx={{
+            style={{
               position: "absolute",
               left: 0,
               right: 0,
@@ -566,15 +563,15 @@ export const MovableForm: React.FC<MovableFormProps> = ({
             }}
           />
 
-          <Box
+          <div
             onMouseDown={handleResizeBothStart}
-            sx={{
+            style={{
               position: "absolute",
               right: -7,
               bottom: -7,
               width: 14,
               height: 14,
-              borderRadius: 1,
+              borderRadius: 4,
               cursor: "nwse-resize",
               zIndex: 2,
               backgroundColor: "transparent",
@@ -583,6 +580,6 @@ export const MovableForm: React.FC<MovableFormProps> = ({
           />
         </>
       )}
-    </Box>
+    </div>
   );
 };

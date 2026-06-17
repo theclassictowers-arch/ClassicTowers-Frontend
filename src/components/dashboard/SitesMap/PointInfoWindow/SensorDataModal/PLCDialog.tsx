@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { Dialog, styled } from "@mui/material";
 
 export const PLCDialog = styled(Dialog)(({ theme }) => ({

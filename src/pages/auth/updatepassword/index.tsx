@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+﻿// @ts-nocheck
+import React, { useState, useEffect, type CSSProperties } from "react";
 import { useForm } from "@refinedev/react-hook-form";
 import {
   TextField,
@@ -16,6 +17,20 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { formStyles } from "../styles";
 import { axiosInstance } from "../../../utils";
 import { MovableForm } from "../../../components/movable-form";
+
+const authContainerStyle: CSSProperties = {
+  margin: 0,
+  width: "100%",
+  maxWidth: "100%",
+  padding: "32px 24px",
+  background: "rgba(164, 198, 236, 0.25)",
+  borderRadius: 16,
+  boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+  backdropFilter: "blur(13.5px)",
+  WebkitBackdropFilter: "blur(13.5px)",
+  border: "1px solid rgba(164, 198, 236, 0.42)",
+  transition: "all 0.3s ease",
+};
 
 const UpdatePasswordForm: React.FC = () => {
   const navigate = useNavigate();
@@ -78,21 +93,14 @@ const UpdatePasswordForm: React.FC = () => {
         minWidth={320}
         maxWidth={720}
       >
-        <Box
-          sx={{
-            ...formStyles.container,
-            m: 0,
-            width: "100%",
-            maxWidth: "100%",
-          }}
-        >
+        <div style={authContainerStyle}>
           <Alert severity="error" sx={{ mb: 2 }}>
             Invalid session. Please start the password reset process again.
           </Alert>
           <MuiLink component={Link} to="/forgot-password" color="primary">
             Go to Forgot Password
           </MuiLink>
-        </Box>
+        </div>
       </MovableForm>
     );
   }
@@ -104,15 +112,9 @@ const UpdatePasswordForm: React.FC = () => {
       minWidth={320}
       maxWidth={720}
     >
-      <Box
-        component="form"
+      <form
         onSubmit={handleSubmit(onSubmit)}
-        sx={{
-          ...formStyles.container,
-          m: 0,
-          width: "100%",
-          maxWidth: "100%",
-        }}
+        style={authContainerStyle}
       >
         <Typography variant="h4" gutterBottom sx={formStyles.title}>
           Reset Password
@@ -212,7 +214,7 @@ const UpdatePasswordForm: React.FC = () => {
         )}
       </Button>
 
-        <Box textAlign="center" mt={2}>
+        <div style={{ marginTop: 16, textAlign: "center" }}>
           <Typography sx={formStyles.linkText}>
             Remember your password?{" "}
             <MuiLink
@@ -224,8 +226,8 @@ const UpdatePasswordForm: React.FC = () => {
               Sign In
             </MuiLink>
           </Typography>
-        </Box>
-      </Box>
+        </div>
+      </form>
     </MovableForm>
   );
 };

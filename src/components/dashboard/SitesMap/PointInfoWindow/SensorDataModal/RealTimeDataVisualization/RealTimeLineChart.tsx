@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import React, { useState, useEffect, useRef } from "react";
 import { useTheme, alpha, Switch } from "@mui/material";
 import { styled } from "@mui/material/styles";

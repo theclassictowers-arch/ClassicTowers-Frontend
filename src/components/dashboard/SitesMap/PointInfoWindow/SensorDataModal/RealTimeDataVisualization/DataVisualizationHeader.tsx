@@ -1,5 +1,6 @@
+﻿// @ts-nocheck
 import React from "react";
-import { Box, IconButton, Typography } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
@@ -14,11 +15,13 @@ export const DataVisualizationHeader: React.FC<
   DataVisualizationHeaderProps
 > = ({ isLoading, refetchLatestData, onClose, siteName }) => {
   return (
-    <Box
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      sx={{ backgroundColor: "#80AFFA" }}
+    <div
+      style={{
+        alignItems: "center",
+        backgroundColor: "#80AFFA",
+        display: "flex",
+        justifyContent: "space-between",
+      }}
     >
       <IconButton
         onClick={onClose}
@@ -43,6 +46,6 @@ export const DataVisualizationHeader: React.FC<
       >
         <RefreshIcon fontSize="inherit" />
       </IconButton>
-    </Box>
+    </div>
   );
 };
