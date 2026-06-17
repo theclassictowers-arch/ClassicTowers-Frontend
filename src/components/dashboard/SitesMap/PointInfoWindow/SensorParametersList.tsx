@@ -125,13 +125,15 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+          gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.15fr)",
           gap: 0.6,
           mt: 0.8,
         }}
       >
         {(["graph", "3d"] as const).map((mode) => {
           const isActive = activeView === mode;
+          const isGraphMode = mode === "graph";
+          const label = isGraphMode ? "Graph" : "Tower 3D";
 
           return (
             <Button
@@ -139,10 +141,10 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
               size="small"
               variant={isActive ? "contained" : "outlined"}
               onClick={() => onViewChange?.(mode)}
-              disabled={selectedParameters.length === 0}
+              disabled={isGraphMode && selectedParameters.length === 0}
               sx={{
-                textTransform: "lowercase",
-                fontSize: "0.72rem",
+                textTransform: "none",
+                fontSize: "0.7rem",
                 fontWeight: 700,
                 py: 0.25,
                 borderRadius: 0.75,
@@ -163,7 +165,7 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
                 },
               }}
             >
-              {mode}
+              {label}
             </Button>
           );
         })}

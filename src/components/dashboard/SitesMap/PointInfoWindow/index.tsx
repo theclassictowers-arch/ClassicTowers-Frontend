@@ -133,7 +133,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
 
   const handleViewModeChange = (mode: SensorViewMode) => {
     setViewMode(mode);
-    setIsModalOpen(sensorParameters.length > 0);
+    setIsModalOpen(mode === "3d" || sensorParameters.length > 0);
   };
 
   const handleCloseModal = () => {
@@ -315,7 +315,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         appliedFilter={appliedFilter}
       />
 
-      {sensorParameters.length > 0 && (
+      {isModalOpen && (viewMode === "3d" || sensorParameters.length > 0) && (
         <SensorDataModal
           open={isModalOpen}
           onClose={handleCloseModal}

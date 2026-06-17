@@ -178,7 +178,7 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
         display: "flex",
         flexDirection: compact ? "column" : "row",
         overflow: "hidden",
-        padding: compact ? "2px 8px 0 4px" : "0 15px 0 5px",
+        padding: compact ? "4px 10px 2px 6px" : "0 15px 0 5px",
       }}
     >
       {compact && (
@@ -187,7 +187,9 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
             display: "flex",
             flexWrap: "wrap",
             gap: "6px 10px",
-            padding: "0 4px 4px 4px",
+            padding: "0 4px 6px 4px",
+            maxHeight: 58,
+            overflowY: "auto",
             flexShrink: 0,
           }}
         >
@@ -210,6 +212,7 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
                 fontSize: "0.68rem",
                 lineHeight: 1.1,
                 cursor: "pointer",
+                minWidth: 0,
               }}
             >
               <span
@@ -222,7 +225,16 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
                   flexShrink: 0,
                 }}
               />
-              <span>{label ?? key}</span>
+              <span
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: 150,
+                }}
+              >
+                {label ?? key}
+              </span>
             </button>
           ))}
         </div>
@@ -267,7 +279,7 @@ export const RealTimeLineChart: React.FC<RealTimeLineChartProps> = ({
           data={sensorData}
           margin={
             compact
-              ? { top: 8, right: 10, left: -14, bottom: 8 }
+              ? { top: 8, right: 16, left: 2, bottom: 8 }
               : { top: 20, right: 30, left: 10, bottom: 30 }
           }
         >

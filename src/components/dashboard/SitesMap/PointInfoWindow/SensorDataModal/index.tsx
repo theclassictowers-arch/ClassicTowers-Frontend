@@ -41,6 +41,11 @@ const trendColors = [
   "#059669",
 ];
 
+const toNumericValue = (value: any) => {
+  const numericValue = parseFloat(value);
+  return Number.isFinite(numericValue) ? numericValue : undefined;
+};
+
 export const SensorDataModal: FC<SensorDataModalProps> = ({
   open,
   onClose,
@@ -52,25 +57,33 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
   siteName,
   viewMode,
 }) => {
-  const rawDataArray = Array.isArray(sensorData) ? sensorData : [sensorData];
+  const rawDataArray = useMemo(
+    () => (Array.isArray(sensorData) ? sensorData : [sensorData]),
+    [sensorData]
+  );
   const limits = rawDataArray[0]?.limits;
-  const allProcessedData = rawDataArray.flatMap(
-    (item) => item?.processedSensorData || []
+  const allProcessedData = useMemo(
+    () => rawDataArray.flatMap((item) => item?.processedSensorData || []),
+    [rawDataArray]
   );
 
-  const sensorDataForGraphs = allProcessedData?.map((data: any) => {
-    const timestamp = data.createdAt || `${data.date}T${data.time}Z`;
-    const dateObj = new Date(timestamp);
-    const formattedTime = dateObj.toLocaleTimeString("en-GB", {
-      hour12: false,
-    });
+  const sensorDataForGraphs = useMemo(
+    () =>
+      allProcessedData?.map((data: any) => {
+        const timestamp = data.createdAt || `${data.date}T${data.time}Z`;
+        const dateObj = new Date(timestamp);
+        const formattedTime = dateObj.toLocaleTimeString("en-GB", {
+          hour12: false,
+        });
 
-    return {
-      ...data,
-      date: data.date,
-      time: formattedTime,
-    };
-  });
+        return {
+          ...data,
+          date: data.date,
+          time: formattedTime,
+        };
+      }),
+    [allProcessedData]
+  );
 
   const unifiedChartData = useMemo(() => {
     const timeMap: Record<string, any> = {};
@@ -82,12 +95,17 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
       }
 
       const paramKey = item.parameter || "unknown";
-      if (item.value !== undefined) {
-        timeMap[timeKey][paramKey] = parseFloat(item.value);
+      const singleValue = toNumericValue(item.value);
+
+      if (singleValue !== undefined) {
+        timeMap[timeKey][paramKey] = singleValue;
       } else {
-        timeMap[timeKey][`${paramKey}_x`] = parseFloat(item.x);
-        timeMap[timeKey][`${paramKey}_y`] = parseFloat(item.y);
-        timeMap[timeKey][`${paramKey}_z`] = parseFloat(item.z);
+        (["x", "y", "z"] as const).forEach((axis) => {
+          const axisValue = toNumericValue(item[axis]);
+          if (axisValue !== undefined) {
+            timeMap[timeKey][`${paramKey}_${axis}`] = axisValue;
+          }
+        });
       }
     });
 
@@ -100,21 +118,27 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
     let colorIndex = 0;
 
     return sensorParameters.flatMap((param) => {
-      const sample = sensorDataForGraphs?.find(
+      const samples = sensorDataForGraphs?.filter(
         (data: any) => data.parameter === param
       );
       const label = labelMapping[param] || param;
       const getNextColor = () => trendColors[colorIndex++ % trendColors.length];
+      const hasSingleValue = samples?.some(
+        (data: any) => toNumericValue(data.value) !== undefined
+      );
+      const availableAxes = (["x", "y", "z"] as const).filter((axis) =>
+        samples?.some((data: any) => toNumericValue(data[axis]) !== undefined)
+      );
 
-      if (!sample || sample.value !== undefined) {
+      if (hasSingleValue || availableAxes.length === 0) {
         return [{ key: param, color: getNextColor(), label }];
       }
 
-      return [
-        { key: `${param}_x`, color: getNextColor(), label: `${label} (X)` },
-        { key: `${param}_y`, color: getNextColor(), label: `${label} (Y)` },
-        { key: `${param}_z`, color: getNextColor(), label: `${label} (Z)` },
-      ];
+      return availableAxes.map((axis) => ({
+        key: `${param}_${axis}`,
+        color: getNextColor(),
+        label: `${label} (${axis.toUpperCase()})`,
+      }));
     });
   }, [sensorDataForGraphs, sensorParameters]);
 
@@ -141,7 +165,8 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
     top: { xs: 72, md: 64 },
     right: { xs: 8, md: 12 },
     bottom: { xs: 8, md: 12 },
-    width: { xs: "calc(100vw - 16px)", sm: 360, md: 390 },
+    width: { xs: "calc(100vw - 16px)", sm: 480, md: 560, lg: 640 },
+    maxWidth: { xs: "calc(100vw - 16px)", sm: "calc(100vw - 24px)" },
     zIndex: 1301,
     display: "flex",
     flexDirection: "column",
@@ -163,6 +188,10 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
   } as const;
 
   const renderBody = () => {
+    if (viewMode === "3d") {
+      return <Tower3DView {...latestAngles} />;
+    }
+
     if (isSensorDataLoading) {
       return (
         <Box display="flex" alignItems="center" justifyContent="center" flex={1}>
@@ -187,10 +216,6 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
       );
     }
 
-    if (viewMode === "3d") {
-      return <Tower3DView {...latestAngles} />;
-    }
-
     if (unifiedChartData.length === 0) {
       return (
         <Box display="flex" alignItems="center" justifyContent="center" flex={1}>
@@ -211,7 +236,7 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
           variant="subtitle2"
           sx={{ mb: 0.75, fontWeight: "bold", color: "text.secondary" }}
         >
-          Selected Trends
+          Selected Trends ({selectedTrendKeys.length})
         </Typography>
         <Box
           sx={{
@@ -246,7 +271,7 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
     <Portal>
       <Box sx={panelSx}>
         <DataVisualizationHeader
-          isLoading={isSensorDataLoading}
+          isLoading={viewMode === "graph" && isSensorDataLoading}
           refetchLatestData={refetchLatestData}
           onClose={onClose}
           siteName={siteName}
