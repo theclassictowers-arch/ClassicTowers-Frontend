@@ -18,6 +18,7 @@ import { ContactShadows, OrbitControls, Text } from "@react-three/drei";
 import * as THREE from "three";
 import {
   CartesianGrid,
+  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -53,6 +54,13 @@ type LiveTelemetry = {
 
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
+
+const towerChartSeries = [
+  { key: "yaw", label: "Yaw", color: "#7c3aed" },
+  { key: "roll", label: "Roll", color: "#2563eb" },
+  { key: "pitch", label: "Pitch", color: "#16a34a" },
+  { key: "vibration", label: "Vibration", color: "#ef4444" },
+];
 
 const toNumber = (value: any, fallback = 0) => {
   const numericValue = Number(value);
@@ -486,7 +494,32 @@ export const Tower3DView = ({
       }),
     [demoTelemetry.time]
   );
-  const activeHistory = chartHistory.length > 0 ? chartHistory : fallbackHistory;
+  const activeHistory = useMemo(() => {
+    const baseHistory = chartHistory.length > 0 ? chartHistory : fallbackHistory;
+    const latestValues = {
+      yaw: telemetry.yaw,
+      roll: telemetry.roll,
+      pitch: telemetry.pitch,
+      vibration: telemetry.vibration,
+    };
+
+    return baseHistory.map((item) => ({
+      ...item,
+      yaw: Number.isFinite(item.yaw) ? item.yaw : latestValues.yaw,
+      roll: Number.isFinite(item.roll) ? item.roll : latestValues.roll,
+      pitch: Number.isFinite(item.pitch) ? item.pitch : latestValues.pitch,
+      vibration: Number.isFinite(item.vibration)
+        ? item.vibration
+        : latestValues.vibration,
+    }));
+  }, [
+    chartHistory,
+    fallbackHistory,
+    telemetry.pitch,
+    telemetry.roll,
+    telemetry.vibration,
+    telemetry.yaw,
+  ]);
   const tiltRotation: [number, number, number] = [
     THREE.MathUtils.degToRad(telemetry.pitch) * 0.18,
     THREE.MathUtils.degToRad(telemetry.yaw) * 0.02,
@@ -499,9 +532,17 @@ export const Tower3DView = ({
     borderRadius: 10,
     display: "grid",
     flex: 1,
-    gap: 0,
-    gridTemplateColumns: isDesktop ? "minmax(0, 1fr) 190px" : "1fr",
-    gridTemplateRows: isDesktop ? "minmax(0, 1fr) 156px" : "minmax(350px, 1fr) auto 156px",
+    gap: 8,
+    gridTemplateColumns: isDesktop ? "minmax(330px, 0.88fr) minmax(420px, 1.12fr)" : "1fr",
+    gridTemplateRows: isDesktop ? "minmax(0, 1fr) auto" : "260px minmax(350px, 1fr) auto auto",
+    minHeight: 0,
+    overflow: "auto",
+    padding: 8,
+  };
+
+  const panelStyle: CSSProperties = {
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: 8,
     minHeight: 0,
     overflow: "hidden",
   };
@@ -510,10 +551,12 @@ export const Tower3DView = ({
     <div style={rootStyle}>
       <div
         style={{
-          gridColumn: isDesktop ? "1 / 2" : "1",
-          minHeight: 350,
-          position: "relative",
           background: `linear-gradient(180deg, ${alpha("#e0f2fe", 0.9)} 0%, ${alpha("#f8fafc", 0.92)} 55%, ${alpha(status.color, 0.11)} 100%)`,
+          gridColumn: isDesktop ? "2 / 3" : "1",
+          gridRow: isDesktop ? "1 / 2" : "2",
+          minHeight: isDesktop ? 0 : 350,
+          position: "relative",
+          ...panelStyle,
         }}
       >
         <Canvas
@@ -555,17 +598,64 @@ export const Tower3DView = ({
 
       <div
         style={{
-          borderLeft: isDesktop ? `1px solid ${theme.palette.divider}` : 0,
-          borderTop: isDesktop ? 0 : `1px solid ${theme.palette.divider}`,
-          background: alpha(theme.palette.background.default, 0.76),
-          gridColumn: isDesktop ? "2 / 3" : "1",
-          gridRow: isDesktop ? "1 / 3" : "2",
+          gridColumn: isDesktop ? "1 / 2" : "1",
+          gridRow: isDesktop ? "1 / 2" : "1",
+          minHeight: isDesktop ? 0 : 260,
+          padding: "8px 10px 9px 8px",
+          ...panelStyle,
+        }}
+      >
+        <div style={{ alignItems: "center", display: "flex", gap: 8, height: 26, marginBottom: 5 }}>
+          <IconButton size="small" onClick={() => setIsPlaying((value) => !value)} sx={{ p: 0.25 }}>
+            {isPlaying ? <PauseIcon sx={{ fontSize: "1rem" }} /> : <PlayArrowIcon sx={{ fontSize: "1rem" }} />}
+          </IconButton>
+          <Typography sx={{ fontSize: "0.76rem", fontWeight: 900, color: "text.secondary" }}>
+            Yaw / Roll / Pitch / Vibration
+          </Typography>
+          <Typography sx={{ ml: "auto", fontSize: "0.68rem", color: "text.disabled", whiteSpace: "nowrap" }}>
+            {hasRealTelemetry ? "sensor history" : "demo stream"} | {telemetry.time}
+          </Typography>
+        </div>
+        <ResponsiveContainer width="100%" height="calc(100% - 31px)">
+          <LineChart data={activeHistory} margin={{ top: 6, right: 12, left: -18, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={alpha(theme.palette.grey[400], 0.25)} vertical={false} />
+            <XAxis dataKey="time" tick={{ fontSize: 10 }} height={18} />
+            <YAxis tick={{ fontSize: 10 }} width={34} />
+            <Tooltip />
+            <Legend
+              align="right"
+              iconType="plainline"
+              verticalAlign="top"
+              wrapperStyle={{ fontSize: 11, paddingBottom: 4 }}
+            />
+            {towerChartSeries.map((series) => (
+              <Line
+                key={series.key}
+                type="monotone"
+                dataKey={series.key}
+                name={series.label}
+                stroke={series.color}
+                strokeWidth={1.9}
+                dot={false}
+                isAnimationActive={false}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div
+        style={{
+          background: alpha(theme.palette.background.default, 0.58),
+          gridColumn: isDesktop ? "1 / 2" : "1",
+          gridRow: isDesktop ? "2 / 3" : "3",
           minHeight: 0,
           overflowY: "auto",
           padding: 10,
+          ...panelStyle,
         }}
       >
-        <Stack spacing={0.9}>
+        <Stack spacing={0.85}>
           <Box sx={{ p: 1, borderRadius: 1, border: `1px solid ${alpha(status.color, 0.32)}`, bgcolor: status.tint }}>
             <Typography sx={{ fontSize: "0.63rem", color: "text.secondary", textTransform: "uppercase", fontWeight: 800 }}>
               Tower Status
@@ -575,7 +665,7 @@ export const Tower3DView = ({
             </Typography>
           </Box>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isDesktop ? "repeat(3, minmax(0, 1fr))" : "1fr 1fr", gap: 7 }}>
             <TelemetryRow label="Roll" value={telemetry.roll} suffix=" deg" color={status.textColor} />
             <TelemetryRow label="Pitch" value={telemetry.pitch} suffix=" deg" color={status.textColor} />
             <TelemetryRow label="Yaw" value={telemetry.yaw} suffix=" deg" />
@@ -583,7 +673,20 @@ export const Tower3DView = ({
             <TelemetryRow label="Wind Dir" value={telemetry.windDirection} suffix=" deg" />
             <TelemetryRow label="Vibration" value={telemetry.vibration} suffix=" mm/s" />
           </div>
+        </Stack>
+      </div>
 
+      <div
+        style={{
+          background: alpha(theme.palette.background.default, 0.58),
+          gridColumn: isDesktop ? "2 / 3" : "1",
+          gridRow: isDesktop ? "2 / 3" : "4",
+          minHeight: 0,
+          padding: 10,
+          ...panelStyle,
+        }}
+      >
+        <div style={{ display: "grid", gridTemplateColumns: isDesktop ? "1fr 1fr" : "1fr", gap: 8 }}>
           <Box sx={{ p: 1, border: `1px solid ${theme.palette.divider}`, borderRadius: 1, bgcolor: "#fff" }}>
             <Typography sx={{ color: "text.secondary", fontSize: "0.64rem", mb: 0.5 }}>Battery</Typography>
             <LinearProgress variant="determinate" value={telemetry.battery} sx={{ height: 7, borderRadius: 1 }} />
@@ -595,42 +698,7 @@ export const Tower3DView = ({
             <LinearProgress color="success" variant="determinate" value={telemetry.signal} sx={{ height: 7, borderRadius: 1 }} />
             <Typography sx={{ fontSize: "0.72rem", fontWeight: 800, mt: 0.45 }}>{telemetry.signal.toFixed(0)}%</Typography>
           </Box>
-        </Stack>
-      </div>
-
-      <div
-        style={{
-          borderTop: `1px solid ${theme.palette.divider}`,
-          gridColumn: isDesktop ? "1 / 2" : "1",
-          gridRow: isDesktop ? "2 / 3" : "3",
-          minHeight: 0,
-          padding: "8px 10px 8px 8px",
-          background: "#fff",
-        }}
-      >
-        <div style={{ alignItems: "center", display: "flex", gap: 8, height: 24, marginBottom: 4 }}>
-          <IconButton size="small" onClick={() => setIsPlaying((value) => !value)} sx={{ p: 0.25 }}>
-            {isPlaying ? <PauseIcon sx={{ fontSize: "1rem" }} /> : <PlayArrowIcon sx={{ fontSize: "1rem" }} />}
-          </IconButton>
-          <Typography sx={{ fontSize: "0.72rem", fontWeight: 800, color: "text.secondary" }}>
-            Yaw / Roll / Pitch / Vibration
-          </Typography>
-          <Typography sx={{ ml: "auto", fontSize: "0.68rem", color: "text.disabled" }}>
-            {hasRealTelemetry ? "sensor history" : "demo stream"} | {telemetry.time}
-          </Typography>
         </div>
-        <ResponsiveContainer width="100%" height="calc(100% - 28px)">
-          <LineChart data={activeHistory} margin={{ top: 4, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={alpha(theme.palette.grey[400], 0.25)} vertical={false} />
-            <XAxis dataKey="time" tick={{ fontSize: 10 }} height={18} />
-            <YAxis tick={{ fontSize: 10 }} width={34} />
-            <Tooltip />
-            <Line type="monotone" dataKey="yaw" stroke="#7c3aed" strokeWidth={1.5} dot={false} isAnimationActive={false} />
-            <Line type="monotone" dataKey="roll" stroke="#2563eb" strokeWidth={1.5} dot={false} isAnimationActive={false} />
-            <Line type="monotone" dataKey="pitch" stroke="#16a34a" strokeWidth={1.5} dot={false} isAnimationActive={false} />
-            <Line type="monotone" dataKey="vibration" stroke="#ef4444" strokeWidth={1.5} dot={false} isAnimationActive={false} />
-          </LineChart>
-        </ResponsiveContainer>
       </div>
     </div>
   );
