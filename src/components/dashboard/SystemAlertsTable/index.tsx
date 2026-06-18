@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   useTheme,
   Paper,
-  Box,
   Table,
   TableBody,
   TableCell,
@@ -174,6 +173,7 @@ export const SystemAlertsTable: React.FC<SystemAlertsTableProps> = ({
         position: "relative",
         overflow: "visible",
         zIndex: 4,
+        pointerEvents: "auto",
         minHeight: isClosedWidth ? 38 : "auto",
         transition: "width 320ms cubic-bezier(0.16, 1, 0.3, 1)",
       }}

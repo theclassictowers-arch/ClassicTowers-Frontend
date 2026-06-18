@@ -85,6 +85,8 @@ const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
 const getStorageKey = (panelId: string) => `${STORAGE_PREFIX}${panelId}`;
+const FOCUS_EVENT = "movable-form:focus";
+const ACTIVE_Z_INDEX_LIMIT = 1290;
 
 const getDefaultPosition = (
   panelWidth: number,
@@ -128,11 +130,15 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
   const panelRef = useRef<HTMLDivElement | null>(null);
   const interactionRef = useRef<InteractionState>(null);
+  const [isActivePanel, setIsActivePanel] = useState(false);
 
   const resolvedMaxWidth = useMemo(() => {
     if (!isDesktop) return maxWidth;
-    return Math.min(maxWidth, Math.max(minWidth, window.innerWidth - VIEWPORT_MARGIN * 2));
-  }, [isDesktop, maxWidth, minWidth]);
+    return Math.min(
+      maxWidth,
+      Math.max(minWidth, window.innerWidth - Math.max(VIEWPORT_MARGIN, reservedLeft) - VIEWPORT_MARGIN)
+    );
+  }, [isDesktop, maxWidth, minWidth, reservedLeft]);
 
   const resolvedMaxHeight = useMemo(() => {
     if (!isDesktop) return maxHeight;
@@ -161,6 +167,12 @@ export const MovableForm: React.FC<MovableFormProps> = ({
       setIsFullPage(nextValue);
     }
     onFullPageChange?.(nextValue);
+  };
+
+  const focusPanel = () => {
+    window.dispatchEvent(
+      new CustomEvent(FOCUS_EVENT, { detail: { panelId } })
+    );
   };
   const shouldUseInlineActions = showFullPageButton;
   const windowButtonBaseSx: SxProps<Theme> = {
@@ -244,6 +256,16 @@ export const MovableForm: React.FC<MovableFormProps> = ({
       y: clamp(nextPosition.y, VIEWPORT_MARGIN, maxY),
     };
   };
+
+  useEffect(() => {
+    const handleFocusEvent = (event: Event) => {
+      const focusedPanelId = (event as CustomEvent)?.detail?.panelId;
+      setIsActivePanel(focusedPanelId === panelId);
+    };
+
+    window.addEventListener(FOCUS_EVENT, handleFocusEvent);
+    return () => window.removeEventListener(FOCUS_EVENT, handleFocusEvent);
+  }, [panelId]);
 
   useEffect(() => {
     if (!isDesktop) {
@@ -399,6 +421,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   ]);
 
   const handleDragStart = (event: React.MouseEvent<HTMLElement>) => {
+    focusPanel();
     if (!isDesktop) return;
     if (resolvedIsFullPage) return;
     if (event.button !== 0) return;
@@ -536,7 +559,9 @@ export const MovableForm: React.FC<MovableFormProps> = ({
         height: resolvedIsFullPage
           ? `calc(100dvh - ${VIEWPORT_MARGIN * 2}px)`
           : height ?? "auto",
-        zIndex,
+        zIndex: isActivePanel
+          ? Math.min(ACTIVE_Z_INDEX_LIMIT, zIndex + 80)
+          : zIndex,
         cursor: resolvedIsFullPage ? "default" : "grab",
         visibility: isInitialized ? "visible" : "hidden",
         pointerEvents: isInitialized ? "auto" : "none",

@@ -104,8 +104,8 @@ export const DashboardPage: React.FC = () => {
           top: isAdmin ? 0 : "auto",
           left: isAdmin ? 0 : "auto",
           right: isAdmin ? 0 : "auto",
-          zIndex: 2,
-          pointerEvents: "none",
+          zIndex: 1295,
+          pointerEvents: "auto",
         }}
       >
         <SystemAlertsTable
