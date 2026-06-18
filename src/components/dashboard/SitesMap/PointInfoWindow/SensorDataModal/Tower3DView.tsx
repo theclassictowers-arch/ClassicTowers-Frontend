@@ -468,12 +468,12 @@ export const Tower3DView = ({
   }, [isPlaying]);
 
   const telemetry: LiveTelemetry = {
-    roll: demoTelemetry.roll,
-    pitch: demoTelemetry.pitch,
-    yaw: demoTelemetry.yaw,
+    roll: toNumber(roll, demoTelemetry.roll),
+    pitch: toNumber(pitch, demoTelemetry.pitch),
+    yaw: toNumber(yaw, demoTelemetry.yaw),
     windSpeed: toNumber(windSpeed, demoTelemetry.windSpeed),
     windDirection: toNumber(windDirection, demoTelemetry.windDirection),
-    vibration: demoTelemetry.vibration,
+    vibration: toNumber(vibration, demoTelemetry.vibration),
     battery: toNumber(battery, demoTelemetry.battery),
     signal: toNumber(signal, demoTelemetry.signal),
     time: demoTelemetry.time,
