@@ -468,12 +468,12 @@ export const Tower3DView = ({
   }, [isPlaying]);
 
   const telemetry: LiveTelemetry = {
-    roll: toNumber(roll, demoTelemetry.roll),
-    pitch: toNumber(pitch, demoTelemetry.pitch),
-    yaw: toNumber(yaw, demoTelemetry.yaw),
+    roll: demoTelemetry.roll,
+    pitch: demoTelemetry.pitch,
+    yaw: demoTelemetry.yaw,
     windSpeed: toNumber(windSpeed, demoTelemetry.windSpeed),
     windDirection: toNumber(windDirection, demoTelemetry.windDirection),
-    vibration: toNumber(vibration, demoTelemetry.vibration),
+    vibration: demoTelemetry.vibration,
     battery: toNumber(battery, demoTelemetry.battery),
     signal: toNumber(signal, demoTelemetry.signal),
     time: demoTelemetry.time,
@@ -503,7 +503,7 @@ export const Tower3DView = ({
       vibration: telemetry.vibration,
     };
 
-    return baseHistory.map((item) => ({
+    const normalizedHistory = baseHistory.map((item) => ({
       ...item,
       yaw: Number.isFinite(item.yaw) ? item.yaw : latestValues.yaw,
       roll: Number.isFinite(item.roll) ? item.roll : latestValues.roll,
@@ -512,18 +512,36 @@ export const Tower3DView = ({
         ? item.vibration
         : latestValues.vibration,
     }));
+
+    return [
+      ...normalizedHistory.slice(-47),
+      {
+        index: normalizedHistory.length,
+        time: telemetry.time,
+        yaw: latestValues.yaw,
+        roll: latestValues.roll,
+        pitch: latestValues.pitch,
+        vibration: latestValues.vibration,
+      },
+    ];
   }, [
     chartHistory,
     fallbackHistory,
     telemetry.pitch,
     telemetry.roll,
+    telemetry.time,
     telemetry.vibration,
     telemetry.yaw,
   ]);
+  const motionPhase = Date.now() / 1000;
+  const vibrationMotion = clamp(telemetry.vibration / 5, 0, 1);
   const tiltRotation: [number, number, number] = [
-    THREE.MathUtils.degToRad(telemetry.pitch) * 0.18,
-    THREE.MathUtils.degToRad(telemetry.yaw) * 0.02,
-    THREE.MathUtils.degToRad(telemetry.roll) * 0.18,
+    THREE.MathUtils.degToRad(telemetry.pitch) * 0.24 +
+      THREE.MathUtils.degToRad(Math.sin(motionPhase * 7.2) * vibrationMotion * 1.4),
+    THREE.MathUtils.degToRad(telemetry.yaw) * 0.025 +
+      THREE.MathUtils.degToRad(Math.sin(motionPhase * 3.1) * vibrationMotion * 0.75),
+    THREE.MathUtils.degToRad(telemetry.roll) * 0.24 +
+      THREE.MathUtils.degToRad(Math.cos(motionPhase * 6.4) * vibrationMotion * 1.4),
   ];
 
   const rootStyle: CSSProperties = {
