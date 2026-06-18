@@ -1,16 +1,19 @@
 ﻿// @ts-nocheck
 import { CSSProperties, Dispatch, FC, useContext, useState, useEffect } from "react";
-import { Divider, IconButton, Portal, Typography, useTheme } from "@mui/material";
+import { Button, Divider, IconButton, Portal, Typography, useTheme } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useList } from "@refinedev/core";
 import { ThemedLayoutContext } from "@refinedev/mui";
+import { useNavigate } from "react-router-dom";
 import dayjs, { Dayjs } from "dayjs";
 
 import { SensorDataModal } from "./SensorDataModal";
 import { InfoWindowContentProps } from "./types";
 import { SensorFilterPanel } from "./SensorFilterPanel";
 import { SensorParametersList } from "./SensorParametersList";
+import { DEFAULT_TOWER_PARAMETERS } from "./SensorDataModal/visualizationUtils";
 
 interface ExtendedInfoWindowContentProps extends InfoWindowContentProps {
   onModalStateChange?: Dispatch<boolean>;
@@ -19,21 +22,13 @@ interface ExtendedInfoWindowContentProps extends InfoWindowContentProps {
 
 type SensorViewMode = "graph" | "3d";
 
-const DEFAULT_TOWER_PARAMETERS = [
-  "vibrationRollAngle",
-  "vibrationPitchAngle",
-  "vibrationAngle",
-  "vibrationSpeed",
-  "windSpeed",
-  "windDirection",
-];
-
 const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   point,
   onModalStateChange,
   onClose,
 }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { siderCollapsed } = useContext(ThemedLayoutContext);
   const [sensorParameters, setSensorParameters] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -227,6 +222,23 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
       refetchSensorData();
     }
   };
+
+  const openFullPageView = (mode: SensorViewMode) => {
+    const params = new URLSearchParams();
+    const imei = Array.isArray(point.imei) ? point.imei[0] : point.imei;
+
+    if (imei) params.set("imei", String(imei));
+    if (point.display_name) params.set("siteName", point.display_name);
+    if (appliedFilter.startDateTime) {
+      params.set("startDateTime", appliedFilter.startDateTime);
+    }
+    if (appliedFilter.endDateTime) {
+      params.set("endDateTime", appliedFilter.endDateTime);
+    }
+    params.set("mode", mode);
+
+    navigate(`/visualization?${params.toString()}`);
+  };
   const panelStyle: CSSProperties = {
     position: "fixed",
     top: 76,
@@ -310,6 +322,35 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         onViewChange={handleViewModeChange}
         appliedFilter={appliedFilter}
       />
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 5,
+          padding: "0 8px 8px",
+        }}
+      >
+        <Button
+          size="small"
+          variant="outlined"
+          startIcon={<OpenInFullIcon />}
+          onClick={() => openFullPageView("graph")}
+          disabled={sensorParameters.length === 0}
+          sx={{ borderRadius: 0.75, fontSize: "0.68rem", textTransform: "none" }}
+        >
+          Full Graph
+        </Button>
+        <Button
+          size="small"
+          variant="outlined"
+          startIcon={<OpenInFullIcon />}
+          onClick={() => openFullPageView("3d")}
+          sx={{ borderRadius: 0.75, fontSize: "0.68rem", textTransform: "none" }}
+        >
+          Full 3D
+        </Button>
+      </div>
 
       {isModalOpen && (viewMode === "3d" || sensorParameters.length > 0) && (
         <SensorDataModal

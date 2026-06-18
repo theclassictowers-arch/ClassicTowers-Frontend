@@ -5,3 +5,4 @@ export * from "./limits";
 export * from "./users";
 export * from "./settings";
 export * from "./profile";
+export * from "./visualization";

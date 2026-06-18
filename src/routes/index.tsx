@@ -21,6 +21,7 @@ import {
   LimitsEdit,
   LimitsShow,
   ProfilePage,
+  VisualizationPage,
 } from "../pages";
 import { ThemedLayoutV2 } from "@refinedev/mui";
 import {
@@ -150,6 +151,10 @@ const AppRoutes: React.FC = () => {
               </>
             )}
           </Route>
+        ) : null}
+
+        {canViewSensors(role) ? (
+          <Route path="/visualization" element={<VisualizationPage />} />
         ) : null}
 
         {canViewUsers(role) ? (
