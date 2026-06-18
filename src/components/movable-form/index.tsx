@@ -51,6 +51,8 @@ type MovableFormProps = {
   minHeight?: number;
   maxHeight?: number;
   initialPosition?: Position;
+  isFullPage?: boolean;
+  onFullPageChange?: React.Dispatch<boolean>;
   onClose?: () => void;
   showFullPageButton?: boolean;
   reservedLeft?: number;
@@ -115,6 +117,8 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   minHeight = 280,
   maxHeight = 920,
   initialPosition,
+  isFullPage: controlledFullPage,
+  onFullPageChange,
   onClose,
   showFullPageButton = false,
   reservedLeft = VIEWPORT_MARGIN,
@@ -150,6 +154,14 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   );
   const [isInitialized, setIsInitialized] = useState(false);
   const [isFullPage, setIsFullPage] = useState(false);
+  const resolvedIsFullPage =
+    typeof controlledFullPage === "boolean" ? controlledFullPage : isFullPage;
+  const setResolvedIsFullPage = (nextValue: boolean) => {
+    if (typeof controlledFullPage !== "boolean") {
+      setIsFullPage(nextValue);
+    }
+    onFullPageChange?.(nextValue);
+  };
   const shouldUseInlineActions = showFullPageButton;
   const windowButtonBaseSx: SxProps<Theme> = {
     minHeight: 30,
@@ -388,7 +400,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
   const handleDragStart = (event: React.MouseEvent<HTMLElement>) => {
     if (!isDesktop) return;
-    if (isFullPage) return;
+    if (resolvedIsFullPage) return;
     if (event.button !== 0) return;
     if (isNonDraggableTarget(event.target)) return;
     event.preventDefault();
@@ -403,7 +415,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
   const handleResizeStart = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isDesktop) return;
-    if (isFullPage) return;
+    if (resolvedIsFullPage) return;
     event.preventDefault();
     event.stopPropagation();
     interactionRef.current = {
@@ -415,7 +427,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
   const handleResizeHeightStart = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isDesktop) return;
-    if (isFullPage) return;
+    if (resolvedIsFullPage) return;
     event.preventDefault();
     event.stopPropagation();
     interactionRef.current = {
@@ -427,7 +439,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
   const handleResizeBothStart = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isDesktop) return;
-    if (isFullPage) return;
+    if (resolvedIsFullPage) return;
     event.preventDefault();
     event.stopPropagation();
     interactionRef.current = {
@@ -462,10 +474,10 @@ export const MovableForm: React.FC<MovableFormProps> = ({
         <Button
           aria-label={isFullPage ? "Exit full page" : "Full page view"}
           data-no-drag="true"
-          onClick={() => setIsFullPage((prev) => !prev)}
+          onClick={() => setResolvedIsFullPage(!resolvedIsFullPage)}
           size="small"
           startIcon={
-            isFullPage ? (
+            resolvedIsFullPage ? (
               <CloseFullscreenIcon fontSize="small" />
             ) : (
               <OpenInFullIcon fontSize="small" />
@@ -475,7 +487,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
             shouldUseInlineActions ? inlineFullPageButtonSx : fullPageButtonSx
           }
         >
-          {isFullPage ? "Exit" : "Full page"}
+          {resolvedIsFullPage ? "Exit" : "Full page"}
         </Button>
       )}
     </>
@@ -513,16 +525,19 @@ export const MovableForm: React.FC<MovableFormProps> = ({
       onMouseDown={handleDragStart}
       style={{
         position: "fixed",
-        left: isFullPage ? VIEWPORT_MARGIN : position.x,
-        top: isFullPage ? VIEWPORT_MARGIN : position.y,
-        width: isFullPage
+        left: resolvedIsFullPage ? Math.max(VIEWPORT_MARGIN, reservedLeft) : position.x,
+        top: resolvedIsFullPage ? VIEWPORT_MARGIN : position.y,
+        width: resolvedIsFullPage
           ? `calc(100vw - ${VIEWPORT_MARGIN * 2}px)`
           : width,
-        height: isFullPage
+        maxWidth: resolvedIsFullPage
+          ? `calc(100vw - ${Math.max(VIEWPORT_MARGIN, reservedLeft) + VIEWPORT_MARGIN}px)`
+          : undefined,
+        height: resolvedIsFullPage
           ? `calc(100dvh - ${VIEWPORT_MARGIN * 2}px)`
           : height ?? "auto",
         zIndex,
-        cursor: isFullPage ? "default" : "grab",
+        cursor: resolvedIsFullPage ? "default" : "grab",
         visibility: isInitialized ? "visible" : "hidden",
         pointerEvents: isInitialized ? "auto" : "none",
       }}
@@ -531,8 +546,8 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
       <div
         style={{
-          height: (height || isFullPage) ? "100%" : "auto",
-          overflow: (height || isFullPage) ? "auto" : "visible",
+          height: (height || resolvedIsFullPage) ? "100%" : "auto",
+          overflow: (height || resolvedIsFullPage) ? "auto" : "visible",
           paddingRight: 2,
           paddingBottom: 2,
         }}
@@ -541,7 +556,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
         {children}
       </div>
 
-      {!isFullPage && (
+      {!resolvedIsFullPage && (
         <>
           <div
             onMouseDown={handleResizeStart}

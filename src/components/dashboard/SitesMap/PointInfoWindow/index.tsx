@@ -5,7 +5,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useList } from "@refinedev/core";
 import { ThemedLayoutContext } from "@refinedev/mui";
-import { useNavigate } from "react-router-dom";
 import dayjs, { Dayjs } from "dayjs";
 
 import { SensorDataModal } from "./SensorDataModal";
@@ -28,7 +27,6 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   onClose,
 }) => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const { siderCollapsed } = useContext(ThemedLayoutContext);
   const [sensorParameters, setSensorParameters] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -223,22 +221,6 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
     }
   };
 
-  const openFullPageView = (mode: SensorViewMode) => {
-    const params = new URLSearchParams();
-    const imei = Array.isArray(point.imei) ? point.imei[0] : point.imei;
-
-    if (imei) params.set("imei", String(imei));
-    if (point.display_name) params.set("siteName", point.display_name);
-    if (appliedFilter.startDateTime) {
-      params.set("startDateTime", appliedFilter.startDateTime);
-    }
-    if (appliedFilter.endDateTime) {
-      params.set("endDateTime", appliedFilter.endDateTime);
-    }
-    params.set("mode", mode);
-
-    navigate(`/visualization?${params.toString()}`);
-  };
   const panelStyle: CSSProperties = {
     background:
       "color-mix(in srgb, var(--app-bg-color, #f5f7fb) 88%, transparent)",
@@ -336,7 +318,6 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
           sensorDataError={sensorDataError}
           sensorParameters={sensorParameters}
           refetchLatestData={refetchLatestData}
-          onOpenFullPage={() => openFullPageView(viewMode)}
           reservedLeft={siderCollapsed ? 470 : 594}
           siteName={point.display_name}
           viewMode={viewMode}

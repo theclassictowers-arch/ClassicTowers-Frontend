@@ -1,5 +1,5 @@
 ﻿// @ts-nocheck
-import { CSSProperties, FC } from "react";
+import { CSSProperties, FC, useState } from "react";
 import { DataVisualizationHeader } from "./RealTimeDataVisualization/DataVisualizationHeader";
 import { CircularProgress, Portal, Typography } from "@mui/material";
 import { RealTimeLineChart } from "./RealTimeDataVisualization/RealTimeLineChart";
@@ -15,7 +15,6 @@ interface SensorDataModalProps {
   sensorDataError: any;
   sensorParameters: string[];
   refetchLatestData: () => void;
-  onOpenFullPage?: () => void;
   reservedLeft?: number;
   siteName: string;
   viewMode: "graph" | "3d";
@@ -29,11 +28,11 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
   sensorDataError,
   sensorParameters,
   refetchLatestData,
-  onOpenFullPage,
   reservedLeft = 12,
   siteName,
   viewMode,
 }) => {
+  const [isFullPage, setIsFullPage] = useState(false);
   const { limits, unifiedChartData, selectedTrendKeys, latestAngles } =
     useSensorVisualizationData({ sensorData, sensorParameters });
 
@@ -159,6 +158,8 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
         maxWidth={1200}
         maxHeight={900}
         initialPosition={{ x: Math.max(470, window.innerWidth - 720), y: 64 }}
+        isFullPage={isFullPage}
+        onFullPageChange={setIsFullPage}
         reservedLeft={reservedLeft}
         zIndex={1201}
       >
@@ -167,7 +168,8 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
             isLoading={viewMode === "graph" && isSensorDataLoading}
             refetchLatestData={refetchLatestData}
             onClose={onClose}
-            onOpenFullPage={onOpenFullPage}
+            onOpenFullPage={() => setIsFullPage((current) => !current)}
+            isFullPage={isFullPage}
             siteName={siteName}
           />
           <div style={bodyStyle}>{renderBody()}</div>

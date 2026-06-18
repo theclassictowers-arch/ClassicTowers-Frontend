@@ -1,8 +1,9 @@
 ﻿// @ts-nocheck
 import React from "react";
-import { IconButton, Tooltip, Typography } from "@mui/material";
+import { Button, IconButton, Tooltip, Typography } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 export interface DataVisualizationHeaderProps {
@@ -10,12 +11,20 @@ export interface DataVisualizationHeaderProps {
   refetchLatestData: () => void;
   onClose: () => void;
   onOpenFullPage?: () => void;
+  isFullPage?: boolean;
   siteName: any;
 }
 
 export const DataVisualizationHeader: React.FC<
   DataVisualizationHeaderProps
-> = ({ isLoading, refetchLatestData, onClose, onOpenFullPage, siteName }) => {
+> = ({
+  isLoading,
+  refetchLatestData,
+  onClose,
+  onOpenFullPage,
+  isFullPage = false,
+  siteName,
+}) => {
   return (
     <div
       style={{
@@ -41,16 +50,31 @@ export const DataVisualizationHeader: React.FC<
 
       <div style={{ alignItems: "center", display: "flex" }}>
         {onOpenFullPage && (
-          <Tooltip title="Full view">
-            <IconButton
+          <Tooltip title={isFullPage ? "Exit full view" : "Full view"}>
+            <Button
               onClick={onOpenFullPage}
               disabled={isLoading}
-              aria-label="Open full view"
-              size="medium"
-              sx={{ color: "#fff" }}
+              aria-label={isFullPage ? "Exit full view" : "Open full view"}
+              size="small"
+              startIcon={
+                isFullPage ? (
+                  <CloseFullscreenIcon fontSize="small" />
+                ) : (
+                  <OpenInFullIcon fontSize="small" />
+                )
+              }
+              sx={{
+                color: "#fff",
+                fontSize: "0.78rem",
+                fontWeight: 800,
+                minWidth: 0,
+                px: 1,
+                textTransform: "none",
+                "& .MuiButton-startIcon": { mr: 0.5 },
+              }}
             >
-              <OpenInFullIcon fontSize="inherit" />
-            </IconButton>
+              {isFullPage ? "Exit" : "Full"}
+            </Button>
           </Tooltip>
         )}
         <IconButton
