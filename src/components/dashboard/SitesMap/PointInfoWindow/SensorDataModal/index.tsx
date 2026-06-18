@@ -16,6 +16,7 @@ interface SensorDataModalProps {
   sensorParameters: string[];
   refetchLatestData: () => void;
   onOpenFullPage?: () => void;
+  reservedLeft?: number;
   siteName: string;
   viewMode: "graph" | "3d";
 }
@@ -29,6 +30,7 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
   sensorParameters,
   refetchLatestData,
   onOpenFullPage,
+  reservedLeft = 12,
   siteName,
   viewMode,
 }) => {
@@ -157,6 +159,7 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
         maxWidth={1200}
         maxHeight={900}
         initialPosition={{ x: Math.max(470, window.innerWidth - 720), y: 64 }}
+        reservedLeft={reservedLeft}
         zIndex={1201}
       >
         <div style={panelStyle}>

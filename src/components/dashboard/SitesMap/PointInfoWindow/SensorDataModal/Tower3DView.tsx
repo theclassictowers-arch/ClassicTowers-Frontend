@@ -416,7 +416,7 @@ const compactHistory = (history: any[]) =>
         time: item.time || `${index}`,
         roll: toNumber(item.vibrationRollAngle, undefined),
         pitch: toNumber(item.vibrationPitchAngle, undefined),
-        windSpeed: toNumber(item.windSpeed, undefined),
+        yaw: toNumber(item.vibrationAngle, undefined),
         vibration:
           vibrationValues.length > 0
             ? vibrationValues.reduce((total, value) => total + Math.abs(value), 0) /
@@ -425,7 +425,7 @@ const compactHistory = (history: any[]) =>
       };
     })
     .filter((item) =>
-      ["roll", "pitch", "windSpeed", "vibration"].some((key) => Number.isFinite(item[key]))
+      ["yaw", "roll", "pitch", "vibration"].some((key) => Number.isFinite(item[key]))
     ) || [];
 
 export const Tower3DView = ({
@@ -478,9 +478,9 @@ export const Tower3DView = ({
         return {
           index,
           time: `${index}`,
+          yaw: sample.yaw,
           roll: sample.roll,
           pitch: sample.pitch,
-          windSpeed: sample.windSpeed,
           vibration: sample.vibration,
         };
       }),
@@ -501,7 +501,7 @@ export const Tower3DView = ({
     flex: 1,
     gap: 0,
     gridTemplateColumns: isDesktop ? "minmax(0, 1fr) 190px" : "1fr",
-    gridTemplateRows: isDesktop ? "minmax(0, 1fr) 132px" : "minmax(350px, 1fr) auto 128px",
+    gridTemplateRows: isDesktop ? "minmax(0, 1fr) 156px" : "minmax(350px, 1fr) auto 156px",
     minHeight: 0,
     overflow: "hidden",
   };
@@ -613,7 +613,7 @@ export const Tower3DView = ({
             {isPlaying ? <PauseIcon sx={{ fontSize: "1rem" }} /> : <PlayArrowIcon sx={{ fontSize: "1rem" }} />}
           </IconButton>
           <Typography sx={{ fontSize: "0.72rem", fontWeight: 800, color: "text.secondary" }}>
-            History Playback
+            Yaw / Roll / Pitch / Vibration
           </Typography>
           <Typography sx={{ ml: "auto", fontSize: "0.68rem", color: "text.disabled" }}>
             {hasRealTelemetry ? "sensor history" : "demo stream"} | {telemetry.time}
@@ -625,9 +625,9 @@ export const Tower3DView = ({
             <XAxis dataKey="time" tick={{ fontSize: 10 }} height={18} />
             <YAxis tick={{ fontSize: 10 }} width={34} />
             <Tooltip />
+            <Line type="monotone" dataKey="yaw" stroke="#7c3aed" strokeWidth={1.5} dot={false} isAnimationActive={false} />
             <Line type="monotone" dataKey="roll" stroke="#2563eb" strokeWidth={1.5} dot={false} isAnimationActive={false} />
             <Line type="monotone" dataKey="pitch" stroke="#16a34a" strokeWidth={1.5} dot={false} isAnimationActive={false} />
-            <Line type="monotone" dataKey="windSpeed" stroke="#f97316" strokeWidth={1.5} dot={false} isAnimationActive={false} />
             <Line type="monotone" dataKey="vibration" stroke="#ef4444" strokeWidth={1.5} dot={false} isAnimationActive={false} />
           </LineChart>
         </ResponsiveContainer>

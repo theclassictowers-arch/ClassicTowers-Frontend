@@ -270,6 +270,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         x: siderCollapsed ? 64 : 252,
         y: 76,
       }}
+      reservedLeft={siderCollapsed ? 64 : 252}
       zIndex={1202}
     >
     <div className="dashboard-parameter-panel" style={panelStyle}>
@@ -336,6 +337,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
           sensorParameters={sensorParameters}
           refetchLatestData={refetchLatestData}
           onOpenFullPage={() => openFullPageView(viewMode)}
+          reservedLeft={siderCollapsed ? 470 : 594}
           siteName={point.display_name}
           viewMode={viewMode}
         />

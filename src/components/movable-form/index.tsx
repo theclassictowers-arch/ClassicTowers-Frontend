@@ -53,6 +53,7 @@ type MovableFormProps = {
   initialPosition?: Position;
   onClose?: () => void;
   showFullPageButton?: boolean;
+  reservedLeft?: number;
   zIndex?: number;
   sx?: SxProps<Theme>;
 };
@@ -116,6 +117,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   initialPosition,
   onClose,
   showFullPageButton = false,
+  reservedLeft = VIEWPORT_MARGIN,
   zIndex = 1300,
 }) => {
   const theme = useTheme();
@@ -215,8 +217,9 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
     const panelHeight = panelRef.current?.offsetHeight ?? nextHeight ?? 0;
     const panelWidth = panelRef.current?.offsetWidth ?? nextWidth;
+    const minX = Math.max(VIEWPORT_MARGIN, reservedLeft);
     const maxX = Math.max(
-      VIEWPORT_MARGIN,
+      minX,
       window.innerWidth - panelWidth - VIEWPORT_MARGIN
     );
     const maxY = Math.max(
@@ -225,7 +228,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
     );
 
     return {
-      x: clamp(nextPosition.x, VIEWPORT_MARGIN, maxX),
+      x: clamp(nextPosition.x, minX, maxX),
       y: clamp(nextPosition.y, VIEWPORT_MARGIN, maxY),
     };
   };
@@ -286,6 +289,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
     minWidth,
     minHeight,
     panelId,
+    reservedLeft,
     resolvedMaxHeight,
     resolvedMaxWidth,
   ]);
@@ -378,6 +382,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
     minWidth,
     resolvedMaxHeight,
     resolvedMaxWidth,
+    reservedLeft,
     width,
   ]);
 
