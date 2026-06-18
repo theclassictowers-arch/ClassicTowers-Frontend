@@ -5,6 +5,7 @@ import { CircularProgress, Portal, Typography } from "@mui/material";
 import { RealTimeLineChart } from "./RealTimeDataVisualization/RealTimeLineChart";
 import { Tower3DView } from "./Tower3DView";
 import { useSensorVisualizationData } from "./visualizationUtils";
+import { MovableForm } from "../../../../movable-form";
 
 interface SensorDataModalProps {
   open: boolean;
@@ -35,15 +36,9 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
   if (!open) return null;
 
   const panelStyle: CSSProperties = {
-    position: "fixed",
-    top: 64,
-    right: 8,
-    bottom: 8,
-    width: "min(640px, calc(100vw - 16px))",
-    maxWidth: "calc(100vw - 16px)",
-    zIndex: 1301,
     display: "flex",
     flexDirection: "column",
+    height: "100%",
     overflow: "hidden",
     border: "1px solid rgba(148, 163, 184, 0.28)",
     borderRadius: 16,
@@ -151,15 +146,27 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
 
   return (
     <Portal>
-      <div style={panelStyle}>
-        <DataVisualizationHeader
-          isLoading={viewMode === "graph" && isSensorDataLoading}
-          refetchLatestData={refetchLatestData}
-          onClose={onClose}
-          siteName={siteName}
-        />
-        <div style={bodyStyle}>{renderBody()}</div>
-      </div>
+      <MovableForm
+        panelId={`sensor-${viewMode}-window`}
+        initialWidth={viewMode === "3d" ? 780 : 680}
+        initialHeight={viewMode === "3d" ? 680 : 560}
+        minWidth={380}
+        minHeight={360}
+        maxWidth={1200}
+        maxHeight={900}
+        initialPosition={{ x: Math.max(72, window.innerWidth - 720), y: 64 }}
+        zIndex={1303}
+      >
+        <div style={panelStyle}>
+          <DataVisualizationHeader
+            isLoading={viewMode === "graph" && isSensorDataLoading}
+            refetchLatestData={refetchLatestData}
+            onClose={onClose}
+            siteName={siteName}
+          />
+          <div style={bodyStyle}>{renderBody()}</div>
+        </div>
+      </MovableForm>
     </Portal>
   );
 };

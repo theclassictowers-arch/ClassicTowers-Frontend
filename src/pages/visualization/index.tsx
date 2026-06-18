@@ -1,6 +1,7 @@
 // @ts-nocheck
-import { useMemo } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useList } from "@refinedev/core";
+import { ThemedLayoutContext } from "@refinedev/mui";
 import {
   Box,
   Button,
@@ -15,6 +16,7 @@ import {
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import ThreeDRotationIcon from "@mui/icons-material/ThreeDRotation";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import FitScreenIcon from "@mui/icons-material/FitScreen";
 import { useSearchParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { RealTimeLineChart } from "../../components/dashboard/SitesMap/PointInfoWindow/SensorDataModal/RealTimeDataVisualization/RealTimeLineChart";
@@ -25,10 +27,18 @@ import {
 } from "../../components/dashboard/SitesMap/PointInfoWindow/SensorDataModal/visualizationUtils";
 
 type ViewMode = "graph" | "3d";
+type VisualizationSize = {
+  width: number;
+  height: number;
+} | null;
 
 export const VisualizationPage = () => {
   const theme = useTheme();
+  const { siderCollapsed } = useContext(ThemedLayoutContext);
   const [searchParams, setSearchParams] = useSearchParams();
+  const resizeStateRef = useRef<any>(null);
+  const [visualizationSize, setVisualizationSize] =
+    useState<VisualizationSize>(null);
   const mode = (searchParams.get("mode") === "3d" ? "3d" : "graph") as ViewMode;
   const imei = searchParams.get("imei") || "";
   const siteName = searchParams.get("siteName") || "Tower Visualization";
@@ -70,6 +80,56 @@ export const VisualizationPage = () => {
     const nextParams = new URLSearchParams(searchParams);
     nextParams.set("mode", nextMode);
     setSearchParams(nextParams);
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      const resizeState = resizeStateRef.current;
+      if (!resizeState) return;
+
+      const nextWidth = Math.max(
+        420,
+        Math.min(
+          resizeState.startWidth + event.clientX - resizeState.startX,
+          window.innerWidth - (siderCollapsed ? 92 : 280)
+        )
+      );
+      const nextHeight = Math.max(
+        360,
+        Math.min(
+          resizeState.startHeight + event.clientY - resizeState.startY,
+          window.innerHeight - 112
+        )
+      );
+
+      setVisualizationSize({ width: nextWidth, height: nextHeight });
+    };
+
+    const handleMouseUp = () => {
+      resizeStateRef.current = null;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [siderCollapsed]);
+
+  const startResize = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const currentTarget = event.currentTarget.parentElement;
+    const rect = currentTarget?.getBoundingClientRect();
+
+    resizeStateRef.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+      startWidth: rect?.width ?? window.innerWidth - (siderCollapsed ? 92 : 280),
+      startHeight: rect?.height ?? window.innerHeight - 112,
+    };
   };
 
   const renderContent = () => {
@@ -129,8 +189,12 @@ export const VisualizationPage = () => {
         flexDirection: "column",
         height: "calc(100dvh - 16px)",
         overflow: "hidden",
-        p: 1,
+        pb: 1,
+        pl: { xs: 1, md: siderCollapsed ? "64px" : "calc(var(--sidebar-width, 240px) + 12px)" },
+        pr: 1,
+        pt: 1,
         position: "relative",
+        transition: "padding-left 220ms ease",
       }}
     >
       <Box
@@ -184,6 +248,15 @@ export const VisualizationPage = () => {
           >
             Refresh
           </Button>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<FitScreenIcon />}
+            onClick={() => setVisualizationSize(null)}
+            sx={{ textTransform: "none" }}
+          >
+            Fit
+          </Button>
         </Stack>
       </Box>
 
@@ -193,12 +266,31 @@ export const VisualizationPage = () => {
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: 1,
           display: "flex",
-          flex: 1,
+          flex: visualizationSize ? "0 0 auto" : 1,
+          height: visualizationSize?.height ?? "auto",
           minHeight: 0,
           overflow: "hidden",
+          position: "relative",
+          width: visualizationSize?.width ?? "100%",
+          maxHeight: "100%",
+          maxWidth: "100%",
         }}
       >
         {renderContent()}
+        <Box
+          onMouseDown={startResize}
+          sx={{
+            borderBottom: `2px solid ${alpha(theme.palette.text.secondary, 0.38)}`,
+            borderRight: `2px solid ${alpha(theme.palette.text.secondary, 0.38)}`,
+            bottom: 8,
+            cursor: "nwse-resize",
+            height: 18,
+            position: "absolute",
+            right: 8,
+            width: 18,
+            zIndex: 4,
+          }}
+        />
       </Box>
     </Box>
   );

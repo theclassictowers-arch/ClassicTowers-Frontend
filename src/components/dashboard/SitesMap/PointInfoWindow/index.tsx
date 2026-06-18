@@ -14,6 +14,7 @@ import { InfoWindowContentProps } from "./types";
 import { SensorFilterPanel } from "./SensorFilterPanel";
 import { SensorParametersList } from "./SensorParametersList";
 import { DEFAULT_TOWER_PARAMETERS } from "./SensorDataModal/visualizationUtils";
+import { MovableForm } from "../../../movable-form";
 
 interface ExtendedInfoWindowContentProps extends InfoWindowContentProps {
   onModalStateChange?: Dispatch<boolean>;
@@ -240,18 +241,12 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
     navigate(`/visualization?${params.toString()}`);
   };
   const panelStyle: CSSProperties = {
-    position: "fixed",
-    top: 76,
-    left: siderCollapsed ? 64 : "calc(var(--sidebar-width, 240px) + 12px)",
-    width: "min(330px, calc(100vw - 16px))",
-    maxHeight: "calc(100dvh - 92px)",
-    zIndex: 1302,
     background:
       "color-mix(in srgb, var(--app-bg-color, #f5f7fb) 88%, transparent)",
     backgroundColor: theme.palette.background.default,
     borderRadius: 16,
+    height: "100%",
     overflow: "auto",
-    maxWidth: "calc(100vw - 16px)",
     boxShadow: "0 10px 28px rgba(15, 23, 42, 0.16)",
   };
   const headerStyle: CSSProperties = {
@@ -264,12 +259,21 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
 
   return (
     <Portal>
-    <div
-      className="dashboard-parameter-panel"
-      onMouseDown={(event) => event.stopPropagation()}
-      onPointerDown={(event) => event.stopPropagation()}
-      style={panelStyle}
+    <MovableForm
+      panelId="dashboard-parameter-panel"
+      initialWidth={siderCollapsed ? 390 : 330}
+      initialHeight={620}
+      minWidth={300}
+      minHeight={420}
+      maxWidth={560}
+      maxHeight={900}
+      initialPosition={{
+        x: siderCollapsed ? 64 : 252,
+        y: 76,
+      }}
+      zIndex={1302}
     >
+    <div className="dashboard-parameter-panel" style={panelStyle}>
       {/* Header: primary color, location icon + site name, close button */}
       <div style={headerStyle}>
         <LocationOnIcon sx={{ color: "#fff", fontSize: "1rem", flexShrink: 0 }} />
@@ -366,6 +370,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         />
       )}
     </div>
+    </MovableForm>
     </Portal>
   );
 };

@@ -1,6 +1,5 @@
 ﻿// @ts-nocheck
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
@@ -54,6 +53,7 @@ type MovableFormProps = {
   initialPosition?: Position;
   onClose?: () => void;
   showFullPageButton?: boolean;
+  zIndex?: number;
   sx?: SxProps<Theme>;
 };
 
@@ -116,6 +116,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
   initialPosition,
   onClose,
   showFullPageButton = false,
+  zIndex = 1300,
 }) => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
@@ -515,7 +516,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
         height: isFullPage
           ? `calc(100dvh - ${VIEWPORT_MARGIN * 2}px)`
           : height ?? "auto",
-        zIndex: 1300,
+        zIndex,
         cursor: isFullPage ? "default" : "grab",
         visibility: isInitialized ? "visible" : "hidden",
         pointerEvents: isInitialized ? "auto" : "none",
@@ -525,8 +526,8 @@ export const MovableForm: React.FC<MovableFormProps> = ({
 
       <div
         style={{
-          height: height || isFullPage ? "100%" : "auto",
-          overflow: height || isFullPage ? "auto" : "visible",
+          height: (height || isFullPage) ? "100%" : "auto",
+          overflow: (height || isFullPage) ? "auto" : "visible",
           paddingRight: 2,
           paddingBottom: 2,
         }}
