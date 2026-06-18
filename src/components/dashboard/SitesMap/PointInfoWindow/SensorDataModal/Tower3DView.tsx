@@ -569,6 +569,13 @@ export const Tower3DView = ({
     <div style={rootStyle}>
       <div
         data-no-drag="true"
+        onMouseDown={(event) => event.stopPropagation()}
+        onMouseMove={(event) => event.stopPropagation()}
+        onPointerDown={(event) => event.stopPropagation()}
+        onPointerMove={(event) => event.stopPropagation()}
+        onTouchStart={(event) => event.stopPropagation()}
+        onTouchMove={(event) => event.stopPropagation()}
+        onWheel={(event) => event.stopPropagation()}
         style={{
           background: `linear-gradient(180deg, ${alpha("#e0f2fe", 0.9)} 0%, ${alpha("#f8fafc", 0.92)} 55%, ${alpha(status.color, 0.11)} 100%)`,
           gridColumn: isDesktop ? "2 / 3" : "1",
