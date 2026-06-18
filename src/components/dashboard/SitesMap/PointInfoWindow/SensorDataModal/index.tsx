@@ -147,15 +147,15 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
   return (
     <Portal>
       <MovableForm
-        panelId={`sensor-${viewMode}-window`}
+        panelId={`sensor-${viewMode}-window-v2`}
         initialWidth={viewMode === "3d" ? 780 : 680}
         initialHeight={viewMode === "3d" ? 680 : 560}
         minWidth={380}
         minHeight={360}
         maxWidth={1200}
         maxHeight={900}
-        initialPosition={{ x: Math.max(72, window.innerWidth - 720), y: 64 }}
-        zIndex={1303}
+        initialPosition={{ x: Math.max(470, window.innerWidth - 720), y: 64 }}
+        zIndex={1201}
       >
         <div style={panelStyle}>
           <DataVisualizationHeader

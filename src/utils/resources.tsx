@@ -2,7 +2,6 @@ import Dashboard from "@mui/icons-material/Dashboard";
 import PeopleAltTwoToneIcon from "@mui/icons-material/PeopleAltTwoTone";
 import RoomTwoToneIcon from "@mui/icons-material/RoomTwoTone";
 import AdjustIcon from "@mui/icons-material/Adjust";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
   canAccessSettings,
@@ -69,14 +68,6 @@ export const getResources = (role: string) => {
           },
         },
         {
-          name: "visualization",
-          list: "/visualization",
-          meta: {
-            label: "Full View",
-            icon: <ShowChartIcon />,
-          },
-        },
-        {
           name: "users",
           list: "/users",
           create: "/users/create",
@@ -110,14 +101,6 @@ export const getResources = (role: string) => {
           meta: {
             label: "Sensors",
             icon: <AdjustIcon />,
-          },
-        },
-        {
-          name: "visualization",
-          list: "/visualization",
-          meta: {
-            label: "Full View",
-            icon: <ShowChartIcon />,
           },
         },
       ]

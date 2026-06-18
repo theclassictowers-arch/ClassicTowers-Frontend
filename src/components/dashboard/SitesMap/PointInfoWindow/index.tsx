@@ -260,7 +260,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
   return (
     <Portal>
     <MovableForm
-      panelId="dashboard-parameter-panel"
+      panelId="dashboard-parameter-panel-v2"
       initialWidth={siderCollapsed ? 390 : 330}
       initialHeight={620}
       minWidth={300}
@@ -271,7 +271,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         x: siderCollapsed ? 64 : 252,
         y: 76,
       }}
-      zIndex={1302}
+      zIndex={1202}
     >
     <div className="dashboard-parameter-panel" style={panelStyle}>
       {/* Header: primary color, location icon + site name, close button */}
