@@ -568,6 +568,7 @@ export const Tower3DView = ({
   return (
     <div style={rootStyle}>
       <div
+        data-no-drag="true"
         style={{
           background: `linear-gradient(180deg, ${alpha("#e0f2fe", 0.9)} 0%, ${alpha("#f8fafc", 0.92)} 55%, ${alpha(status.color, 0.11)} 100%)`,
           gridColumn: isDesktop ? "2 / 3" : "1",
