@@ -1,8 +1,7 @@
 ﻿// @ts-nocheck
 import { CSSProperties, Dispatch, FC, useContext, useState, useEffect } from "react";
-import { Button, Divider, IconButton, Portal, Typography, useTheme } from "@mui/material";
+import { Divider, IconButton, Portal, Typography, useTheme } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useList } from "@refinedev/core";
 import { ThemedLayoutContext } from "@refinedev/mui";
@@ -327,35 +326,6 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         appliedFilter={appliedFilter}
       />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 5,
-          padding: "0 8px 8px",
-        }}
-      >
-        <Button
-          size="small"
-          variant="outlined"
-          startIcon={<OpenInFullIcon />}
-          onClick={() => openFullPageView("graph")}
-          disabled={sensorParameters.length === 0}
-          sx={{ borderRadius: 0.75, fontSize: "0.68rem", textTransform: "none" }}
-        >
-          Full Graph
-        </Button>
-        <Button
-          size="small"
-          variant="outlined"
-          startIcon={<OpenInFullIcon />}
-          onClick={() => openFullPageView("3d")}
-          sx={{ borderRadius: 0.75, fontSize: "0.68rem", textTransform: "none" }}
-        >
-          Full 3D
-        </Button>
-      </div>
-
       {isModalOpen && (viewMode === "3d" || sensorParameters.length > 0) && (
         <SensorDataModal
           open={isModalOpen}
@@ -365,6 +335,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
           sensorDataError={sensorDataError}
           sensorParameters={sensorParameters}
           refetchLatestData={refetchLatestData}
+          onOpenFullPage={() => openFullPageView(viewMode)}
           siteName={point.display_name}
           viewMode={viewMode}
         />

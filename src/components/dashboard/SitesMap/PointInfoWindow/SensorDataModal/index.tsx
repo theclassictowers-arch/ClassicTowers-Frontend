@@ -15,6 +15,7 @@ interface SensorDataModalProps {
   sensorDataError: any;
   sensorParameters: string[];
   refetchLatestData: () => void;
+  onOpenFullPage?: () => void;
   siteName: string;
   viewMode: "graph" | "3d";
 }
@@ -27,6 +28,7 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
   sensorDataError,
   sensorParameters,
   refetchLatestData,
+  onOpenFullPage,
   siteName,
   viewMode,
 }) => {
@@ -162,6 +164,7 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
             isLoading={viewMode === "graph" && isSensorDataLoading}
             refetchLatestData={refetchLatestData}
             onClose={onClose}
+            onOpenFullPage={onOpenFullPage}
             siteName={siteName}
           />
           <div style={bodyStyle}>{renderBody()}</div>

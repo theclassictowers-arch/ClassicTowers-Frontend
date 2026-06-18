@@ -136,7 +136,7 @@ export const SensorParametersList: FC<SensorParametersListProps> = ({
         {(["graph", "3d"] as const).map((mode) => {
           const isActive = activeView === mode;
           const isGraphMode = mode === "graph";
-          const label = isGraphMode ? "Graph" : "3D Tower";
+          const label = isGraphMode ? "Graph" : "3D";
           const Icon = isGraphMode ? ShowChartIcon : ThreeDRotationIcon;
 
           return (
