@@ -3,13 +3,11 @@ import { useCallback, useEffect } from "react";
 import { Box } from "@mui/material";
 import { useList } from "@refinedev/core";
 import { io } from "socket.io-client";
-import { useLocation } from "react-router-dom";
 import { SitesMap } from "../dashboard";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
 export const PersistentDashboardMap = () => {
-  const { pathname } = useLocation();
   const {
     data: siteData,
     isLoading,
@@ -33,8 +31,6 @@ export const PersistentDashboardMap = () => {
     };
   }, [handleNewData]);
 
-  if (pathname !== "/") return null;
-
   return (
     <Box
       sx={{
@@ -43,7 +39,6 @@ export const PersistentDashboardMap = () => {
         zIndex: 0,
         overflow: "hidden",
         backgroundColor: "background.default",
-        pointerEvents: "auto",
       }}
     >
       <SitesMap siteData={siteData} isLoading={isLoading} />
