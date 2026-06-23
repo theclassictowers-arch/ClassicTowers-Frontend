@@ -41,6 +41,34 @@ const toNumericValue = (value: any) => {
   return Number.isFinite(numericValue) ? numericValue : undefined;
 };
 
+const normalizeParameterKey = (parameter: any) => {
+  const key = String(parameter || "").trim();
+  const normalized = key.toLowerCase().replace(/[\s_-]/g, "");
+
+  if (normalized === "windspeed" || normalized === "windsensorwind") {
+    return "windSpeed";
+  }
+
+  if (
+    normalized === "winddirection" ||
+    normalized === "winddir" ||
+    normalized === "direction"
+  ) {
+    return "windDirection";
+  }
+
+  return key || "unknown";
+};
+
+const getFirstNumericValue = (item: any, keys: string[]) => {
+  for (const key of keys) {
+    const value = toNumericValue(item?.[key]);
+    if (value !== undefined) return value;
+  }
+
+  return undefined;
+};
+
 export const useSensorVisualizationData = ({
   sensorData,
   sensorParameters,
@@ -85,7 +113,7 @@ export const useSensorVisualizationData = ({
         timeMap[timeKey] = { date: item.date, time: item.time };
       }
 
-      const paramKey = item.parameter || "unknown";
+      const paramKey = normalizeParameterKey(item.parameter);
       const singleValue = toNumericValue(item.value);
 
       if (singleValue !== undefined) {
@@ -97,6 +125,17 @@ export const useSensorVisualizationData = ({
             timeMap[timeKey][`${paramKey}_${axis}`] = axisValue;
           }
         });
+      }
+
+      const inlineWindDirection = getFirstNumericValue(item, [
+        "windDirection",
+        "wind_direction",
+        "windDir",
+        "direction",
+        "dir",
+      ]);
+      if (inlineWindDirection !== undefined) {
+        timeMap[timeKey].windDirection = inlineWindDirection;
       }
     });
 
@@ -110,7 +149,7 @@ export const useSensorVisualizationData = ({
 
     return sensorParameters.flatMap((param) => {
       const samples = sensorDataForGraphs?.filter(
-        (data: any) => data.parameter === param
+        (data: any) => normalizeParameterKey(data.parameter) === param
       );
       const label = labelMapping[param] || param;
       const getNextColor = () => trendColors[colorIndex++ % trendColors.length];
