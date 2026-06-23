@@ -427,6 +427,7 @@ export const MovableForm: React.FC<MovableFormProps> = ({
     if (event.button !== 0) return;
     if (isNonDraggableTarget(event.target)) return;
     event.preventDefault();
+    event.stopPropagation();
     interactionRef.current = {
       mode: "drag",
       startX: event.clientX,

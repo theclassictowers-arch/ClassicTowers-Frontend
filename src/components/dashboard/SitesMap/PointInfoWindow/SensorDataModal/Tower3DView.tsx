@@ -450,12 +450,10 @@ export const Tower3DView = ({
 }: Tower3DViewProps) => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
-  const hasRealTelemetry = [roll, pitch, yaw, windSpeed, windDirection, vibration].some(
-    (value) => typeof value === "number" && Number.isFinite(value)
-  );
   const [demoTelemetry, setDemoTelemetry] = useState<LiveTelemetry>(() => makeDemoTelemetry());
   const [isPlaying, setIsPlaying] = useState(true);
   const chartHistory = useMemo(() => compactHistory(history), [history]);
+  const hasSensorHistory = chartHistory.length > 0;
 
   useEffect(() => {
     if (!isPlaying) return undefined;
@@ -467,7 +465,7 @@ export const Tower3DView = ({
     return () => window.clearInterval(interval);
   }, [isPlaying]);
 
-  const telemetry: LiveTelemetry = {
+  const inputTelemetry: LiveTelemetry = {
     roll: toNumber(roll, demoTelemetry.roll),
     pitch: toNumber(pitch, demoTelemetry.pitch),
     yaw: toNumber(yaw, demoTelemetry.yaw),
@@ -478,7 +476,6 @@ export const Tower3DView = ({
     signal: toNumber(signal, demoTelemetry.signal),
     time: demoTelemetry.time,
   };
-  const status = statusFromTilt(telemetry);
   const fallbackHistory = useMemo(
     () =>
       Array.from({ length: 36 }, (_, index) => {
@@ -497,10 +494,10 @@ export const Tower3DView = ({
   const activeHistory = useMemo(() => {
     const baseHistory = chartHistory.length > 0 ? chartHistory : fallbackHistory;
     const latestValues = {
-      yaw: telemetry.yaw,
-      roll: telemetry.roll,
-      pitch: telemetry.pitch,
-      vibration: telemetry.vibration,
+      yaw: inputTelemetry.yaw,
+      roll: inputTelemetry.roll,
+      pitch: inputTelemetry.pitch,
+      vibration: inputTelemetry.vibration,
     };
 
     const normalizedHistory = baseHistory.map((item) => ({
@@ -517,7 +514,7 @@ export const Tower3DView = ({
       ...normalizedHistory.slice(-47),
       {
         index: normalizedHistory.length,
-        time: telemetry.time,
+        time: inputTelemetry.time,
         yaw: latestValues.yaw,
         roll: latestValues.roll,
         pitch: latestValues.pitch,
@@ -527,12 +524,25 @@ export const Tower3DView = ({
   }, [
     chartHistory,
     fallbackHistory,
-    telemetry.pitch,
-    telemetry.roll,
-    telemetry.time,
-    telemetry.vibration,
-    telemetry.yaw,
+    inputTelemetry.pitch,
+    inputTelemetry.roll,
+    inputTelemetry.time,
+    inputTelemetry.vibration,
+    inputTelemetry.yaw,
   ]);
+  const latestGraphPoint = activeHistory[activeHistory.length - 1] || {};
+  const telemetry: LiveTelemetry = {
+    roll: toNumber(latestGraphPoint.roll, inputTelemetry.roll),
+    pitch: toNumber(latestGraphPoint.pitch, inputTelemetry.pitch),
+    yaw: toNumber(latestGraphPoint.yaw, inputTelemetry.yaw),
+    windSpeed: inputTelemetry.windSpeed,
+    windDirection: inputTelemetry.windDirection,
+    vibration: toNumber(latestGraphPoint.vibration, inputTelemetry.vibration),
+    battery: inputTelemetry.battery,
+    signal: inputTelemetry.signal,
+    time: String(latestGraphPoint.time || inputTelemetry.time),
+  };
+  const status = statusFromTilt(telemetry);
   const motionPhase = Date.now() / 1000;
   const vibrationMotion = clamp(telemetry.vibration / 5, 0, 1);
   const tiltRotation: [number, number, number] = [
@@ -617,7 +627,7 @@ export const Tower3DView = ({
 
         <div style={{ position: "absolute", left: 10, top: 10, display: "flex", gap: 6, flexWrap: "wrap" }}>
           <Chip size="small" label={siteName || "Telecom Tower 3D"} sx={{ height: 23, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.15), color: "primary.main", fontSize: "0.66rem", fontWeight: 800 }} />
-          <Chip size="small" label={hasRealTelemetry ? "Live data" : "Demo mode"} sx={{ height: 23, borderRadius: 1, bgcolor: status.tint, color: status.textColor, fontSize: "0.66rem", fontWeight: 800 }} />
+          <Chip size="small" label={hasSensorHistory ? "Live data" : "Demo mode"} sx={{ height: 23, borderRadius: 1, bgcolor: status.tint, color: status.textColor, fontSize: "0.66rem", fontWeight: 800 }} />
           <Chip size="small" label={status.label} sx={{ height: 23, borderRadius: 1, bgcolor: status.color, color: "#fff", fontSize: "0.66rem", fontWeight: 800 }} />
         </div>
       </div>
@@ -639,7 +649,7 @@ export const Tower3DView = ({
             Yaw / Roll / Pitch / Vibration
           </Typography>
           <Typography sx={{ ml: "auto", fontSize: "0.68rem", color: "text.disabled", whiteSpace: "nowrap" }}>
-            {hasRealTelemetry ? "sensor history" : "demo stream"} | {telemetry.time}
+            {hasSensorHistory ? "sensor history" : "demo stream"} | {telemetry.time}
           </Typography>
         </div>
         <ResponsiveContainer width="100%" height="calc(100% - 31px)">
