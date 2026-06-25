@@ -161,7 +161,7 @@ export const SensorDataModal: FC<SensorDataModalProps> = ({
         isFullPage={isFullPage}
         onFullPageChange={setIsFullPage}
         reservedLeft={reservedLeft}
-        zIndex={1201}
+        zIndex={1210}
       >
         <div style={panelStyle}>
           <DataVisualizationHeader

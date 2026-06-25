@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { CSSProperties, useEffect, useMemo, useState } from "react";
+import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import {
   alpha,
   Box,
@@ -13,7 +13,7 @@ import {
 import useMediaQuery from "@mui/material/useMediaQuery";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, OrbitControls, Text } from "@react-three/drei";
 import * as THREE from "three";
 import {
@@ -376,6 +376,56 @@ const WindArrow = ({
       <Text position={[0, 0.36, 0]} fontSize={0.16} color={statusColor} anchorX="center">
         {`${speed.toFixed(1)} km/h`}
       </Text>
+      <Text position={[0, 0.13, 0]} fontSize={0.13} color={statusColor} anchorX="center">
+        {`${direction.toFixed(0)} deg`}
+      </Text>
+    </group>
+  );
+};
+
+const AnimatedTower = ({
+  telemetry,
+  statusColor,
+}: {
+  telemetry: LiveTelemetry;
+  statusColor: string;
+}) => {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame(({ clock }) => {
+    if (!groupRef.current) return;
+
+    const elapsed = clock.getElapsedTime();
+    const vibrationMotion = clamp(Math.abs(telemetry.vibration) / 5, 0.18, 1);
+    const targetRotation: [number, number, number] = [
+      THREE.MathUtils.degToRad(telemetry.pitch) * 0.38 +
+        THREE.MathUtils.degToRad(Math.sin(elapsed * 7.2) * vibrationMotion * 1.6),
+      THREE.MathUtils.degToRad(telemetry.yaw) * 0.045 +
+        THREE.MathUtils.degToRad(Math.sin(elapsed * 3.1) * vibrationMotion * 0.9),
+      THREE.MathUtils.degToRad(telemetry.roll) * 0.38 +
+        THREE.MathUtils.degToRad(Math.cos(elapsed * 6.4) * vibrationMotion * 1.6),
+    ];
+
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(
+      groupRef.current.rotation.x,
+      targetRotation[0],
+      0.12
+    );
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(
+      groupRef.current.rotation.y,
+      targetRotation[1],
+      0.12
+    );
+    groupRef.current.rotation.z = THREE.MathUtils.lerp(
+      groupRef.current.rotation.z,
+      targetRotation[2],
+      0.12
+    );
+  });
+
+  return (
+    <group ref={groupRef}>
+      <TelecomTower statusColor={statusColor} />
     </group>
   );
 };
@@ -543,16 +593,6 @@ export const Tower3DView = ({
     time: String(latestGraphPoint.time || inputTelemetry.time),
   };
   const status = statusFromTilt(telemetry);
-  const motionPhase = Date.now() / 1000;
-  const vibrationMotion = clamp(telemetry.vibration / 5, 0, 1);
-  const tiltRotation: [number, number, number] = [
-    THREE.MathUtils.degToRad(telemetry.pitch) * 0.24 +
-      THREE.MathUtils.degToRad(Math.sin(motionPhase * 7.2) * vibrationMotion * 1.4),
-    THREE.MathUtils.degToRad(telemetry.yaw) * 0.025 +
-      THREE.MathUtils.degToRad(Math.sin(motionPhase * 3.1) * vibrationMotion * 0.75),
-    THREE.MathUtils.degToRad(telemetry.roll) * 0.24 +
-      THREE.MathUtils.degToRad(Math.cos(motionPhase * 6.4) * vibrationMotion * 1.4),
-  ];
 
   const rootStyle: CSSProperties = {
     backgroundColor: theme.palette.background.paper,
@@ -604,9 +644,7 @@ export const Tower3DView = ({
           <ambientLight intensity={0.68} />
           <directionalLight position={[4, 7, 5]} intensity={1.5} castShadow shadow-mapSize={[1024, 1024]} />
           <spotLight position={[-4, 4.5, 4]} intensity={0.62} angle={0.42} penumbra={0.7} />
-          <group rotation={tiltRotation}>
-            <TelecomTower statusColor={status.color} />
-          </group>
+          <AnimatedTower telemetry={telemetry} statusColor={status.color} />
           <WindArrow direction={telemetry.windDirection} speed={telemetry.windSpeed} statusColor={status.color} />
           <mesh position={[0, -2.32, 0]} receiveShadow>
             <cylinderGeometry args={[2.6, 2.8, 0.12, 64]} />

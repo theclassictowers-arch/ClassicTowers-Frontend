@@ -173,33 +173,34 @@ export const useSensorVisualizationData = ({
   }, [sensorDataForGraphs, sensorParameters]);
 
   const latestAngles = useMemo(() => {
-    const latest = [...unifiedChartData]
-      .reverse()
-      .find((item: any) =>
-        [
-          "vibrationRollAngle",
-          "vibrationPitchAngle",
-          "vibrationAngle",
-          "windSpeed",
-          "windDirection",
-          "vibrationSpeed_x",
-          "vibrationSpeed_y",
-          "vibrationSpeed_z",
-        ].some((key) => typeof item[key] === "number")
-      ) as any;
+    const reversedData = [...unifiedChartData].reverse();
+    const latestNumber = (keys: string[]) => {
+      for (const item of reversedData) {
+        const value = getFirstNumericValue(item, keys);
+        if (value !== undefined) return value;
+      }
+
+      return undefined;
+    };
 
     const vibrationValues = [
-      latest?.vibrationSpeed_x,
-      latest?.vibrationSpeed_y,
-      latest?.vibrationSpeed_z,
+      latestNumber(["vibrationSpeed_x"]),
+      latestNumber(["vibrationSpeed_y"]),
+      latestNumber(["vibrationSpeed_z"]),
     ].filter((value) => typeof value === "number");
 
     return {
-      roll: latest?.vibrationRollAngle,
-      pitch: latest?.vibrationPitchAngle,
-      yaw: latest?.vibrationAngle,
-      windSpeed: latest?.windSpeed,
-      windDirection: latest?.windDirection,
+      roll: latestNumber(["vibrationRollAngle"]),
+      pitch: latestNumber(["vibrationPitchAngle"]),
+      yaw: latestNumber(["vibrationAngle"]),
+      windSpeed: latestNumber(["windSpeed"]),
+      windDirection: latestNumber([
+        "windDirection",
+        "wind_direction",
+        "windDir",
+        "direction",
+        "dir",
+      ]),
       vibration:
         vibrationValues.length > 0
           ? vibrationValues.reduce((total, value) => total + Math.abs(value), 0) /

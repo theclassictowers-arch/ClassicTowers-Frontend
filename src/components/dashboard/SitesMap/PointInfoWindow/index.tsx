@@ -253,7 +253,7 @@ const PointInfoWindow: FC<ExtendedInfoWindowContentProps> = ({
         y: 76,
       }}
       reservedLeft={siderCollapsed ? 64 : 252}
-      zIndex={1202}
+      zIndex={1080}
     >
     <div className="dashboard-parameter-panel" style={panelStyle}>
       {/* Header: primary color, location icon + site name, close button */}
