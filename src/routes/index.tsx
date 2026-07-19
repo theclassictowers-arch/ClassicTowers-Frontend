@@ -22,6 +22,9 @@ import {
   LimitsShow,
   ProfilePage,
   VisualizationPage,
+  AdminCrudList,
+  AdminCrudForm,
+  AdminCrudShow,
 } from "../pages";
 import { ThemedLayoutV2 } from "@refinedev/mui";
 import {
@@ -181,6 +184,22 @@ const AppRoutes: React.FC = () => {
             />
           </Route>
         ) : null}
+        {role?.toLowerCase() === "admin" && (
+          <>
+            <Route path="/menus">
+              <Route index element={<AdminCrudList resource="menus" />} />
+              <Route path="create" element={<AdminCrudForm resource="menus" mode="create" />} />
+              <Route path="edit/:id" element={<><AdminCrudList resource="menus" /><AdminCrudForm resource="menus" mode="edit" /></>} />
+              <Route path="show/:id" element={<><AdminCrudList resource="menus" /><AdminCrudShow resource="menus" /></>} />
+            </Route>
+            <Route path="/inventory">
+              <Route index element={<AdminCrudList resource="inventory" />} />
+              <Route path="create" element={<AdminCrudForm resource="inventory" mode="create" />} />
+              <Route path="edit/:id" element={<><AdminCrudList resource="inventory" /><AdminCrudForm resource="inventory" mode="edit" /></>} />
+              <Route path="show/:id" element={<><AdminCrudList resource="inventory" /><AdminCrudShow resource="inventory" /></>} />
+            </Route>
+          </>
+        )}
         <Route path="*" element={<ErrorComponent />} />
       </Route>
       <Route

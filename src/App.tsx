@@ -22,6 +22,7 @@ import {
   sensorProvider,
   limitsProvider,
   archivesProvider,
+  adminCrudProvider,
 } from "./providers";
 import { getResources } from "./utils";
 
@@ -71,6 +72,7 @@ const App: React.FC = () => {
               limits: limitsProvider,
               users: userProvider,
               archives: archivesProvider,
+              admin: adminCrudProvider,
             }}
             notificationProvider={useNotificationProvider}
             routerProvider={routerProvider}

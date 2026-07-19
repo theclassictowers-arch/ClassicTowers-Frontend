@@ -4,3 +4,4 @@ export * from "./site.provider";
 export * from "./sensor.provider";
 export * from "./limits.provider";
 export * from "./user.provider";
+export * from "./adminCrud.provider";
