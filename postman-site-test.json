@@ -1,0 +1,22 @@
+{
+  "coordinates": [77.2157, 28.6204],
+  "region": "Test Region",
+  "infrastructure_id": "POSTMAN-TEST-20260719-02",
+  "imei": [123456789020722],
+  "vibrationSensor": {
+    "sensorId": "VIB-TEST-20260719-02",
+    "speed": { "x": [0], "y": [0], "z": [0] },
+    "displacement": { "x": [0], "y": [0], "z": [0] },
+    "yaw": [0],
+    "pitch": [0],
+    "roll": [0],
+    "resonance": [0]
+  },
+  "windSensor": {
+    "sensorId": "WIND-TEST-20260719-02",
+    "speed": [0],
+    "direction": [0],
+    "humidity": [0],
+    "temperature": [0]
+  }
+}
