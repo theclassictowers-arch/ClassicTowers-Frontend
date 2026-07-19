@@ -6,4 +6,3 @@ export * from "./users";
 export * from "./settings";
 export * from "./profile";
 export * from "./visualization";
-export * from "./admin-crud";

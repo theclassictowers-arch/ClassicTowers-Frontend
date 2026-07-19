@@ -3,8 +3,6 @@ import PeopleAltTwoToneIcon from "@mui/icons-material/PeopleAltTwoTone";
 import RoomTwoToneIcon from "@mui/icons-material/RoomTwoTone";
 import AdjustIcon from "@mui/icons-material/Adjust";
 import SettingsIcon from "@mui/icons-material/Settings";
-import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
-import Inventory2Icon from "@mui/icons-material/Inventory2";
 import {
   canAccessSettings,
   canCreateSites,
@@ -78,30 +76,6 @@ export const getResources = (role: string) => {
           meta: {
             label: "Users",
             icon: <PeopleAltTwoToneIcon />,
-          },
-        },
-        {
-          name: "menus",
-          list: "/menus",
-          create: "/menus/create",
-          edit: "/menus/edit/:id",
-          show: "/menus/show/:id",
-          meta: {
-            label: "Menu Management",
-            icon: <RestaurantMenuIcon />,
-            dataProviderName: "admin",
-          },
-        },
-        {
-          name: "inventory",
-          list: "/inventory",
-          create: "/inventory/create",
-          edit: "/inventory/edit/:id",
-          show: "/inventory/show/:id",
-          meta: {
-            label: "Inventory",
-            icon: <Inventory2Icon />,
-            dataProviderName: "admin",
           },
         },
       ]
