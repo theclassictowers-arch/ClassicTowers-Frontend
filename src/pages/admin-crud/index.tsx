@@ -8,6 +8,7 @@ import {
   CircularProgress,
   FormControlLabel,
   Grid,
+  MenuItem,
   Stack,
   TextField,
   Typography,
@@ -39,10 +40,27 @@ const configs = {
     title: "Menu",
     fields: [
       { name: "title", label: "Title", required: true },
-      { name: "path", label: "Path", required: true, placeholder: "/dashboard" },
+      { name: "path", label: "Path / URL", required: true, placeholder: "/dashboard or https://example.com" },
       { name: "icon", label: "Icon" },
-      { name: "parent", label: "Parent menu" },
+      { name: "parent", label: "Parent menu", placeholder: "Leave blank for main menu" },
       { name: "order", label: "Display order", type: "number" },
+      {
+        name: "menuType",
+        label: "Link type",
+        type: "select",
+        options: [
+          { value: "internal", label: "Internal page" },
+          { value: "external", label: "External URL" },
+        ],
+      },
+      {
+        name: "roles",
+        label: "Visible to roles",
+        placeholder: "admin, organization, team_lead, operator",
+        array: true,
+      },
+      { name: "description", label: "Description", multiline: true },
+      { name: "openInNewTab", label: "Open in new tab", type: "boolean" },
       { name: "isActive", label: "Active", type: "boolean" },
     ],
   },
@@ -83,7 +101,9 @@ export const AdminCrudList = ({ resource }) => {
         minWidth: 110,
         valueFormatter: field.type === "boolean"
           ? ({ value }) => (value === false ? "No" : "Yes")
-          : undefined,
+          : field.array
+            ? ({ value }) => (Array.isArray(value) ? value.join(", ") : value || "")
+            : undefined,
       }));
     return [
       ...fields,
@@ -137,14 +157,20 @@ export const AdminCrudForm = ({ resource, mode }) => {
   const navigate = useNavigate();
   const { open } = useNotification();
   const [loading, setLoading] = React.useState(mode === "edit");
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
-    defaultValues: { isActive: true },
+  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm({
+    defaultValues: { isActive: true, openInNewTab: false, menuType: "internal" },
   });
 
   useEffect(() => {
     if (mode !== "edit" || !id) return;
     axiosInstance.get(`/${resource}/${id}`)
-      .then(({ data }) => reset(data?.data ?? data))
+      .then(({ data }) => {
+        const record = data?.data ?? data;
+        config.fields.filter((field) => field.array).forEach((field) => {
+          if (Array.isArray(record?.[field.name])) record[field.name] = record[field.name].join(", ");
+        });
+        reset(record);
+      })
       .catch((error) => {
         open?.({ type: "error", message: `Could not load ${config.title}`, description: error?.response?.data?.message });
         navigate(`/${resource}`);
@@ -157,6 +183,14 @@ export const AdminCrudForm = ({ resource, mode }) => {
     const payload = { ...values };
     config.fields.filter((field) => field.type === "number").forEach((field) => {
       payload[field.name] = Number(payload[field.name] || 0);
+    });
+    config.fields.filter((field) => field.array).forEach((field) => {
+      payload[field.name] = Array.isArray(payload[field.name])
+        ? payload[field.name]
+        : String(payload[field.name] || "")
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean);
     });
     try {
       if (mode === "edit") await axiosInstance.patch(`/${resource}/${id}`, payload);
@@ -179,7 +213,15 @@ export const AdminCrudForm = ({ resource, mode }) => {
             <Grid container spacing={2}>
               {config.fields.map((field) => field.type === "boolean" ? (
                 <Grid item xs={12} sm={6} key={field.name}>
-                  <FormControlLabel control={<Checkbox defaultChecked {...register(field.name)} />} label={field.label} />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={Boolean(watch(field.name))}
+                        onChange={(event) => setValue(field.name, event.target.checked, { shouldDirty: true })}
+                      />
+                    }
+                    label={field.label}
+                  />
                 </Grid>
               ) : (
                 <Grid item xs={12} sm={field.multiline ? 12 : 6} key={field.name}>
@@ -190,12 +232,17 @@ export const AdminCrudForm = ({ resource, mode }) => {
                     placeholder={field.placeholder}
                     multiline={field.multiline}
                     rows={field.multiline ? 3 : undefined}
+                    select={field.type === "select"}
                     error={Boolean(errors[field.name])}
                     helperText={errors[field.name]?.message}
                     fullWidth
                     size="small"
                     InputLabelProps={{ shrink: true }}
-                  />
+                  >
+                    {field.options?.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
               ))}
               <Grid item xs={12} display="flex" justifyContent="flex-end" gap={1}>
