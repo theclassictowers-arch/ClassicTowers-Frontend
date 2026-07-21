@@ -35,12 +35,7 @@ export const SiteCreate: React.FC = () => {
     setIsLoading(true);
     try {
       const payload = {
-        name: data.name || "",
-        display_name: data.display_name || "",
-        sim_number: data.sim_number || "",
         coordinates: [Number(data.lon), Number(data.lat)],
-        lat: Number(data.lat),
-        lon: Number(data.lon),
         region: data.region || "",
         infrastructure_id: data.infrastructure_id || "",
         imei: String(data.imei || "")
@@ -51,10 +46,10 @@ export const SiteCreate: React.FC = () => {
           sensorId: data.vibrationSensorId,
           speed: defaultAxisData,
           displacement: defaultAxisData,
-          yaw: [0],
-          pitch: [0],
-          roll: [0],
-          resonance: [0],
+          frequency: defaultAxisData,
+          angle: defaultAxisData,
+          pitchAngle: [0],
+          rollAngle: [0],
         },
         windSensor: {
           sensorId: data.windSensorId,

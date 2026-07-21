@@ -104,14 +104,9 @@ export const SiteEdit: React.FC = () => {
     setIsSaving(true);
     try {
       const payload = {
-        name: data.name || "",
-        display_name: data.display_name || "",
-        sim_number: data.sim_number || "",
         region: data.region || "",
         infrastructure_id: data.infrastructure_id || "",
         coordinates: [Number(data.lon), Number(data.lat)],
-        lat: Number(data.lat),
-        lon: Number(data.lon),
         imei: String(data.imei || "")
           .split(",")
           .map((v) => Number(v.trim()))
@@ -120,10 +115,10 @@ export const SiteEdit: React.FC = () => {
           ...(siteSnapshot?.vibrationSensor || {
             speed: defaultAxisData,
             displacement: defaultAxisData,
-            yaw: [0],
-            pitch: [0],
-            roll: [0],
-            resonance: [0],
+            frequency: defaultAxisData,
+            angle: defaultAxisData,
+            pitchAngle: [0],
+            rollAngle: [0],
           }),
           sensorId: data.vibrationSensorId || "",
         },

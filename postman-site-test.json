@@ -1,10 +1,5 @@
 {
-  "name": "POSTMAN-TEST-20260721-01",
-  "display_name": "Postman Test Site",
-  "sim_number": "03001234567",
   "coordinates": [77.2157, 28.6204],
-  "lat": 28.6204,
-  "lon": 77.2157,
   "region": "Test Region",
   "infrastructure_id": "POSTMAN-TEST-20260721-01",
   "imei": [123456789020722],
@@ -12,10 +7,10 @@
     "sensorId": "VIB-TEST-20260721-01",
     "speed": { "x": [0], "y": [0], "z": [0] },
     "displacement": { "x": [0], "y": [0], "z": [0] },
-    "yaw": [0],
-    "pitch": [0],
-    "roll": [0],
-    "resonance": [0]
+    "frequency": { "x": [0], "y": [0], "z": [0] },
+    "angle": { "x": [0], "y": [0], "z": [0] },
+    "pitchAngle": [0],
+    "rollAngle": [0]
   },
   "windSensor": {
     "sensorId": "WIND-TEST-20260721-01",
